@@ -1,0 +1,1 @@
+# copy to terminal: source improApp_env/bin/activate
