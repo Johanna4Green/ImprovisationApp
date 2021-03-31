@@ -20,6 +20,11 @@ class MidiInput():
         self.velocity = 0
         self.channel = 0 
         #self.nachricht = [self.type, self.note, self.velocity, self.channel]
+        self.fs = fluidsynth.Synth(1)
+        self.fs.start(driver = 'portaudio')
+    
+        self.sfid = self.fs.sfload("default-GM.sf2") 
+        self.fs.program_select(0, self.sfid, 0, 0)
 
 
         #print(self.msg)
@@ -78,31 +83,27 @@ class MidiInput():
         #self.velocity = velo
         #self.channel = channel
   
-        fs = fluidsynth.Synth(1)
-        fs.start(driver = 'portaudio')
-    
-        sfid = fs.sfload("default-GM.sf2") 
-        fs.program_select(0, sfid, 0, 0)
+       
    
 
         #time.sleep(1.0)
     
         if self.type == "note_on":
-            fs.noteon(self.channel, self.note, self.velocity)
+            self.fs.noteon(self.channel, self.note, self.velocity)
             #fs.noteon(0, 67, 30)
             #fs.noteon(0, 76, 30)
 
-            time.sleep(0.2)
+            #time.sleep(0.2)
         elif self.type == "note_off":
-            #fs.noteoff(self.channel, self.note)
-            fs.noteoff(0, 67)
+            self.fs.noteoff(self.channel, self.note)
+            #self.fs.noteoff(0, 67)
             #fs.noteoff(0, 76)
         else:
             print("fail")
 
             #time.sleep(1.0)
         print("before deleting")
-        fs.delete()
+        #self.fs.delete()
 
 
 
