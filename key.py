@@ -12,7 +12,8 @@ import pygame.midi
 import time
 from constants import *
 
-from midiInput import MidiInput
+from testMidiInput import MidiInput
+#from midiInput import MidiInput
 
 
 
