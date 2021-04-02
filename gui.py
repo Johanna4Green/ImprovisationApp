@@ -72,20 +72,26 @@ class Window(QMainWindow):
     @pyqtSlot()
     def on_click_play(self):
         print('Play button click')
-        state = "play"
-        return
+        #self.state = "play"
+        backing_track.play_bt()
+        print("gui end of play click")
+        #return self.state
 
     @pyqtSlot()
     def on_click_pause(self):
         print('Pause button click')
-        state = "pause"
-        return
+        #self.state = "pause"
+        backing_track.pause_bt()
+        print("gui end of pause click")
+        #return self.state
 
     @pyqtSlot()
     def on_click_stop(self):
         print('Stop button click')
-        state = "stop"
-        return
+        #self.state = "stop"
+        backing_track.stop_bt()
+        print("gui end of stop click")
+        #return self.state
 
     # draw Piano keyboard with 88 keys
     def paintEvent(self, e):
