@@ -50,16 +50,12 @@ class MidiInput():
 
         if self.type == "note_on":
             self.fs.noteon(self.channel, self.note, self.velocity)
-            #fs.noteon(0, 67, 30)
 
-            #time.sleep(0.2)
         elif self.type == "note_off":
             self.fs.noteoff(self.channel, self.note)
-            #self.fs.noteoff(0, 67)
+
         else:
             print("fail")
-
-        #self.fs.delete()
 
 # For driver = portaudio to work: brew install portaudio --HEAD 
 # https://github.com/gordonklaus/portaudio/issues/41
