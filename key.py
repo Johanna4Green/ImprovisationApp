@@ -1,6 +1,3 @@
-# the keys are created and inizialized 
-# gets MidiInput from the midiInput module/ class
-
 from PyQt5 import QtGui
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget
 from PyQt5.QtGui import QPainter, QBrush, QPen
@@ -13,12 +10,10 @@ import time
 from constants import *
 from midiInput import MidiInput
 
-
-
 class Key():
 
     BLACK_KEYS = [1, 4, 6, 9, 11, 13, 16, 18, 21, 23, 25, 28, 30, 33, 35, 37, 40 ,42, 45, 47, 49, 52, 54, 57, 59, 61, 64, 66, 69, 71, 73, 76, 78, 81, 83, 85] # welche Tasten sind schwarz?
-    # this array stores the x position dependent of the DISTANCE_TO_LEFT_MARGIN of all black and white keys 
+
     X_POSITION_ARRAY = [DISTANCE_TO_LEFT_MARGIN,DISTANCE_TO_LEFT_MARGIN + 14, DISTANCE_TO_LEFT_MARGIN + 20, DISTANCE_TO_LEFT_MARGIN + 40, DISTANCE_TO_LEFT_MARGIN + 54, DISTANCE_TO_LEFT_MARGIN + 60 , DISTANCE_TO_LEFT_MARGIN + 74 , DISTANCE_TO_LEFT_MARGIN + 80,
         DISTANCE_TO_LEFT_MARGIN + 100, DISTANCE_TO_LEFT_MARGIN + 114, DISTANCE_TO_LEFT_MARGIN + 120, DISTANCE_TO_LEFT_MARGIN + 134, DISTANCE_TO_LEFT_MARGIN + 140, DISTANCE_TO_LEFT_MARGIN + 154, DISTANCE_TO_LEFT_MARGIN + 160, DISTANCE_TO_LEFT_MARGIN + 180, DISTANCE_TO_LEFT_MARGIN + 194,
         DISTANCE_TO_LEFT_MARGIN + 200, DISTANCE_TO_LEFT_MARGIN + 214, DISTANCE_TO_LEFT_MARGIN + 220, DISTANCE_TO_LEFT_MARGIN + 240, DISTANCE_TO_LEFT_MARGIN + 254, DISTANCE_TO_LEFT_MARGIN + 260, DISTANCE_TO_LEFT_MARGIN + 274, DISTANCE_TO_LEFT_MARGIN + 280, DISTANCE_TO_LEFT_MARGIN + 294,
@@ -32,26 +27,22 @@ class Key():
         DISTANCE_TO_LEFT_MARGIN + 1000, DISTANCE_TO_LEFT_MARGIN + 1020, DISTANCE_TO_LEFT_MARGIN + 1040
     ] # (16,25, 33, 42, 50, 59, 67, 76, 85 is letztes
 
-
-
     def __init__(self, key_number):
-
         super().__init__()
         self.key_number = key_number
         self.is_pressed = False
 
+        #self.x = 200 + 20 * self.key_number
         self.x = self.X_POSITION_ARRAY[self.key_number]
-        self.y = 200
-        self.w = 20
+        self.y = 350                    # WINDOW_HEIGHT / 2  # 200
+        self.w = 20                     # WINDOW_WIDTH / 60 # 20      # 52 white keys, je 4 am rand frei
         self.w_black = 12
-        self.h =  170
+        self.h =  170                   # w * 4 # 170
         self.h_black = 110
         self.white_circle_w = 10
         self.black_circle_w = 8
         self.white_circle_h = 10
         self.black_circle_h = 8
-
-        #self.painter = QPainter(self)    # reated the object of QPainter class
 
         if key_number in self.BLACK_KEYS:
             self.key_type = KEY_TYPE_BLACK
@@ -62,8 +53,10 @@ class Key():
 
 
     def draw(self, painter):
+
         is_pressed = midi_input.getKeyArray()[self.key_number]
-      
+
+        # zeiche Taste
         if self.key_type == KEY_TYPE_BLACK:
             # zeichne ein schwarzes Viereck
             painter.setPen(QPen(Qt.black, 1, Qt.SolidLine))  # set pen to draw the outline of the key
@@ -71,21 +64,21 @@ class Key():
             painter.drawRect(self.x, self.y, self.w_black, self.h_black)
 
             if is_pressed:
-                # zeichne die Markierung
                 painter.setBrush(QBrush(Qt.red, Qt.SolidPattern)) # set brush to fill the key with color
                 painter.drawEllipse(self.x + 2, self.y + 100, self.black_circle_w, self.black_circle_h)
                 pass
-                
+                # zeichne die Markierung
+
         else:
             # zeichne ein weißes Viereck
             painter.setPen(QPen(Qt.black, 1, Qt.SolidLine))  # set pen to draw the outline of the key
             painter.setBrush(QBrush(Qt.white, Qt.SolidPattern)) # set brush to fill the key with color
             painter.drawRect(self.x, self.y, self.w, self.h)
-            
+
             if is_pressed:
-                # zeichne die Markierung
                 painter.setBrush(QBrush(Qt.red, Qt.SolidPattern)) # set brush to fill the key with color
                 painter.drawEllipse(self.x + 5, self.y + 155, self.white_circle_w, self.white_circle_h)
                 pass
-               
+                # zeichne die Markierung
+
 midi_input = MidiInput()

@@ -16,17 +16,19 @@ from midiInput import MidiInput
 from backingTrack import BackingTrack
 from key import Key
 import keyboard
+from chord import Chord
 
 
 class Window(QMainWindow):
     def __init__(self):
-        
+        print("in main Window ")
         super().__init__()      # exended from class QMainWindow
         self.title = "Improvisation App"
         self.top = WINDOW_X
         self.left = WINDOW_Y
         self.width = WINDOW_WIDTH
         self.height = WINDOW_HEIGHT
+
         # init buttons, keyboard and window
         self.InitButtons()
         self.InitKeyboard(88)
@@ -48,10 +50,8 @@ class Window(QMainWindow):
         for i in range(num_keys):
             self.keys.append(Key(i))
 
+
     def InitButtons(self):
-        # play
-        # play_icon  = QtGui.QIcon("play_button.jpeg")
-        # play_button.setIcon(play_icon)
         play_button = QPushButton('Play', self)
         play_button.setToolTip('to start playing the Backing Track')
         play_button.move(100,70)
@@ -81,10 +81,18 @@ class Window(QMainWindow):
     def on_click_stop(self):
         print('Stop button click')
         backing_track.stop_bt()
+       
 
     # draw Piano keyboard with 88 keys
     def paintEvent(self, e):
         painter = QPainter(self)    # create the object of QPainter class
+
+        #### MUST CALL NOTENZEILE.PY INSTEAD ####
+        #### MUST BE MOVED TO NOTENZEILE.PY ####
+        # Chord(painter, chordArray, notelength, tonality, xPosition)
+        cho = Chord(painter, [1,5,13], 'EIGHTH', 'Eb', NOTELINE_VER_X +500)
+        cho.InitNoteLine()
+
         for key in WHITE_KEYS:
             key.draw(painter)
         for key in BLACK_KEYS:
