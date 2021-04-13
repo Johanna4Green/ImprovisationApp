@@ -38,15 +38,12 @@ class BackingTrack():
         while(True): # loop of backing track
             for msg in MidiFile(self.btFile).play():
                 if self.state =="playing":
-                    print("play is the state")
                     pass
                 elif self.state == "paused":
                     while self.state == "paused":
-                        print("still paused")
                         time.sleep(0.5)     # as long as bt is paused, waits until play to continue
                         pass
                 elif self.state == "stopped":
-                    print ("stopped")
                     break
                 else:
                     print("Bt failed")

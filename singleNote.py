@@ -25,29 +25,26 @@ class SingleNote():
     def draw(self, painter):
 
         painter.setPen(QPen(Qt.black, 1, Qt.SolidLine))  # set pen to draw the outline of the key
-           
-        if self.noteLength == 'WHOLE':
-            # empty circle
+        if self.noteLength == 'WHOLE':  # empty circle
             painter.drawEllipse(self.xPosition, self.calculate_note_position(), NOTEWIDTH, NOTEHEIGHT)      # bobble ring
             pass
-        elif self.noteLength == 'HALF':
-            # empty circle with bar
+
+        elif self.noteLength == 'HALF': # empty circle with bar
             print('in HalfPrinter')
-            #painter.setBrush(NoBrush)
             painter.drawEllipse(self.xPosition, self.calculate_note_position(), NOTEWIDTH, NOTEHEIGHT)      # bobble ring
             lineX = self.xPosition + NOTEWIDTH
             lineY = self.calculate_note_position() + NOTEHEIGHT/2
             painter.drawLine(lineX, lineY - NOTEBARLENGTH, lineX, lineY)                                    # note bar
             pass
-        elif self.noteLength == 'QUARTER':
-            # filled circle with bar
+
+        elif self.noteLength == 'QUARTER': # filled circle with bar
             painter.setBrush(QBrush(Qt.black, Qt.SolidPattern))
             painter.drawEllipse(self.xPosition, self.calculate_note_position(), NOTEWIDTH, NOTEHEIGHT)      # bobble filled
             lineX = self.xPosition + NOTEWIDTH
             lineY = self.calculate_note_position() + NOTEHEIGHT/2
             painter.drawLine(lineX, lineY - NOTEBARLENGTH, lineX, lineY)                                    # note bar
-        elif self.noteLength == 'EIGHTH':
-            # filled circle with bar and tick
+        
+        elif self.noteLength == 'EIGHTH':   # filled circle with bar and tick
             painter.setBrush(QBrush(Qt.black, Qt.SolidPattern))
             painter.drawEllipse(self.xPosition, self.calculate_note_position(), NOTEWIDTH, NOTEHEIGHT)      # booble filled
             lineX = self.xPosition + NOTEWIDTH
@@ -57,7 +54,6 @@ class SingleNote():
         else:
             print("error: note has impossible length")
 
-    
 
     # gets yPosition for note depending of noteNumber
     # depending on sharp/ flat form sharp_or_flat function: all "black notes" are shifted up one note when sharp, shifted down one note when flat 
@@ -160,8 +156,6 @@ class SingleNote():
             print("error with yPosition")
         print(self.yPosition)
         return self.yPosition
-
-
 
 #noteline1_X =  NOTELINE_VER_X - 100
 #sn = SingleNote(14, 2.0, 'F#', noteline1_X)

@@ -15,82 +15,73 @@
 
 # "Hauptklasse" des Programms (GUI) erstellt eine neue Instanz der Notenzeile
 
-from PyQt5 import QtGui
+from PyQt5 import QtGui, QtWidgets
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QPushButton, QLabel
 from PyQt5.QtGui import QPainter, QBrush, QPen, QIcon, QPixmap
 from PyQt5.QtCore import Qt, QTimer, pyqtSlot
 
-
-import threading
 import mido
 from mido import MidiFile
 from mido import MetaMessage
 import math
+
 from constants import * 
+from chord import Chord
 
 
-class Notenzeile():
+class Staff():
 
     def __init__(self):
-        #self.painter = painter
         self.midFILE = 'AkkordeGDur.mid'
         self.noteArray = []
         self.overallTime = 0
         self.notelength = 'WHOLE'
-        #self.tempo = 500000
         self.tonality = 'C'
         self.tones = {} # if notes start and end at different times, an array with the length is not possible, each notelength needs to be saved individually then
 
-        #get_notes_thread = threading.Thread(target=self.getNotesOfSong)
-        #get_notes_thread.start()
+        # Chord(painter, chordArray, notelength, tonality, xPosition)
+        #cho = Chord(painter, [1,5,13], 'HALF', 'Eb', NOTELINE_VER_X +500)
+
 
 
     def InitNoteLine(self, painter):
         painter.setPen(QPen(Qt.black, 2, Qt.SolidLine))  # set pen to draw the outline of the key
         # horizontal lines / staves
         y = NOTELINE_HOR_Y
-            #painter.setBrush(QBrush(Qt.black, Qt.SolidPattern)) # set brush to fill the key with color
         for line in range(5):
             painter.drawLine(NOTELINE_HOR_X1, y, NOTELINE_HOR_X2, y)
             y = y + Y_DISTANCE
-            #print(y)
         # vertical lines / bar line
         x = NOTELINE_VER_X
         for line in range(3):
             painter.drawLine(x, NOTELINE_VER_Y1, x, NOTELINE_VER_Y2)
-            #print(x)
             x = x + X_DISTANCE
         pass
-        #self.InitLabel()
-        #noteline1_X =  NOTELINE_VER_X - 100
-        #noteline1_Y =  NOTELINE_HOR_Y + 32
 
     
-    def InitLabel(self):
-        clefLabel = QLabel(self)
+    def InitLabel(self, window):
+        print("in init label Notenzeile")
+        
+        clefLabel = QtWidgets.QLabel(window)
         clefLabel.resize(70,125)
         clefPixmap = QPixmap('images/clef.png')
         clefLabel.setPixmap(clefPixmap)
         clefLabel.setScaledContents(True)
         clefLabel.move(112, 132)
-
-        time44Label = QLabel(self)
+        clefLabel.show()
+        
+        time44Label = QtWidgets.QLabel(window)
         time44Label.resize(45,95)
         time44Pixmap = QPixmap('images/timeSign44.webp')
         time44Label.setPixmap(time44Pixmap)
         time44Label.setScaledContents(True)
         time44Label.move(165, 147)
+        time44Label.show()
 
         #flatLabel = QLabel(self)
         #flatLabel.resize(10,10)
         #flatLabel = QPixmap()
-    
-
-
-
-
-
-
+        
 
 
 
