@@ -18,13 +18,13 @@ class Chord():
         self.tonality = tonality
         self.xPosition = xPosition
         print(self.chordArray, self.notelength, self.tonality, self.xPosition)
-        sg = SingleNote(17, self.notelength, self.tonality, self.xPosition)
+        sg = SingleNote(13, self.notelength, self.tonality, self.xPosition)
         sg.draw(self.painter)
     #noteNumber, noteLength, tonality, xPosition
 
 
+    '''
 
-    #### MUST BE MOVED TO NOTENZEILE.PY ####
     def InitNoteLine(self):
         self.painter.setPen(QPen(Qt.black, 1, Qt.SolidLine))  # set pen to draw the outline of the key
         # horizontal lines / staves
@@ -33,7 +33,7 @@ class Chord():
         for line in range(5):
             self.painter.drawLine(NOTELINE_HOR_X1, y, NOTELINE_HOR_X2, y)
             y = y + Y_DISTANCE
-            #print(y)
+            print(y)
         # vertical lines / bar line
         x = NOTELINE_VER_X
         for line in range(3):
@@ -41,7 +41,7 @@ class Chord():
             x = x + X_DISTANCE
         #noteline1_X =  NOTELINE_VER_X - 100
         #noteline1_Y =  NOTELINE_HOR_Y + 32
-
+    '''
 
     
     # get chordArray from notenzeile.py

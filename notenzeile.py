@@ -9,13 +9,19 @@
 # clocks_per_click=24 means that the metronome will click once every 24 MIDI clocks. 
 # notated_32nd_notes_per_beat=8 means that there are eight 32nd notes per beat.
 
-#  Notenzeile, die sich um das "drumherum" wie Linien und Notenschlüssel kümmert 
+# Notenzeile, die sich um das "drumherum" wie Linien und Notenschlüssel kümmert 
 # UND mehrere Akkorde enthält, die dann gezeichnet werden
 # die Notenzeile weiß, wo der Akkord sein soll und sagt es ihm (und der Akkord weiß dann, wo die Note hin muss)
 
 # "Hauptklasse" des Programms (GUI) erstellt eine neue Instanz der Notenzeile
 
+from PyQt5 import QtGui
+from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QPushButton, QLabel
+from PyQt5.QtGui import QPainter, QBrush, QPen, QIcon, QPixmap
+from PyQt5.QtCore import Qt, QTimer, pyqtSlot
 
+
+import threading
 import mido
 from mido import MidiFile
 from mido import MetaMessage
@@ -26,6 +32,7 @@ from constants import *
 class Notenzeile():
 
     def __init__(self):
+        #self.painter = painter
         self.midFILE = 'AkkordeGDur.mid'
         self.noteArray = []
         self.overallTime = 0
@@ -33,6 +40,57 @@ class Notenzeile():
         #self.tempo = 500000
         self.tonality = 'C'
         self.tones = {} # if notes start and end at different times, an array with the length is not possible, each notelength needs to be saved individually then
+
+        #get_notes_thread = threading.Thread(target=self.getNotesOfSong)
+        #get_notes_thread.start()
+
+
+    def InitNoteLine(self, painter):
+        painter.setPen(QPen(Qt.black, 2, Qt.SolidLine))  # set pen to draw the outline of the key
+        # horizontal lines / staves
+        y = NOTELINE_HOR_Y
+            #painter.setBrush(QBrush(Qt.black, Qt.SolidPattern)) # set brush to fill the key with color
+        for line in range(5):
+            painter.drawLine(NOTELINE_HOR_X1, y, NOTELINE_HOR_X2, y)
+            y = y + Y_DISTANCE
+            #print(y)
+        # vertical lines / bar line
+        x = NOTELINE_VER_X
+        for line in range(3):
+            painter.drawLine(x, NOTELINE_VER_Y1, x, NOTELINE_VER_Y2)
+            #print(x)
+            x = x + X_DISTANCE
+        pass
+        #self.InitLabel()
+        #noteline1_X =  NOTELINE_VER_X - 100
+        #noteline1_Y =  NOTELINE_HOR_Y + 32
+
+    
+    def InitLabel(self):
+        clefLabel = QLabel(self)
+        clefLabel.resize(70,125)
+        clefPixmap = QPixmap('images/clef.png')
+        clefLabel.setPixmap(clefPixmap)
+        clefLabel.setScaledContents(True)
+        clefLabel.move(112, 132)
+
+        time44Label = QLabel(self)
+        time44Label.resize(45,95)
+        time44Pixmap = QPixmap('images/timeSign44.webp')
+        time44Label.setPixmap(time44Pixmap)
+        time44Label.setScaledContents(True)
+        time44Label.move(165, 147)
+
+        #flatLabel = QLabel(self)
+        #flatLabel.resize(10,10)
+        #flatLabel = QPixmap()
+    
+
+
+
+
+
+
 
 
 
@@ -83,6 +141,8 @@ class Notenzeile():
         return self.notelength
 
 
+
+
     def getTempo(self, midfile):
 
         for msg in MidiFile(midfile):
@@ -104,7 +164,21 @@ class Notenzeile():
                     
     
     
+    def sharp_or_flat(self, tonality):
+        semitone = ''
+        if tonality in FLAT_TONALITY:
+            semitone = 'is_flat'
+        elif tonality in SHARP_TONALITY:
+            semitone = 'is_sharp'
+        else:
+            ("this tonality does not exist in this application")
+            semitone = ''
+        return semitone
 
-nz = Notenzeile()
-nz.getNotesOfSong()
-g = nz.getTonality('AkkordeGDur.mid')
+
+#nz = Notenzeile()
+#nz.getNotesOfSong()
+#g = nz.getTonality('sound_midis/bes.mid')
+#q =nz.sharp_or_flat(g)
+#print(q)
+

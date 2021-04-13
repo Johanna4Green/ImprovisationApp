@@ -18,7 +18,7 @@ class SingleNote():
         self.xPosition = xPosition  # zum Testen: noteline1_X übergeben
         self.yPosition = NOTELINE_HOR_Y
         self.value = 'C'
-        #print(self.noteNumber)
+        print(self.noteNumber)
 
 
     # die Notelength kann man über ein enum oder Konstanten lösen, sodass da nicht 0.5 sondern HALF steht oder so
@@ -32,6 +32,8 @@ class SingleNote():
             pass
         elif self.noteLength == 'HALF':
             # empty circle with bar
+            print('in HalfPrinter')
+            #painter.setBrush(NoBrush)
             painter.drawEllipse(self.xPosition, self.calculate_note_position(), NOTEWIDTH, NOTEHEIGHT)      # bobble ring
             lineX = self.xPosition + NOTEWIDTH
             lineY = self.calculate_note_position() + NOTEHEIGHT/2
@@ -66,16 +68,16 @@ class SingleNote():
             if self.sharp_or_flat() == 'is_sharp':
                 print(self.noteNumber)
                 self.noteNumber = self.noteNumber + 1
-                #print(self.noteNumber)
+                print(self.noteNumber)
                 return self.getYPosition(self.number_to_value(self.noteNumber))
 
             elif self.sharp_or_flat() == 'is_flat':
                 print(self.noteNumber)
                 self.noteNumber = self.noteNumber - 1
-                #print(self.noteNumber)
+                print(self.noteNumber)
                 return self.getYPosition(self.number_to_value(self.noteNumber))
         else:
-            #print(self.noteNumber)
+            print(self.noteNumber)
             return self.getYPosition(self.number_to_value(self.noteNumber))
 
     #determines if tonality is minor or major and thereby the note is flat or sharp
@@ -90,47 +92,47 @@ class SingleNote():
     # turns notNumber into the Value/ Notename
     def number_to_value(self, noteNumber):
         if self.noteNumber % 12 == 0: #
-            #print('in G#')
+            print('in G#')
             self.value = OKTAVE[0]
         elif self.noteNumber % 12 == 1:
-            #print('in A')
+            print('in A')
             self.value = OKTAVE[1]
         elif self.noteNumber % 12 == 2: #
-            #print('in A#')
+            print('in A#')
             self.value = OKTAVE[2]
-            #print(self.value)
+            print(self.value)
         elif self.noteNumber % 12 == 3:
-            #print('in B')
+            print('in B')
             self.value = OKTAVE[3]
         elif self.noteNumber % 12 == 4:
-            #print('in C')
+            print('in C')
             self.value = OKTAVE[4]
         elif self.noteNumber % 12 == 5: #
-            #print('in C#')
+            print('in C#')
             self.value = OKTAVE[5]
         elif self.noteNumber % 12 == 6:
-            #print('in D')
+            print('in D')
             self.value = OKTAVE[6]
         elif self.noteNumber % 12 == 7: #
-            #print('in D#')
+            print('in D#')
             self.value = OKTAVE[7]
         elif self.noteNumber % 12 == 8:
-            #print('in E')
+            print('in E')
             self.value = OKTAVE[8]
         elif self.noteNumber % 12 == 9:
-            #print('in F')
+            print('in F')
             self.value = OKTAVE[9]
         elif self.noteNumber % 12 == 10: #
-            #print('in F#')
+            print('in F#')
             self.value = OKTAVE[10]
         else: # self.noteNumber % 12 == 11:
-            #print('in G')
+            print('in G')
             self.value = OKTAVE[11]
         return self.value
 
     # for each given "White note" returns the yPosition in the sheetmusic lines
     def getYPosition(self, noteNumber):
-        #print(self.noteNumber)
+        print(self.noteNumber)
         if self.value == 'C':#self.noteNumber in C_NOTES:
             print('in C')
             self.yPosition = NOTELINE_HOR_Y + (Y_NOTE_DISTANCE * 2)
@@ -150,10 +152,17 @@ class SingleNote():
             print('in A')
             self.yPosition = NOTELINE_HOR_Y + (Y_NOTE_DISTANCE * 4)
         elif self.value == 'B': # self.noteNumber in B_NOTES:
+            print('blub')
             print('in B')
             self.yPosition = NOTELINE_HOR_Y + (Y_NOTE_DISTANCE * 3)
         else:
             self.yPosition = NOTELINE_HOR_Y - Y_NOTE_DISTANCE
             print("error with yPosition")
-        #print(self.yPosition)
+        print(self.yPosition)
         return self.yPosition
+
+
+
+#noteline1_X =  NOTELINE_VER_X - 100
+#sn = SingleNote(14, 2.0, 'F#', noteline1_X)
+#sn.calculate_note_position()
