@@ -12,7 +12,6 @@
 # Notenzeile, die sich um das "drumherum" wie Linien und Notenschlüssel kümmert 
 # UND mehrere Akkorde enthält, die dann gezeichnet werden
 # die Notenzeile weiß, wo der Akkord sein soll und sagt es ihm (und der Akkord weiß dann, wo die Note hin muss)
-
 # "Hauptklasse" des Programms (GUI) erstellt eine neue Instanz der Notenzeile
 
 from PyQt5 import QtGui, QtWidgets
@@ -20,11 +19,12 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QPushButton, QLa
 from PyQt5.QtGui import QPainter, QBrush, QPen, QIcon, QPixmap
 from PyQt5.QtCore import Qt, QTimer, pyqtSlot
 
+import time
+import threading
 import mido
 from mido import MidiFile
 from mido import MetaMessage
 import math
-
 from constants import * 
 from chord import Chord
 
@@ -32,19 +32,61 @@ from chord import Chord
 class Staff():
 
     def __init__(self):
+        #self.painter = painter
         self.midFILE = 'AkkordeGDur.mid'
         self.noteArray = []
         self.overallTime = 0
         self.notelength = 'WHOLE'
         self.tonality = 'C'
-        self.tones = {} # if notes start and end at different times, an array with the length is not possible, each notelength needs to be saved individually then
+        #self.tones = {} # if notes start and end at different times, an array with the length is not possible, each notelength needs to be saved individually then
+        #Chord(painter, chordArray, notelength, tonality, xPosition)
+        #self.cho = Chord([12,13, 17, 19], 'EIGHTH', 'Eb', NOTELINE_VER_X +500)
+        #staff_thread = threading.Thread(target=self.getNotesOfSong)
+        #staff_thread.start()
+        self.chords = []
+        self.timeToWait = {}
+        
+        
+    def getNotesOfSong(self):
+        #self.overallTime = 0.10104166666666667  # WholeNote before
+        #self.overallTime = 0.051041666666666666 # HalfNote before
+        #self.overallTime = 0.026041666666666668 # QuarterNote before
+        #self.overallTime = 0.013541666666666667 # EighthNote before
+        #0.007291666666666667
+        for msg in MidiFile(self.midFILE):
+            if(msg.type != 'program_change' and msg.type != 'control_change') and not msg.is_meta:
+                #print(msg)
+                # calculate time since start
+                self.overallTime = self.overallTime + msg.time
 
-        # Chord(painter, chordArray, notelength, tonality, xPosition)
-        #cho = Chord(painter, [1,5,13], 'HALF', 'Eb', NOTELINE_VER_X +500)
+                if(msg.velocity > 0): # noteon
+                    self.noteArray.append(msg.note)
+                    # self.tones[msg.note] = self.overallTime
+                    #time.sleep(msg.time)
+                else:  # noteoff
+                    if (msg.time != 0):
+                        #time.sleep(msg.time)
+                        # calculate length of this tone
+                        self.notelength = self.determineLength(msg.time)
+                        # self.notelength = vartime - tones[msg.note] 
+                        #self.overallTime = math.ceil(self.overallTime + msg.time)
+                        #self, chordArray, notelength, tonality, xPosition
+                        print(self.noteArray, self.notelength, self.overallTime) #################### THIS IMPORTANT
+                        cho = Chord(self.noteArray, self.notelength, self.getTonality(self.midFILE), NOTELINE_VER_X)
+                        self.chords.append(cho)
+                        #self.
+                        #return cho 
+                        
+                        self.noteArray =[]
+
+
+
+    # die Notenzeile weiß, wo der Akkord sein soll und sagt es ihm (und der Akkord weiß dann, wo die Note hin muss)
 
 
 
     def InitNoteLine(self, painter):
+        
         painter.setPen(QPen(Qt.black, 2, Qt.SolidLine))  # set pen to draw the outline of the key
         # horizontal lines / staves
         y = NOTELINE_HOR_Y
@@ -56,10 +98,20 @@ class Staff():
         for line in range(3):
             painter.drawLine(x, NOTELINE_VER_Y1, x, NOTELINE_VER_Y2)
             x = x + X_DISTANCE
-        pass
+        ############ DRAW
+        self.getNotesOfSong()
+        print(self.chords)
+        x = 20
+        for chord in self.chords:
+            chord.xPosition += x
+            x = x+50
+            chord.draw(painter)
+            
+            #time.sleep(0.5)
+        #self.getNotesOfSong().draw(painter)
 
     
-    def InitLabel(self, window):
+    def InitLabel(self,window):
         print("in init label Notenzeile")
         
         clefLabel = QtWidgets.QLabel(window)
@@ -78,40 +130,11 @@ class Staff():
         time44Label.move(165, 147)
         time44Label.show()
 
+        ######## NEED TO GET TONALITY AND DEPENDING ON IT SET SHARPS OR FLATS ###############################
         #flatLabel = QLabel(self)
         #flatLabel.resize(10,10)
         #flatLabel = QPixmap()
         
-
-
-
-    def getNotesOfSong(self):
-        #self.overallTime = 0.10104166666666667  # WholeNote before
-        #self.overallTime = 0.051041666666666666 # HalfNote before
-        #self.overallTime = 0.026041666666666668 # QuarterNote before
-        #self.overallTime = 0.013541666666666667 # EighthNote before
-        #0.007291666666666667
-        for msg in MidiFile(self.midFILE):
-            if(msg.type != 'program_change' and msg.type != 'control_change') and not msg.is_meta:
-                #print(msg)
-                # calculate time since start
-                self.overallTime = self.overallTime + msg.time
-
-                if(msg.velocity > 0): # noteon
-                    self.noteArray.append(msg.note)
-                    # self.tones[msg.note] = self.overallTime
-        
-                else:  # noteoff
-                    if (msg.time != 0):
-                        # calculate length of this tone
-                        self.notelength = self.determineLength(msg.time)
-                        # self.notelength = vartime - tones[msg.note] 
-                        #self.overallTime = math.ceil(self.overallTime + msg.time)
-
-                        print(self.noteArray, self.notelength, self.overallTime) #################### THIS IMPORTANT
-                        self.noteArray =[]
-                    pass
-
   
     def determineLength(self, number):
         div = 1000000   # 1 second has 1 million microseconds
@@ -132,17 +155,13 @@ class Staff():
         return self.notelength
 
 
-
-
     def getTempo(self, midfile):
-
         for msg in MidiFile(midfile):
             if msg.is_meta:
                 if msg.type == 'set_tempo':
                     print(msg.tempo)
                     self.tempo = msg.tempo
                     return self.tempo
-
 
     def getTonality(self, midfile):
         for msg in MidiFile(midfile):
@@ -152,9 +171,8 @@ class Staff():
                     self.tonality = msg.key
                     print(self.tonality)
                     return self.tonality
-                    
-    
-    
+
+    '''               
     def sharp_or_flat(self, tonality):
         semitone = ''
         if tonality in FLAT_TONALITY:
@@ -165,11 +183,7 @@ class Staff():
             ("this tonality does not exist in this application")
             semitone = ''
         return semitone
+    '''
 
-
-#nz = Notenzeile()
-#nz.getNotesOfSong()
-#g = nz.getTonality('sound_midis/bes.mid')
-#q =nz.sharp_or_flat(g)
-#print(q)
-
+#staff = Staff()
+#staff.getNotesOfSong()

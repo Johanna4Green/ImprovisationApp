@@ -20,8 +20,6 @@ from backingTrack import BackingTrack
 from staff import Staff
 from key import Key
 
-
-
 class Window(QMainWindow):
 
     def __init__(self):
@@ -57,7 +55,6 @@ class Window(QMainWindow):
         self.keys = []
         for i in range(num_keys):
             self.keys.append(Key(i))
-
 
     def InitButtons(self):
         play_button = QPushButton('Play', self)
@@ -110,5 +107,5 @@ App = QApplication(sys.argv)
 window = Window()
 midi_input = MidiInput()
 backing_track = BackingTrack()
-
+#staff = Staff()
 sys.exit(App.exec())
