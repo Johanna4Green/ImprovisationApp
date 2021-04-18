@@ -51,7 +51,7 @@ Y_NOTE_DISTANCE = 8
 NOTELINE_VER_X = 400    # 625, 850, (beginn 125,  1st: 275, 2nd, 3rd, 4th: 225 end: 1075)  --> 50 vor Beginning                # 350, 600, 850                #400, 600, 800
 NOTELINE_VER_Y1 = NOTELINE_HOR_Y
 NOTELINE_VER_Y2 = NOTELINE_HOR_Y + (4*16)
-X_DISTANCE = 225
+X_DISTANCE = 224 # 225
 
 NOTEWIDTH = 17
 NOTEHEIGHT = 16

@@ -59,7 +59,7 @@ class Staff():
             #print(self.xPosition)
             print(entry[0], entry[1], self.tonality, self.xPosition)
             listOfChords.append(Chord(entry[0], entry[1], self.tonality, self.xPosition))
-            self.xPosition = self.xPosition + 50
+            self.xPosition = self.xPosition + X_DISTANCE/2  #224  X_DISTANCE/4 für viertel 
         #print(self.chordList)
         #print(len(listOfChords))
         return listOfChords
@@ -85,7 +85,7 @@ class Staff():
         
 
     def setXPosition(self):
-        xPos = 450 #NOTELINE_VER_X
+        xPos = 200 #NOTELINE_VER_X 
         return xPos
         
 
