@@ -21,6 +21,17 @@ class SingleNote():
         self.yPosition = self.calculate_note_position()
         #print('init singleNote', self.yPosition)
     
+        #if self.noteLength == 'WHOLE' or self.noteLength == 'HALF':
+        #    self.fill = Qt.SolidLine
+        #else:
+        #    self.fill = Qt.SolidPattern
+        #print('in init')
+        #print(self.noteNumber, self.noteLength, self. tonality, self.yPosition)
+        #print(self.value)
+        #print(self.noteNumber)
+
+
+
 
 
     # die Notelength kann man über ein enum oder Konstanten lösen, sodass da nicht 0.5 sondern HALF steht oder so
@@ -28,43 +39,42 @@ class SingleNote():
         painter.setPen(QPen(Qt.black, 2, Qt.SolidLine))  # set pen to draw the outline of the key
         if self.noteLength == 'WHOLE':  # empty circle
             if shift == False:
-                painter.drawEllipse(self.xPosition, self.calculate_note_position(), NOTEWIDTH, NOTEHEIGHT)      # bobble ring
+                painter.drawEllipse(self.xPosition, self.yPosition, NOTEWIDTH, NOTEHEIGHT)      # bobble ring
                 pass
             else: # shift == True
                 xPos = self.xPosition + NOTEWIDTH
-                painter.drawEllipse(xPos, self.calculate_note_position(), NOTEWIDTH, NOTEHEIGHT)  
+                painter.drawEllipse(xPos, self.yPosition, NOTEWIDTH, NOTEHEIGHT)  
                 pass
-
 
         elif self.noteLength == 'HALF': # empty circle with bar
             print('in HalfPrinter')
             if shift == False:
-                painter.drawEllipse(self.xPosition, self.calculate_note_position(), NOTEWIDTH, NOTEHEIGHT)      # bobble ring
+                painter.drawEllipse(self.xPosition, self.yPosition, NOTEWIDTH, NOTEHEIGHT)      # bobble ring
                 lineX = self.xPosition + NOTEWIDTH
-                lineY = self.calculate_note_position() + NOTEHEIGHT/2
+                lineY = self.yPosition + NOTEHEIGHT/2
                 painter.drawLine(lineX, lineY - NOTEBARLENGTH, lineX, lineY)                                    # note bar
                 pass
             else:  # shift == True
                 xPos = self.xPosition + NOTEWIDTH
-                painter.drawEllipse(xPos, self.calculate_note_position(), NOTEWIDTH, NOTEHEIGHT) 
+                painter.drawEllipse(xPos, self.yPosition, NOTEWIDTH, NOTEHEIGHT) 
                 lineX = self.xPosition + NOTEWIDTH
-                lineY = self.calculate_note_position() + NOTEHEIGHT/2
+                lineY = self.yPosition + NOTEHEIGHT/2
                 painter.drawLine(lineX, lineY - NOTEBARLENGTH, lineX, lineY)        
                 pass
 
         elif self.noteLength == 'QUARTER': # filled circle with bar
             painter.setBrush(QBrush(Qt.black, Qt.SolidPattern))
             if shift == False:
-                painter.drawEllipse(self.xPosition, self.calculate_note_position(), NOTEWIDTH, NOTEHEIGHT)      # bobble filled
+                painter.drawEllipse(self.xPosition, self.yPosition, NOTEWIDTH, NOTEHEIGHT)      # bobble filled
                 lineX = self.xPosition + NOTEWIDTH
-                lineY = self.calculate_note_position() + NOTEHEIGHT/2
+                lineY = self.yPosition + NOTEHEIGHT/2
                 painter.drawLine(lineX, lineY - NOTEBARLENGTH, lineX, lineY)
                 pass
             else:  # shift == True 
                 xPos = self.xPosition + NOTEWIDTH
-                painter.drawEllipse(xPos, self.calculate_note_position(), NOTEWIDTH, NOTEHEIGHT)      # bobble filled
+                painter.drawEllipse(xPos, self.yPosition, NOTEWIDTH, NOTEHEIGHT)      # bobble filled
                 lineX = self.xPosition + NOTEWIDTH
-                lineY = self.calculate_note_position() + NOTEHEIGHT/2
+                lineY = self.yPosition + NOTEHEIGHT/2
                 painter.drawLine(lineX, lineY - NOTEBARLENGTH, lineX, lineY)
                 pass
 
@@ -73,16 +83,16 @@ class SingleNote():
             painter.setBrush(QBrush(Qt.black, Qt.SolidPattern))
 
             if shift == False:
-                painter.drawEllipse(self.xPosition, self.calculate_note_position(), NOTEWIDTH, NOTEHEIGHT)      # booble filled
+                painter.drawEllipse(self.xPosition, self.yPosition, NOTEWIDTH, NOTEHEIGHT)      # booble filled
                 lineX = self.xPosition + NOTEWIDTH
-                lineY = self.calculate_note_position() + NOTEHEIGHT/2           
+                lineY = self.yPosition + NOTEHEIGHT/2           
                 painter.drawLine(lineX, lineY - NOTEBARLENGTH, lineX, lineY)                                    # note bar
                 painter.drawLine(lineX, lineY - NOTEBARLENGTH, lineX + NOTETICKLENGTH, lineY - (NOTEBARLENGTH - NOTETICKLENGTH))    # note tick
             else:  # shift == True 
                 xPos = self.xPosition + NOTEWIDTH
-                painter.drawEllipse(xPos, self.calculate_note_position(), NOTEWIDTH, NOTEHEIGHT)      # booble filled
+                painter.drawEllipse(xPos, self.yPosition, NOTEWIDTH, NOTEHEIGHT)      # booble filled
                 lineX = self.xPosition + NOTEWIDTH
-                lineY = self.calculate_note_position() + NOTEHEIGHT/2           
+                lineY = self.yPosition + NOTEHEIGHT/2           
                 painter.drawLine(lineX, lineY - NOTEBARLENGTH, lineX, lineY)                                    # note bar
                 painter.drawLine(lineX, lineY - NOTEBARLENGTH, lineX + NOTETICKLENGTH, lineY - (NOTEBARLENGTH - NOTETICKLENGTH))    # note tick 
         
@@ -155,3 +165,6 @@ class SingleNote():
     def getYPos(self):
         #print(type(self.yPosition))
         return self.yPosition
+
+
+

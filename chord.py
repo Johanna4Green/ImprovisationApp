@@ -34,6 +34,7 @@ class Chord():
         for note in self.chordArray:
             print(note, self.notelength, self.tonality, self.xPosition)
             singlNote = SingleNote(note, self.notelength, self.tonality, self.xPosition)
+            #self.xPosition = self.xPosition + 20
             # überprüfe Überschneidung - hier reicht an dieser Stelle übrigens schon der Notenwert, weil die Halbtöne schon korrekt dargestellt werden
             yPos = singlNote.getYPos()
             #print(type(yPos))

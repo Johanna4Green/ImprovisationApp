@@ -38,7 +38,7 @@ class Staff():
         self.midFILE = 'AkkordeGDur.mid'
         self.songChords = self.song_extracting.getNotesOfSong(self.midFILE)
         self.tonality = self.song_extracting.getTonality(self.midFILE)
-        self.xPosition = self.setXPosition()    # NOTELINE_VER_X
+        self.xPosition = self.setXPosition()#NOTELINE_VER_X
         self.x1_hor = NOTELINE_HOR_X1
         self.x2_hor = NOTELINE_HOR_X2
         self.y1_ver = NOTELINE_VER_Y1
@@ -47,7 +47,7 @@ class Staff():
         #print(self.tonality)
         #print(self.songChords)
         #print(self.chordList)
-        print(self.xPosition)
+        #print(self.xPosition)
 
     
     def getChords(self, songchords):
@@ -56,9 +56,10 @@ class Staff():
         for entry in songchords:
             #print(entry)
             #print(entry[0])
-            print(self.xPosition)
+            #print(self.xPosition)
             print(entry[0], entry[1], self.tonality, self.xPosition)
             listOfChords.append(Chord(entry[0], entry[1], self.tonality, self.xPosition))
+            self.xPosition = self.xPosition + 50
         #print(self.chordList)
         #print(len(listOfChords))
         return listOfChords
@@ -76,7 +77,7 @@ class Staff():
         for line in range(3):
             painter.drawLine(x, self.y1_ver, x, self.y2_ver)
             x = x + X_DISTANCE
-        # draw chords 
+    # draw chords 
         for chord in self.chordList:
             #print('in draw chord')
             #print(chord)
@@ -89,7 +90,7 @@ class Staff():
         
 
     def InitLabel(self,window):
-        print("in init label Notenzeile")
+        #print("in init label Notenzeile")
         
         clefLabel = QtWidgets.QLabel(window)
         clefLabel.resize(70,125)
