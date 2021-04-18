@@ -17,39 +17,60 @@ class Chord():
         self.notelength = notelength
         self.tonality = tonality
         self.xPosition = xPosition
-        print(self.chordArray, self.notelength, self.tonality, self.xPosition)
-        self.Notes = []
+        #print(self.chordArray, self.notelength, self.tonality, self.xPosition)
         self.shifts = {}
+        print('chordarray in init chord', self.chordArray)
+        self.Notes = self.chord_to_SingleNotes()
+        print('Notes array in init chord', self.Notes)
         #self.shift = False
         #sg = SingleNote(self.chordArray[1], self.notelength, self.tonality, self.xPosition)
         #sg.draw(self.painter)
     #noteNumber, noteLength, tonality, xPosition
 
     def chord_to_SingleNotes(self):
+        print('in chords_to_SingleNotes')
         thisYPos = 0 
+        chordAr = []
         for note in self.chordArray:
+            print(note, self.notelength, self.tonality, self.xPosition)
             singlNote = SingleNote(note, self.notelength, self.tonality, self.xPosition)
-            y_pos = singlNote.calculate_note_position()
-            print(y_pos)
-            if thisYPos - y_pos == Y_NOTE_DISTANCE:
-                print(thisYPos - y_pos)
+            # überprüfe Überschneidung - hier reicht an dieser Stelle übrigens schon der Notenwert, weil die Halbtöne schon korrekt dargestellt werden
+            yPos = singlNote.getYPos()
+            #print(type(yPos))
+            #print('yPos in chord:', yPos)
+            #shift = False
+            #if singlNote
+            #singlNote.shiftRight()
+
+            #y_pos = singlNote.calculate_note_position(singlNote.noteNumber)
+            #print(type(singlNote.noteNumber))
+            #print('Notennumberprintin', singlNote.noteNumber)
+            #print(y_pos)
+            
+            if thisYPos - yPos == Y_NOTE_DISTANCE:
+                print(thisYPos - yPos)
+                #print('SHIFT = TRUE')
                 shift = True
                 print(shift)
             else:
-                print(thisYPos - y_pos)
+                print(thisYPos - yPos)
+                #print('SHIFT = FALSE')
                 shift = False
                 print(shift)
-            thisYPos = y_pos
-            self.Notes.append(singlNote)
+            thisYPos = yPos
+            chordAr.append(singlNote)
             self.shifts[singlNote] = shift
+        print(' return of chord_tp_SingleNotes', chordAr)
+        return chordAr#, self.shifts[singlNote]
 
 
     def draw(self, painter):
-        self.chord_to_SingleNotes()
+        #self.chord_to_SingleNotes()
         #print(self.Notes)
         for singlNote in self.Notes:
-            print(singlNote.noteNumber)
+            #print(singlNote.noteNumber)
             singlNote.draw(painter, self.shifts[singlNote])
+            print(self.shifts[singlNote])
     
         #if self.noteLength = 'EIGHTH'
         #    for singleNot
@@ -69,7 +90,7 @@ class Chord():
 #cho.chord_to_SingleNotes()
 
 
-    '''
+'''
         # Chord
         Noten = []
         for event in Events:
@@ -77,11 +98,11 @@ class Chord():
         for note in Noten:
         if note.overlaps():
             note.rutsch_zur_seite()
-    '''
+'''
 
 
 
-    '''
+'''
         def draw(self, painter):
             beforeNote = 99
             for note in self.chordArray:
@@ -106,6 +127,6 @@ class Chord():
                 #return singleNote
                 #self.chord_to_SingleNotes(painter)
 
-    '''
-    # get chordArray from notenzeile.py
-    # containing several notes
+'''
+# get chordArray from notenzeile.py
+# containing several notes

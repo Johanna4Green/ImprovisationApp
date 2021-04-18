@@ -57,6 +57,7 @@ class Window(QMainWindow):
             self.keys.append(Key(i))
 
     def InitButtons(self):
+        # play
         play_button = QPushButton('Play', self)
         play_button.setToolTip('to start playing the Backing Track')
         play_button.move(100,70)
@@ -92,7 +93,7 @@ class Window(QMainWindow):
     def paintEvent(self, e):
         painter = QPainter(self)    # create the object of QPainter class
         # draw Notelines from staff.py
-        self.staff.InitNoteLine(painter)
+        self.staff.draw(painter)
 
         for key in WHITE_KEYS:
             key.draw(painter)
@@ -107,5 +108,5 @@ App = QApplication(sys.argv)
 window = Window()
 midi_input = MidiInput()
 backing_track = BackingTrack()
-#staff = Staff()
+
 sys.exit(App.exec())

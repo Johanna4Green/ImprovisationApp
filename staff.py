@@ -26,91 +26,68 @@ from mido import MidiFile
 from mido import MetaMessage
 import math
 from constants import * 
+from songExtracting import SongExtracting
 from chord import Chord
 
 
 class Staff():
 
+    song_extracting = SongExtracting()
+
     def __init__(self):
-        #self.painter = painter
         self.midFILE = 'AkkordeGDur.mid'
-        self.noteArray = []
-        self.overallTime = 0
-        self.notelength = 'WHOLE'
-        self.tonality = 'C'
-        #self.tones = {} # if notes start and end at different times, an array with the length is not possible, each notelength needs to be saved individually then
-        #Chord(painter, chordArray, notelength, tonality, xPosition)
-        #self.cho = Chord([12,13, 17, 19], 'EIGHTH', 'Eb', NOTELINE_VER_X +500)
-        #staff_thread = threading.Thread(target=self.getNotesOfSong)
-        #staff_thread.start()
-        self.chords = []
-        self.timeToWait = {}
+        self.songChords = self.song_extracting.getNotesOfSong(self.midFILE)
+        self.tonality = self.song_extracting.getTonality(self.midFILE)
+        self.xPosition = self.setXPosition()    # NOTELINE_VER_X
+        self.x1_hor = NOTELINE_HOR_X1
+        self.x2_hor = NOTELINE_HOR_X2
+        self.y1_ver = NOTELINE_VER_Y1
+        self.y2_ver = NOTELINE_VER_Y2
+        self.chordList = self.getChords(self.songChords)
+        #print(self.tonality)
+        #print(self.songChords)
+        #print(self.chordList)
+        print(self.xPosition)
+
+    
+    def getChords(self, songchords):
+        listOfChords = []
+        print('in getChords')
+        for entry in songchords:
+            #print(entry)
+            #print(entry[0])
+            print(self.xPosition)
+            print(entry[0], entry[1], self.tonality, self.xPosition)
+            listOfChords.append(Chord(entry[0], entry[1], self.tonality, self.xPosition))
+        #print(self.chordList)
+        #print(len(listOfChords))
+        return listOfChords
         
-        
-    def getNotesOfSong(self):
-        #self.overallTime = 0.10104166666666667  # WholeNote before
-        #self.overallTime = 0.051041666666666666 # HalfNote before
-        #self.overallTime = 0.026041666666666668 # QuarterNote before
-        #self.overallTime = 0.013541666666666667 # EighthNote before
-        #0.007291666666666667
-        for msg in MidiFile(self.midFILE):
-            if(msg.type != 'program_change' and msg.type != 'control_change') and not msg.is_meta:
-                #print(msg)
-                # calculate time since start
-                self.overallTime = self.overallTime + msg.time
 
-                if(msg.velocity > 0): # noteon
-                    self.noteArray.append(msg.note)
-                    # self.tones[msg.note] = self.overallTime
-                    #time.sleep(msg.time)
-                else:  # noteoff
-                    if (msg.time != 0):
-                        #time.sleep(msg.time)
-                        # calculate length of this tone
-                        self.notelength = self.determineLength(msg.time)
-                        # self.notelength = vartime - tones[msg.note] 
-                        #self.overallTime = math.ceil(self.overallTime + msg.time)
-                        #self, chordArray, notelength, tonality, xPosition
-                        print(self.noteArray, self.notelength, self.overallTime) #################### THIS IMPORTANT
-                        cho = Chord(self.noteArray, self.notelength, self.getTonality(self.midFILE), NOTELINE_VER_X)
-                        self.chords.append(cho)
-                        #self.
-                        #return cho 
-                        
-                        self.noteArray =[]
-
-
-
-    # die Notenzeile weiß, wo der Akkord sein soll und sagt es ihm (und der Akkord weiß dann, wo die Note hin muss)
-
-
-
-    def InitNoteLine(self, painter):
-        
+    def draw(self, painter):
         painter.setPen(QPen(Qt.black, 2, Qt.SolidLine))  # set pen to draw the outline of the key
         # horizontal lines / staves
         y = NOTELINE_HOR_Y
         for line in range(5):
-            painter.drawLine(NOTELINE_HOR_X1, y, NOTELINE_HOR_X2, y)
+            painter.drawLine(self.x1_hor, y, self.x2_hor, y)
             y = y + Y_DISTANCE
         # vertical lines / bar line
         x = NOTELINE_VER_X
         for line in range(3):
-            painter.drawLine(x, NOTELINE_VER_Y1, x, NOTELINE_VER_Y2)
+            painter.drawLine(x, self.y1_ver, x, self.y2_ver)
             x = x + X_DISTANCE
-        ############ DRAW
-        self.getNotesOfSong()
-        print(self.chords)
-        x = 20
-        for chord in self.chords:
-            chord.xPosition += x
-            x = x+50
+        # draw chords 
+        for chord in self.chordList:
+            #print('in draw chord')
+            #print(chord)
             chord.draw(painter)
-            
-            #time.sleep(0.5)
-        #self.getNotesOfSong().draw(painter)
+        
 
-    
+    def setXPosition(self):
+        xPos = 450 #NOTELINE_VER_X
+        return xPos
+        
+
     def InitLabel(self,window):
         print("in init label Notenzeile")
         
@@ -134,56 +111,3 @@ class Staff():
         #flatLabel = QLabel(self)
         #flatLabel.resize(10,10)
         #flatLabel = QPixmap()
-        
-  
-    def determineLength(self, number):
-        div = 1000000   # 1 second has 1 million microseconds
-        tempo = 500000  # 1 beat has 500 thousand microseconds
-        quarter = tempo/div
-        if number > 2*quarter*1.05:             # the number is greater than a half note + 5% => whole note
-            self.notelength = 'WHOLE'     
-        elif number > quarter*1.05:             # the number is greater than a quarter note + 5% => half note 
-            self.notelength = 'HALF'
-        elif number > 0.5*quarter*1.05:         # the number is greater than an eighth note + 5% => quarter note
-            self.notelength = 'QUARTER'
-        elif number > 0.25*quarter*1.05:        # the number is greater than an sixteenth note + 5% => eighth note
-            self.notelength = 'EIGHTH'
-        elif number > 0.125*quarter*1.05:        # the number is greater than an thirtysecond note + 5% => eighth note
-            length = 'SIXTHEENTH'
-        else:
-            print("ERROR in calculation")
-        return self.notelength
-
-
-    def getTempo(self, midfile):
-        for msg in MidiFile(midfile):
-            if msg.is_meta:
-                if msg.type == 'set_tempo':
-                    print(msg.tempo)
-                    self.tempo = msg.tempo
-                    return self.tempo
-
-    def getTonality(self, midfile):
-        for msg in MidiFile(midfile):
-            if msg.is_meta:
-                if msg.type == 'key_signature':
-                    #print(msg.tempo)
-                    self.tonality = msg.key
-                    print(self.tonality)
-                    return self.tonality
-
-    '''               
-    def sharp_or_flat(self, tonality):
-        semitone = ''
-        if tonality in FLAT_TONALITY:
-            semitone = 'is_flat'
-        elif tonality in SHARP_TONALITY:
-            semitone = 'is_sharp'
-        else:
-            ("this tonality does not exist in this application")
-            semitone = ''
-        return semitone
-    '''
-
-#staff = Staff()
-#staff.getNotesOfSong()
