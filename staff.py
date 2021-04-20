@@ -24,21 +24,32 @@ import threading
 import mido
 from mido import MidiFile
 from mido import MetaMessage
+import fluidsynth
 import math
 from constants import * 
 from songExtracting import SongExtracting
 from chord import Chord
-
 
 class Staff():
 
     song_extracting = SongExtracting()
 
     def __init__(self):
+
+        self.state = 'paused'  # playing/ paused/ stopped
+        # initializing fluidsynther
+        self.fs = fluidsynth.Synth(1)
+        self.fs.start(driver = 'portaudio')
+        self.sfid = self.fs.sfload("default-GM.sf2") 
+        self.fs.program_select(0, self.sfid, 0, 0)
+
+
         self.midFILE = 'AkkordeGDur.mid'
         self.songChords = self.song_extracting.getNotesOfSong(self.midFILE)
         self.tonality = self.song_extracting.getTonality(self.midFILE)
+
         self.xPosition = self.setXPosition()#NOTELINE_VER_X
+
         self.x1_hor = NOTELINE_HOR_X1
         self.x2_hor = NOTELINE_HOR_X2
         self.y1_ver = NOTELINE_VER_Y1
@@ -48,6 +59,12 @@ class Staff():
         #print(self.songChords)
         #print(self.chordList)
         #print(self.xPosition)
+        fileInput_thread = threading.Thread(target=self.playTrack)
+        fileInput_thread.start()
+        #self.playTrack()
+
+
+
 
     
     def getChords(self, songchords):
@@ -57,13 +74,115 @@ class Staff():
             #print(entry)
             #print(entry[0])
             #print(self.xPosition)
-            print(entry[0], entry[1], self.tonality, self.xPosition)
+            #print(entry[0], entry[1], self.tonality, self.xPosition)
             listOfChords.append(Chord(entry[0], entry[1], self.tonality, self.xPosition))
-            self.xPosition = self.xPosition + X_DISTANCE/2  #224  X_DISTANCE/4 für viertel 
+
+            self.xPosition = self.xPosition + self.getXDistanceOfLength(entry[1])       #X_DISTANCE/2  #224  X_DISTANCE/4 für viertel 
         #print(self.chordList)
         #print(len(listOfChords))
         return listOfChords
+
+    
+
+
+
+    def getXDistanceOfLength(self,length):
+        print(length)
+        xDistance = 0
+        if length == 'WHOLE':
+            xDistance = X_DISTANCE
+        elif length == 'HALF':
+            xDistance = X_DISTANCE/2
+        elif length == 'QUARTER':
+            xDistance = X_DISTANCE/4
+        else:
+            xDistance = X_DISTANCE/8
+        print(xDistance)
+        return xDistance
+
+    
+    def getTimeOfLength(self, length):
+        print(length)
+        #print(type(length))
+        time = 0
+        if length == 'WHOLE':
+            time = 2.0
+        elif length == 'HALF':
+            time = 1.0
+        elif length == 'QUARTER':
+            time = 0.5
+        else:
+            time = 0.25
+        print(time)
+        return time
+
+
+    def playTrack(self):
+        listOfChords = []
+        len = 0
+        print('in playTrack')
         
+        for entry in self.songChords:
+            if self.state =="playing":
+                pass
+            elif self.state == "paused":
+                while self.state == "paused":
+                    time.sleep(0.5)     # as long as bt is paused, waits until play to continue
+                    pass
+            elif self.state == "stopped":
+                break
+            else:
+                print("Bt failed")
+                break
+            print('entry1', entry[1])
+            #len = entry[1]
+            length = self.getTimeOfLength(entry[1])
+            len = len + length 
+            for entrada in entry[0]:
+                print(entrada)
+                self.fs.noteon(0, entrada, 30)
+            time.sleep(length-0.1)
+            for entrada in entry[0]:
+                self.fs.noteoff(0, entrada)
+                #self.xPosition = self.xPosition - X_DISTANCE
+            time.sleep(0.1)
+            if len % 2: 
+               self.xPosition = self.xPosition - X_DISTANCE
+               
+        self.fs.delete()
+
+    '''
+
+ if(msg.velocity > 0): # noteon
+                        self.fs.noteon(0, msg.note, msg.velocity)
+                    else: # noteoff
+                        self.fs.noteoff(0, msg.note)
+        self.fs.delete()
+
+
+         if typei == "note_on":
+            fs.noteon(channel, note, velocity)
+            #fs.noteon(0, 67, 30)
+            #fs.noteon(0, 76, 30)
+
+            #time.sleep(1.0)
+        elif typei == "note_off":
+            fs.noteoff(channel, note)
+            #fs.noteoff(0, 67)
+            #fs.noteoff(0, 76)
+        else:
+            print("fail")
+
+
+
+    
+
+
+
+    '''
+
+
+
 
     def draw(self, painter):
         painter.setPen(QPen(Qt.black, 2, Qt.SolidLine))  # set pen to draw the outline of the key
@@ -76,18 +195,47 @@ class Staff():
         x = NOTELINE_VER_X
         for line in range(3):
             painter.drawLine(x, self.y1_ver, x, self.y2_ver)
+            #print('x1',x)
             x = x + X_DISTANCE
+            #print('x2',x)
     # draw chords 
         for chord in self.chordList:
             #print('in draw chord')
             #print(chord)
-            chord.draw(painter)
-        
+            chord.draw(painter)   
+
+
+
+
+
+
 
     def setXPosition(self):
-        xPos = 200 #NOTELINE_VER_X 
+        xPos = 210 #NOTELINE_VER_X
         return xPos
         
+
+
+
+
+
+    def play_bt(self):
+        self.state = "playing"
+        print('playiay')
+        return self.state
+
+    def pause_bt(self):
+        self.state = "paused"
+        print('pausededed')
+        return self.state
+
+    def stop_bt(self):
+        self.state = "stopped"
+        print('stophophop')
+        return self.state
+
+
+
 
     def InitLabel(self,window):
         #print("in init label Notenzeile")
@@ -97,7 +245,7 @@ class Staff():
         clefPixmap = QPixmap('images/clef.png')
         clefLabel.setPixmap(clefPixmap)
         clefLabel.setScaledContents(True)
-        clefLabel.move(112, 132)
+        clefLabel.move(65, 132)
         clefLabel.show()
         
         time44Label = QtWidgets.QLabel(window)
@@ -108,7 +256,33 @@ class Staff():
         time44Label.move(165, 147)
         time44Label.show()
 
+        sharpLabel = QtWidgets.QLabel(window)
+        sharpLabel.resize(20,30)
+        sharpPixmap = QPixmap('images/sharp.png')
+        sharpLabel.setPixmap(sharpPixmap)
+        sharpLabel.setScaledContents(True)
+        sharpLabel.move(120, 145)       #145 (G-Dur) immer + 8 bis unterstes Ais: 185
+        sharpLabel.show()
+
+        flatLabel = QtWidgets.QLabel(window)
+        flatLabel.resize(20,30)
+        flatPixmap = QPixmap('images/flat.png')
+        flatLabel.setPixmap(flatPixmap)
+        flatLabel.setScaledContents(True)
+        flatLabel.move(130, 187)        #139 immer +8 bis unterstes Fes: 195
+        flatLabel.show()
         ######## NEED TO GET TONALITY AND DEPENDING ON IT SET SHARPS OR FLATS ###############################
         #flatLabel = QLabel(self)
         #flatLabel.resize(10,10)
         #flatLabel = QPixmap()
+        
+    
+
+
+
+
+#staff = Staff()
+#staff.getChords('sound_midis/AkkordeGDur.mid')
+#print(staff.getChords('sound_midis/AkkordeGDur.mid'))
+#staff.playTrack()
+#staff.getNotesOfSong()

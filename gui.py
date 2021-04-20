@@ -76,17 +76,20 @@ class Window(QMainWindow):
     @pyqtSlot()
     def on_click_play(self):
         print('Play button click')
-        backing_track.play_bt()
+        #backing_track.play_bt()
+        self.staff.play_bt()
 
     @pyqtSlot()
     def on_click_pause(self):
         print('Pause button click')
-        backing_track.pause_bt()
+        #backing_track.pause_bt()
+        self.staff.pause_bt()
 
     @pyqtSlot()
     def on_click_stop(self):
         print('Stop button click')
-        backing_track.stop_bt()
+        #backing_track.stop_bt()
+        self.staff.stop_bt()
        
 
     # draw Piano keyboard with 88 keys
@@ -107,6 +110,6 @@ App = QApplication(sys.argv)
 # enter the mainloop of the application. The event handling starts from this point
 window = Window()
 midi_input = MidiInput()
-backing_track = BackingTrack()
+#backing_track = BackingTrack()
 
 sys.exit(App.exec())

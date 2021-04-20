@@ -19,9 +19,9 @@ class Chord():
         self.xPosition = xPosition
         #print(self.chordArray, self.notelength, self.tonality, self.xPosition)
         self.shifts = {}
-        print('chordarray in init chord', self.chordArray)
+        #print('chordarray in init chord', self.chordArray)
         self.Notes = self.chord_to_SingleNotes()
-        print('Notes array in init chord', self.Notes)
+        #print('Notes array in init chord', self.Notes)
         #self.shift = False
         #sg = SingleNote(self.chordArray[1], self.notelength, self.tonality, self.xPosition)
         #sg.draw(self.painter)
@@ -32,11 +32,12 @@ class Chord():
         thisYPos = 0 
         chordAr = []
         for note in self.chordArray:
-            print(note, self.notelength, self.tonality, self.xPosition)
+            #print(note, self.notelength, self.tonality, self.xPosition)
             singlNote = SingleNote(note, self.notelength, self.tonality, self.xPosition)
             #self.xPosition = self.xPosition + 20
             # überprüfe Überschneidung - hier reicht an dieser Stelle übrigens schon der Notenwert, weil die Halbtöne schon korrekt dargestellt werden
             yPos = singlNote.getYPos()
+            print(yPos)
             #print(type(yPos))
             #print('yPos in chord:', yPos)
             #shift = False
@@ -49,19 +50,19 @@ class Chord():
             #print(y_pos)
             
             if thisYPos - yPos == Y_NOTE_DISTANCE:
-                print(thisYPos - yPos)
+                print('its ydist',thisYPos - yPos)
                 #print('SHIFT = TRUE')
                 shift = True
-                print(shift)
+                #print(shift)
             else:
-                print(thisYPos - yPos)
+                print('its no ydist', thisYPos - yPos)
                 #print('SHIFT = FALSE')
                 shift = False
-                print(shift)
+                #print(shift)
             thisYPos = yPos
             chordAr.append(singlNote)
             self.shifts[singlNote] = shift
-        print(' return of chord_tp_SingleNotes', chordAr)
+        #print(' return of chord_tp_SingleNotes', chordAr)
         return chordAr#, self.shifts[singlNote]
 
 
@@ -71,7 +72,7 @@ class Chord():
         for singlNote in self.Notes:
             #print(singlNote.noteNumber)
             singlNote.draw(painter, self.shifts[singlNote])
-            print(self.shifts[singlNote])
+            #print(self.shifts[singlNote])
     
         #if self.noteLength = 'EIGHTH'
         #    for singleNot
