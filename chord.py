@@ -53,12 +53,12 @@ class Chord():
                 print('its ydist',thisYPos - yPos)
                 #print('SHIFT = TRUE')
                 shift = True
-                print(shift)
+                #print(shift)
             else:
                 print('its no ydist', thisYPos - yPos)
                 #print('SHIFT = FALSE')
                 shift = False
-                print(shift)
+                #print(shift)
             thisYPos = yPos
             chordAr.append(singlNote)
             self.shifts[singlNote] = shift
@@ -85,50 +85,8 @@ class Chord():
         #y_pos = self.Notes[(len(self.Notes)-1)].calculate_note_position()
         #print(y_pos)
 
-
-
-
-#cho = Chord([1,5,18], 'QUARTER', 'Eb', NOTELINE_VER_X +500)
-#cho.chord_to_SingleNotes()
-
-
-'''
-        # Chord
-        Noten = []
-        for event in Events:
-        Noten.append(Note(event.irgendwas))             #xPos und Länge
-        for note in Noten:
-        if note.overlaps():
-            note.rutsch_zur_seite()
-'''
-
-
-
-'''
-        def draw(self, painter):
-            beforeNote = 99
-            for note in self.chordArray:
-                print('in for loop ')
-                if note == beforeNote +1 or note == beforeNote -1:
-                    xPos = self.xPosition + NOTEWIDTH
-                else:
-                    xPos = self.xPosition
-
-                beforeNote = note 
-
-                #if self.xPosition == 
-
-                #check if notes are next to each other
-
-                #print(self.chordArray.length)
-                print(note)
-                singleNote = SingleNote(note, self.notelength, self.tonality, xPos)
-                ###### check if note is directly next to note. HOW????? easier to do in singleNote 
-                ###### check xPos from  singleNote before, if  == 15 move to 17, if == 17, stay at 15
-                singleNote.draw(painter)
-                #return singleNote
-                #self.chord_to_SingleNotes(painter)
-
-'''
-# get chordArray from notenzeile.py
+    
+    def update_x_position(self):
+        self.xPosition = self.xPosition - X_DISTANCE
+        
 # containing several notes

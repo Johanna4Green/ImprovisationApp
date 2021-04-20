@@ -43,7 +43,6 @@ class Staff():
         self.sfid = self.fs.sfload("default-GM.sf2") 
         self.fs.program_select(0, self.sfid, 0, 0)
 
-
         self.midFILE = 'AkkordeGDur.mid'
         self.songChords = self.song_extracting.getNotesOfSong(self.midFILE)
         self.tonality = self.song_extracting.getTonality(self.midFILE)
@@ -55,14 +54,9 @@ class Staff():
         self.y1_ver = NOTELINE_VER_Y1
         self.y2_ver = NOTELINE_VER_Y2
         self.chordList = self.getChords(self.songChords)
-        #print(self.tonality)
-        #print(self.songChords)
-        #print(self.chordList)
         #print(self.xPosition)
         fileInput_thread = threading.Thread(target=self.playTrack)
         fileInput_thread.start()
-        #self.playTrack()
-
 
 
 
@@ -71,15 +65,10 @@ class Staff():
         listOfChords = []
         print('in getChords')
         for entry in songchords:
-            #print(entry)
-            #print(entry[0])
             #print(self.xPosition)
             #print(entry[0], entry[1], self.tonality, self.xPosition)
             listOfChords.append(Chord(entry[0], entry[1], self.tonality, self.xPosition))
-
             self.xPosition = self.xPosition + self.getXDistanceOfLength(entry[1])       #X_DISTANCE/2  #224  X_DISTANCE/4 für viertel 
-        #print(self.chordList)
-        #print(len(listOfChords))
         return listOfChords
 
     
@@ -133,6 +122,7 @@ class Staff():
                     break
                 else:
                     print("Bt failed")
+                    ######### SET XPOSITION BACK TO BEGINNING #############
                     break
                 print('entry1', entry[1])
                 #len = entry[1]
@@ -140,50 +130,25 @@ class Staff():
                 len = len + length 
                 for entrada in entry[0]:
                     print(entrada)
-                    self.fs.noteon(0, entrada, 30)
+                    self.fs.noteon(0, entrada, 60)
                 time.sleep(length-0.1)
                 for entrada in entry[0]:
                     self.fs.noteoff(0, entrada)
                     #self.xPosition = self.xPosition - X_DISTANCE
                 time.sleep(0.1)
-                if len % 2: 
-                    self.xPosition = self.xPosition - X_DISTANCE
+                print(len)
+                if len % 2 == 0: 
+                    print('dividebale by 2')
+                    for chord in self.chordList: 
+                        print('chord in listchord', len)
+                        print(chord.xPosition)
+                        #chord.xPosition = chord.xPosition - X_DISTANCE
+                        chord.update_x_position()
+                    #self.xPosition = self.xPosition - X_DISTANCE
                 
         self.fs.delete()
 
-    '''
-
- if(msg.velocity > 0): # noteon
-                        self.fs.noteon(0, msg.note, msg.velocity)
-                    else: # noteoff
-                        self.fs.noteoff(0, msg.note)
-        self.fs.delete()
-
-
-         if typei == "note_on":
-            fs.noteon(channel, note, velocity)
-            #fs.noteon(0, 67, 30)
-            #fs.noteon(0, 76, 30)
-
-            #time.sleep(1.0)
-        elif typei == "note_off":
-            fs.noteoff(channel, note)
-            #fs.noteoff(0, 67)
-            #fs.noteoff(0, 76)
-        else:
-            print("fail")
-
-
-
-    
-
-
-
-    '''
-
-
-
-
+   
     def draw(self, painter):
         painter.setPen(QPen(Qt.black, 2, Qt.SolidLine))  # set pen to draw the outline of the key
         # horizontal lines / staves
@@ -198,15 +163,14 @@ class Staff():
             #print('x1',x)
             x = x + X_DISTANCE
             #print('x2',x)
-    # draw chords 
+        # draw chords 
         for chord in self.chordList:
+            if chord.xPosition < 210 or chord.xPosition > (1120 - NOTEWIDTH):
             #print('in draw chord')
             #print(chord)
-            chord.draw(painter)   
-
-
-
-
+                pass
+            else:
+                chord.draw(painter)  
 
 
 
@@ -214,9 +178,6 @@ class Staff():
         xPos = 210 #NOTELINE_VER_X
         return xPos
         
-
-
-
 
 
     def play_bt(self):
@@ -235,11 +196,8 @@ class Staff():
         return self.state
 
 
-
-
     def InitLabel(self,window):
-        #print("in init label Notenzeile")
-        
+
         clefLabel = QtWidgets.QLabel(window)
         clefLabel.resize(70,125)
         clefPixmap = QPixmap('images/clef.png')
@@ -271,18 +229,3 @@ class Staff():
         flatLabel.setScaledContents(True)
         flatLabel.move(130, 187)        #139 immer +8 bis unterstes Fes: 195
         flatLabel.show()
-        ######## NEED TO GET TONALITY AND DEPENDING ON IT SET SHARPS OR FLATS ###############################
-        #flatLabel = QLabel(self)
-        #flatLabel.resize(10,10)
-        #flatLabel = QPixmap()
-        
-    
-
-
-
-
-#staff = Staff()
-#staff.getChords('sound_midis/AkkordeGDur.mid')
-#print(staff.getChords('sound_midis/AkkordeGDur.mid'))
-#staff.playTrack()
-#staff.getNotesOfSong()
