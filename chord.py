@@ -53,12 +53,12 @@ class Chord():
                 print('its ydist',thisYPos - yPos)
                 #print('SHIFT = TRUE')
                 shift = True
-                #print(shift)
+                print(shift)
             else:
                 print('its no ydist', thisYPos - yPos)
                 #print('SHIFT = FALSE')
                 shift = False
-                #print(shift)
+                print(shift)
             thisYPos = yPos
             chordAr.append(singlNote)
             self.shifts[singlNote] = shift

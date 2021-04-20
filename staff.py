@@ -121,34 +121,34 @@ class Staff():
         listOfChords = []
         len = 0
         print('in playTrack')
-        
-        for entry in self.songChords:
-            if self.state =="playing":
-                pass
-            elif self.state == "paused":
-                while self.state == "paused":
-                    time.sleep(0.5)     # as long as bt is paused, waits until play to continue
+        while True:
+            for entry in self.songChords:
+                if self.state =="playing":
                     pass
-            elif self.state == "stopped":
-                break
-            else:
-                print("Bt failed")
-                break
-            print('entry1', entry[1])
-            #len = entry[1]
-            length = self.getTimeOfLength(entry[1])
-            len = len + length 
-            for entrada in entry[0]:
-                print(entrada)
-                self.fs.noteon(0, entrada, 30)
-            time.sleep(length-0.1)
-            for entrada in entry[0]:
-                self.fs.noteoff(0, entrada)
-                #self.xPosition = self.xPosition - X_DISTANCE
-            time.sleep(0.1)
-            if len % 2: 
-               self.xPosition = self.xPosition - X_DISTANCE
-               
+                elif self.state == "paused":
+                    while self.state == "paused":
+                        time.sleep(0.5)     # as long as bt is paused, waits until play to continue
+                        pass
+                elif self.state == "stopped":
+                    break
+                else:
+                    print("Bt failed")
+                    break
+                print('entry1', entry[1])
+                #len = entry[1]
+                length = self.getTimeOfLength(entry[1])
+                len = len + length 
+                for entrada in entry[0]:
+                    print(entrada)
+                    self.fs.noteon(0, entrada, 30)
+                time.sleep(length-0.1)
+                for entrada in entry[0]:
+                    self.fs.noteoff(0, entrada)
+                    #self.xPosition = self.xPosition - X_DISTANCE
+                time.sleep(0.1)
+                if len % 2: 
+                    self.xPosition = self.xPosition - X_DISTANCE
+                
         self.fs.delete()
 
     '''
