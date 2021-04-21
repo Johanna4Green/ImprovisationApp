@@ -85,8 +85,12 @@ class Chord():
         #y_pos = self.Notes[(len(self.Notes)-1)].calculate_note_position()
         #print(y_pos)
 
-    
+    def get_x_position(self):
+        print('in get x pos chord ')
+        for sg in self.Notes:
+            sg.get_x_position()
+            return sg.get_x_position()
+
     def update_x_position(self):
-        self.xPosition = self.xPosition - X_DISTANCE
-        
-# containing several notes
+        for singleNoti in self.Notes:
+            singleNoti.update_x_position()

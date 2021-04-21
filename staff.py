@@ -122,7 +122,6 @@ class Staff():
                     break
                 else:
                     print("Bt failed")
-                    ######### SET XPOSITION BACK TO BEGINNING #############
                     break
                 print('entry1', entry[1])
                 #len = entry[1]
@@ -165,11 +164,17 @@ class Staff():
             #print('x2',x)
         # draw chords 
         for chord in self.chordList:
-            if chord.xPosition < 210 or chord.xPosition > (1120 - NOTEWIDTH):
+            x = chord.get_x_position()
+            print(type(x))
+            print('x in chord drawing', x)
+            if x < 210 or x > (1120 - NOTEWIDTH):
+            #if chord.xPosition < 210 or chord.xPosition > (1120 - NOTEWIDTH):
             #print('in draw chord')
             #print(chord)
+
                 pass
             else:
+                print('in draw in staff', chord.xPosition)
                 chord.draw(painter)  
 
 
@@ -229,3 +234,8 @@ class Staff():
         flatLabel.setScaledContents(True)
         flatLabel.move(130, 187)        #139 immer +8 bis unterstes Fes: 195
         flatLabel.show()
+        ######## NEED TO GET TONALITY AND DEPENDING ON IT SET SHARPS OR FLATS ###############################
+        #flatLabel = QLabel(self)
+        #flatLabel.resize(10,10)
+        #flatLabel = QPixmap()
+        

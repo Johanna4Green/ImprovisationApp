@@ -31,8 +31,11 @@ class SingleNote():
         #print(self.value)
         #print(self.noteNumber)
 
+    def get_x_position(self):
+            return self.xPosition
 
-
+    def update_x_position(self):
+        self.xPosition = self.xPosition - X_DISTANCE      
 
 
     # die Notelength kann man über ein enum oder Konstanten lösen, sodass da nicht 0.5 sondern HALF steht oder so
