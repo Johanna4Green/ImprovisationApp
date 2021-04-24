@@ -17,7 +17,7 @@ class MidiInput():
         # initializing fluidsynther
         self.fs = fluidsynth.Synth(1)
         self.fs.start(driver = 'portaudio')
-        self.sfid = self.fs.sfload("default-GM.sf2") 
+        self.sfid = self.fs.sfload("sound_midis/default-GM.sf2") 
         self.fs.program_select(0, self.sfid, 0, 0)
 
         self.keys = [False] * 88 # Key Array kommt hier rein, um Model und View zu trennen = Globale Variable

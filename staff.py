@@ -40,10 +40,10 @@ class Staff():
         # initializing fluidsynther
         self.fs = fluidsynth.Synth(1)
         self.fs.start(driver = 'portaudio')
-        self.sfid = self.fs.sfload("default-GM.sf2") 
+        self.sfid = self.fs.sfload("sound_midis/default-GM.sf2") 
         self.fs.program_select(0, self.sfid, 0, 0)
 
-        self.midFILE = 'AkkordeGDur.mid'
+        self.midFILE = 'sound_midis/AkkordeGDur.mid'
         self.songChords = self.song_extracting.getNotesOfSong(self.midFILE)
         self.tonality = self.song_extracting.getTonality(self.midFILE)
 

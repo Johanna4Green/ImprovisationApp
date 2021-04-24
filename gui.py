@@ -16,7 +16,7 @@ import keyboard
 
 from constants import *
 from midiInput import MidiInput
-from backingTrack import BackingTrack
+#from backingTrack import BackingTrack
 from staff import Staff
 from key import Key
 
