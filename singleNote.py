@@ -17,26 +17,8 @@ class SingleNote():
         self.tonality = tonality
         self.xPosition = xPosition  # zum Testen: noteline1_X übergeben
         self.value = OKTAVE[self.noteNumber % 12]   #self.number_to_value(self.noteNumber)
-        #print('print self.value', self.value)
-        #self.shift = shift
         self.yPosition = self.calculate_note_position()
-        #print('init singleNote', self.yPosition)
-    
-        #if self.noteLength == 'WHOLE' or self.noteLength == 'HALF':
-        #    self.fill = Qt.SolidLine
-        #else:
-        #    self.fill = Qt.SolidPattern
-        #print('in init')
-        #print(self.noteNumber, self.noteLength, self. tonality, self.yPosition)
-        #print(self.value)
-        #print(self.noteNumber)
-
-    def get_x_position(self):
-            return self.xPosition
-
-    def update_x_position(self):
-        self.xPosition = self.xPosition - X_DISTANCE      
-
+       
 
     # die Notelength kann man über ein enum oder Konstanten lösen, sodass da nicht 0.5 sondern HALF steht oder so
     def draw(self, painter, shift):
@@ -141,8 +123,8 @@ class SingleNote():
     # for each given "White note" returns the yPosition in the sheetmusic lines
     def getYPosition(self, value):
         #print(self.noteNumber)
-        print('in getYPos', value)
-        if value == 'C':#self.noteNumber in C_NOTES:
+        #print('in getYPos', value)
+        if value == 'C':   #self.noteNumber in C_NOTES:
             #print('in C')
             self.yPosition = NOTELINE_HOR_Y + (Y_NOTE_DISTANCE * 2)
         elif value == 'D': #self.noteNumber in D_NOTES:
@@ -165,11 +147,14 @@ class SingleNote():
             self.yPosition = NOTELINE_HOR_Y + (Y_NOTE_DISTANCE * 3)
         else:
             self.yPosition = NOTELINE_HOR_Y - Y_NOTE_DISTANCE
-            #print("error with yPosition")
-        #print(self.yPosition)
+            print("error with yPosition")
         return self.yPosition
 
+    def get_x_position(self):
+        return self.xPosition
 
-    def getYPos(self):
-        #print(type(self.yPosition))
+    def update_x_position(self):
+        self.xPosition = self.xPosition - X_DISTANCE      
+
+    def getYPos(self): 
         return self.yPosition

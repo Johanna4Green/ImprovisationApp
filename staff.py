@@ -1,18 +1,14 @@
 # die Notenzeile zeichnet Linien, Notenschlüssel etc und hat Instanzen der Noten-Klasse
-# die Noten-Klasse kümmert sich darum, dass die Note gezeichnet wird
-# der Backing-Track kann auch so ein Array haben wie der Input
-# aber vermutlich musst den Backing Track extra einmal komplett auslesen für die Notenzeile, 
-# sonst können die "zukünftigen" Noten ja erst gezeichnet werden, wenn sie abgespielt werden
+# Notenzeile, die sich um das "drumherum" wie Linien und Notenschlüssel kümmert 
+# UND mehrere Akkorde enthält, die dann gezeichnet werden
+# die Notenzeile weiß, wo der Akkord sein soll und sagt es ihm (und der Akkord weiß dann, wo die Note hin muss)
+# "Hauptklasse" des Programms (GUI) erstellt eine neue Instanz der Notenzeile
 
 # <meta message time_signature>
 # numerator=4 denominator=4 means 4/4 Takt
 # clocks_per_click=24 means that the metronome will click once every 24 MIDI clocks. 
 # notated_32nd_notes_per_beat=8 means that there are eight 32nd notes per beat.
 
-# Notenzeile, die sich um das "drumherum" wie Linien und Notenschlüssel kümmert 
-# UND mehrere Akkorde enthält, die dann gezeichnet werden
-# die Notenzeile weiß, wo der Akkord sein soll und sagt es ihm (und der Akkord weiß dann, wo die Note hin muss)
-# "Hauptklasse" des Programms (GUI) erstellt eine neue Instanz der Notenzeile
 
 from PyQt5 import QtGui, QtWidgets
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QPushButton, QLabel
@@ -46,7 +42,9 @@ class Staff():
         self.midFILE = 'sound_midis/AkkordeGDur.mid'
         self.songChords = self.song_extracting.getNotesOfSong(self.midFILE)
         self.tonality = self.song_extracting.getTonality(self.midFILE)
-
+        print(type(self.songChords))
+        self.lengthOfArray = len(self.songChords)
+        print(self.lengthOfArray)
         self.xPosition = self.setXPosition()#NOTELINE_VER_X
 
         self.x1_hor = NOTELINE_HOR_X1
@@ -54,64 +52,25 @@ class Staff():
         self.y1_ver = NOTELINE_VER_Y1
         self.y2_ver = NOTELINE_VER_Y2
         self.chordList = self.getChords(self.songChords)
-        #print(self.xPosition)
+
         fileInput_thread = threading.Thread(target=self.playTrack)
         fileInput_thread.start()
-
-
-
-    
-    def getChords(self, songchords):
-        listOfChords = []
-        print('in getChords')
-        for entry in songchords:
-            #print(self.xPosition)
-            #print(entry[0], entry[1], self.tonality, self.xPosition)
-            listOfChords.append(Chord(entry[0], entry[1], self.tonality, self.xPosition))
-            self.xPosition = self.xPosition + self.getXDistanceOfLength(entry[1])       #X_DISTANCE/2  #224  X_DISTANCE/4 für viertel 
-        return listOfChords
-
-    
-
-
-
-    def getXDistanceOfLength(self,length):
-        print(length)
-        xDistance = 0
-        if length == 'WHOLE':
-            xDistance = X_DISTANCE
-        elif length == 'HALF':
-            xDistance = X_DISTANCE/2
-        elif length == 'QUARTER':
-            xDistance = X_DISTANCE/4
-        else:
-            xDistance = X_DISTANCE/8
-        print(xDistance)
-        return xDistance
-
-    
-    def getTimeOfLength(self, length):
-        print(length)
-        #print(type(length))
-        time = 0
-        if length == 'WHOLE':
-            time = 2.0
-        elif length == 'HALF':
-            time = 1.0
-        elif length == 'QUARTER':
-            time = 0.5
-        else:
-            time = 0.25
-        print(time)
-        return time
 
 
     def playTrack(self):
         listOfChords = []
         len = 0
+        counter = 0
         print('in playTrack')
+        print(self.lengthOfArray)
+        #array[counter % anzahl_akkorde] 
         while True:
+            # array[counter % anzahl_akkorde]
+            
+            #print(count_mod_len)
             for entry in self.songChords:
+                count_mod_len = counter % self.lengthOfArray
+                print('cml', count_mod_len)
                 if self.state =="playing":
                     pass
                 elif self.state == "paused":
@@ -123,31 +82,42 @@ class Staff():
                 else:
                     print("Bt failed")
                     break
-                print('entry1', entry[1])
+                #print('entry1', entry[1])
                 #len = entry[1]
                 length = self.getTimeOfLength(entry[1])
                 len = len + length 
+                #print('len', len)
                 for entrada in entry[0]:
-                    print(entrada)
+                    #print(entrada)
                     self.fs.noteon(0, entrada, 60)
                 time.sleep(length-0.1)
                 for entrada in entry[0]:
                     self.fs.noteoff(0, entrada)
                     #self.xPosition = self.xPosition - X_DISTANCE
                 time.sleep(0.1)
-                print(len)
+                #print(len)
+                print(count_mod_len)
+                print(self.chordList[count_mod_len])  
                 if len % 2 == 0: 
-                    print('dividebale by 2')
+                    #print('dividebale by 2')
+                    #array[counter % anzahl_akkorde]
+                   
                     for chord in self.chordList: 
-                        print('chord in listchord', len)
-                        print(chord.xPosition)
-                        #chord.xPosition = chord.xPosition - X_DISTANCE
+                        #print('chord in listchord', len)
+                        #print(chord.xPosition)
+                        #self.chordList.append(chord)
+                        #self.chordList[count_mod_len].update_x_position()
+                        #print(self.chordList)
+                        
                         chord.update_x_position()
-                    #self.xPosition = self.xPosition - X_DISTANCE
-                
+
+                counter = counter + 1 
+                print(counter) 
+            #self.chordList.append(chord)
         self.fs.delete()
 
-   
+
+    counter = 0
     def draw(self, painter):
         painter.setPen(QPen(Qt.black, 2, Qt.SolidLine))  # set pen to draw the outline of the key
         # horizontal lines / staves
@@ -159,45 +129,85 @@ class Staff():
         x = NOTELINE_VER_X
         for line in range(3):
             painter.drawLine(x, self.y1_ver, x, self.y2_ver)
-            #print('x1',x)
             x = x + X_DISTANCE
-            #print('x2',x)
         # draw chords 
+        #count_mod_len = self.counter % self.lengthOfArray
+        #print('cml', count_mod_len)
         for chord in self.chordList:
+            
+            #self.counter = self.counter +1 
             x = chord.get_x_position()
-            print(type(x))
-            print('x in chord drawing', x)
+            #print(type(x))
+            #print('x in chord drawing', x)
             if x < 210 or x > (1120 - NOTEWIDTH):
-            #if chord.xPosition < 210 or chord.xPosition > (1120 - NOTEWIDTH):
-            #print('in draw chord')
-            #print(chord)
-
                 pass
             else:
-                print('in draw in staff', chord.xPosition)
+                #print('in draw in staff', chord.xPosition)
                 chord.draw(painter)  
+                #print(self.counter)
+        #print(self.counter)
 
+
+
+
+    def getChords(self, songchords):
+        listOfChords = []
+        #print('in getChords')
+        # array[counter % anzahl_akkorde]
+        for entry in songchords:
+            #print(self.xPosition)
+            #print(entry[0], entry[1], self.tonality, self.xPosition)
+            listOfChords.append(Chord(entry[0], entry[1], self.tonality, self.xPosition))
+            self.xPosition = self.xPosition + self.getXDistanceOfLength(entry[1])       #X_DISTANCE/2  #224  X_DISTANCE/4 für viertel 
+        return listOfChords
+
+
+
+    def getXDistanceOfLength(self,length):
+        #print(length)
+        xDistance = 0
+        if length == 'WHOLE':
+            xDistance = X_DISTANCE
+        elif length == 'HALF':
+            xDistance = X_DISTANCE/2
+        elif length == 'QUARTER':
+            xDistance = X_DISTANCE/4
+        else:
+            xDistance = X_DISTANCE/8
+        #print(xDistance)
+        return xDistance
+
+    
+    def getTimeOfLength(self, length):
+        #print(length)
+        #print(type(length))
+        time = 0
+        if length == 'WHOLE':
+            time = 2.0
+        elif length == 'HALF':
+            time = 1.0
+        elif length == 'QUARTER':
+            time = 0.5
+        else:
+            time = 0.25
+        #print(time)
+        return time
 
 
     def setXPosition(self):
         xPos = 210 #NOTELINE_VER_X
         return xPos
         
-
-
     def play_bt(self):
         self.state = "playing"
-        print('playiay')
         return self.state
 
     def pause_bt(self):
         self.state = "paused"
-        print('pausededed')
         return self.state
 
     def stop_bt(self):
         self.state = "stopped"
-        print('stophophop')
         return self.state
 
 
