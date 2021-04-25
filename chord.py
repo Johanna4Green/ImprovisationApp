@@ -71,6 +71,16 @@ class Chord():
             sg.get_x_position()
             return sg.get_x_position()
 
+    def set_x_position(self, x_pos):
+        for sg in self.Notes:
+            sg.set_x_position(x_pos)
+        #self.xPosition = x_pos
+
     def update_x_position(self):
         for singleNoti in self.Notes:
             singleNoti.update_x_position()
+
+    def reset_x_position(self, basic_x_pos):
+        print('in chord class', basic_x_pos)
+        for sg in self.Notes:
+            sg.reset_x_position(basic_x_pos)

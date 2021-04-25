@@ -12,7 +12,7 @@
 
 from PyQt5 import QtGui, QtWidgets
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QPushButton, QLabel
-from PyQt5.QtGui import QPainter, QBrush, QPen, QIcon, QPixmap
+from PyQt5.QtGui import QPainter, QBrush, QPen, QIcon, QPixmap, QFont
 from PyQt5.QtCore import Qt, QTimer, pyqtSlot
 
 import time
@@ -42,17 +42,19 @@ class Staff():
         self.midFILE = 'sound_midis/AkkordeGDur.mid'
         self.songChords = self.song_extracting.getNotesOfSong(self.midFILE)
         self.tonality = self.song_extracting.getTonality(self.midFILE)
-        print(type(self.songChords))
         self.lengthOfArray = len(self.songChords)
         print(self.lengthOfArray)
         self.xPosition = self.setXPosition()#NOTELINE_VER_X
 
+        self.basicXPosList = []
         self.x1_hor = NOTELINE_HOR_X1
         self.x2_hor = NOTELINE_HOR_X2
         self.y1_ver = NOTELINE_VER_Y1
         self.y2_ver = NOTELINE_VER_Y2
         self.chordList = self.getChords(self.songChords)
-
+        self.chordListOfBeginning = self.getChords(self.songChords)
+        
+        print('basicXPosList', self.basicXPosList)
         fileInput_thread = threading.Thread(target=self.playTrack)
         fileInput_thread.start()
 
@@ -69,8 +71,9 @@ class Staff():
             
             #print(count_mod_len)
             for entry in self.songChords:
-                count_mod_len = counter % self.lengthOfArray
-                print('cml', count_mod_len)
+                counter = counter % self.lengthOfArray
+                #print('counter', counter)
+                #print('cml', count_mod_len)
                 if self.state =="playing":
                     pass
                 elif self.state == "paused":
@@ -78,6 +81,17 @@ class Staff():
                         time.sleep(0.5)     # as long as bt is paused, waits until play to continue
                         pass
                 elif self.state == "stopped":
+                    #counter = 0
+                    #self.chordList = []
+                    #self.chordList = self.getChords(self.songChords)
+                    i = 0
+                    for chord in self.chordList: 
+                        print(chord.chordArray)
+                        chord.reset_x_position(self.basicXPosList[i])
+                        print(self.basicXPosList[i])
+                        i = i + 1
+                    #self.fs.delete()
+                    #pass
                     break
                 else:
                     print("Bt failed")
@@ -95,29 +109,36 @@ class Staff():
                     self.fs.noteoff(0, entrada)
                     #self.xPosition = self.xPosition - X_DISTANCE
                 time.sleep(0.1)
-                #print(len)
-                print(count_mod_len)
-                print(self.chordList[count_mod_len])  
-                if len % 2 == 0: 
+                if len % 2 == 0:    # >= 2
                     #print('dividebale by 2')
                     #array[counter % anzahl_akkorde]
-                   
+                    last_chord_pos = self.chordList[counter - 1].get_x_position() # hol die x-Position vom letzten Akkord
+                    print(last_chord_pos)
                     for chord in self.chordList: 
                         #print('chord in listchord', len)
                         #print(chord.xPosition)
                         #self.chordList.append(chord)
                         #self.chordList[count_mod_len].update_x_position()
                         #print(self.chordList)
-                        
+                        print(chord.chordArray)
                         chord.update_x_position()
-
+                        self.chordList[counter].set_x_position(last_chord_pos)         #.xPosition = last_chord_pos # setz den gerade "rausgeschobenen nach ganz hinten  
+                        #print('self.xPos', self.chordList[counter].xPosition)
+                        #print('real self.xPosiition', self.xPosition)
+                    
                 counter = counter + 1 
-                print(counter) 
+                #print(counter) 
             #self.chordList.append(chord)
         self.fs.delete()
 
+    def reset_x_position(self):
+        self.chordList = self.chordListOfBeginning
+        #count = 0
+        #for chord in self.chordList: 
+        #    chord.xPosition = self.basicXPosList[count]      #self.setXPosition() + (X_DISTANCE * count)
+       #     count = count + 1
 
-    counter = 0
+    #counter = 0
     def draw(self, painter):
         painter.setPen(QPen(Qt.black, 2, Qt.SolidLine))  # set pen to draw the outline of the key
         # horizontal lines / staves
@@ -154,11 +175,14 @@ class Staff():
         listOfChords = []
         #print('in getChords')
         # array[counter % anzahl_akkorde]
+        self.basicXPosList.append(210)
         for entry in songchords:
             #print(self.xPosition)
             #print(entry[0], entry[1], self.tonality, self.xPosition)
             listOfChords.append(Chord(entry[0], entry[1], self.tonality, self.xPosition))
             self.xPosition = self.xPosition + self.getXDistanceOfLength(entry[1])       #X_DISTANCE/2  #224  X_DISTANCE/4 für viertel 
+            print('line 171', self.xPosition)
+            self.basicXPosList.append(self.xPosition)
         return listOfChords
 
 
@@ -212,6 +236,8 @@ class Staff():
 
 
     def InitLabel(self,window):
+        self.create_tonality_Label(window)
+
         #clef
         clefLabel = QtWidgets.QLabel(window)
         clefLabel.resize(70,125)
@@ -413,3 +439,44 @@ class Staff():
         flatLabel.setPixmap(flatPixmap)
         flatLabel.setScaledContents(True)
         return flatLabel
+    
+    def create_tonality_Label(self,window):
+        tonalityText = self.getTonalityText(self.tonality)
+        tonalityLabel = QtWidgets.QLabel(window)
+        tonalityLabel.setText(tonalityText)
+        tonalityLabel.setFont(QFont('Arial', 30))
+        tonalityLabel.resize(210, 30)
+        tonalityLabel.move(510,280)
+        tonalityLabel.show()
+
+    def getTonalityText(self, ton):
+        tonText = ''
+        if ton == 'C':
+            tonText = 'Tonart: C - Dur'
+        elif ton == 'F':
+            tonText = 'Tonart: F - Dur'
+        elif ton == 'Bb':
+            tonText = 'Tonart: B - Dur'
+        elif ton == 'Eb':
+            tonText = 'Tonart: Es - Dur'
+        elif ton == 'Ab':
+            tonText = 'Tonart: As - Dur'
+        elif ton == 'Db':
+            tonText = 'Tonart: Des - Dur'
+        elif ton == 'Gb':
+            tonText = 'Tonart: Ges - Dur'
+        elif ton == 'G':
+            tonText = 'Tonart: G - Dur'
+        elif ton == 'D':
+            tonText = 'Tonart: D - Dur'
+        elif ton == 'A':
+            tonText = 'Tonart: A - Dur'
+        elif ton == 'E':
+            tonText = 'Tonart: E - Dur'
+        elif ton == 'B':
+            tonText = 'Tonart: H - Dur'
+        elif ton == 'F#':
+            tonText = 'Tonart: Fis - Dur'
+        else:
+            print('error with tonText in staff line 480')
+        return tonText

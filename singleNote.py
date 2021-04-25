@@ -156,5 +156,12 @@ class SingleNote():
     def update_x_position(self):
         self.xPosition = self.xPosition - X_DISTANCE      
 
+    def set_x_position(self, x):
+        self.xPosition = x  
+
     def getYPos(self): 
         return self.yPosition
+
+    def reset_x_position(self, basic_x_pos):
+        print('in sgNote class', basic_x_pos)
+        self.xPosition = basic_x_pos
