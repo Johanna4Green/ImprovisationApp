@@ -9,6 +9,7 @@ import pygame.midi
 import time
 from constants import *
 from midiInput import MidiInput
+from staff import Staff
 
 class Key():
 
@@ -31,8 +32,7 @@ class Key():
         super().__init__()
         self.key_number = key_number
         self.is_pressed = False
-
-        #self.x = 200 + 20 * self.key_number
+        self.is_played_by_bt = False
         self.x = self.X_POSITION_ARRAY[self.key_number]
         self.y = 350                    # WINDOW_HEIGHT / 2  # 200
         self.w = 20                     # WINDOW_WIDTH / 60 # 20      # 52 white keys, je 4 am rand frei
@@ -55,6 +55,7 @@ class Key():
     def draw(self, painter):
 
         is_pressed = midi_input.getKeyArray()[self.key_number]
+        #is_played_by_bt = staf.get_bt_keyArray()[self.key_number]
 
         # zeiche Taste
         if self.key_type == KEY_TYPE_BLACK:
@@ -62,23 +63,22 @@ class Key():
             painter.setPen(QPen(Qt.black, 1, Qt.SolidLine))  # set pen to draw the outline of the key
             painter.setBrush(QBrush(Qt.black, Qt.SolidPattern)) # set brush to fill the key with color
             painter.drawRect(self.x, self.y, self.w_black, self.h_black)
-
-            if is_pressed:
+            # zeichne die Markierung
+            if is_pressed:  # or is_played_by_bt:
                 painter.setBrush(QBrush(Qt.red, Qt.SolidPattern)) # set brush to fill the key with color
                 painter.drawEllipse(self.x + 2, self.y + 100, self.black_circle_w, self.black_circle_h)
                 pass
-                # zeichne die Markierung
-
+            
         else:
             # zeichne ein weißes Viereck
             painter.setPen(QPen(Qt.black, 1, Qt.SolidLine))  # set pen to draw the outline of the key
             painter.setBrush(QBrush(Qt.white, Qt.SolidPattern)) # set brush to fill the key with color
             painter.drawRect(self.x, self.y, self.w, self.h)
-
-            if is_pressed:
+            # zeichne die Markierung
+            if is_pressed:  # or is_played_by_bt:
                 painter.setBrush(QBrush(Qt.red, Qt.SolidPattern)) # set brush to fill the key with color
                 painter.drawEllipse(self.x + 5, self.y + 155, self.white_circle_w, self.white_circle_h)
                 pass
-                # zeichne die Markierung
-
+                
 midi_input = MidiInput()
+staf = Staff()

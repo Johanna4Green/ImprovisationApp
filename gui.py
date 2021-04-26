@@ -18,6 +18,7 @@ from constants import *
 from midiInput import MidiInput
 from staff import Staff
 from key import Key
+from labeling import Labeling
 
 class Window(QMainWindow):
 
@@ -34,8 +35,11 @@ class Window(QMainWindow):
         self.InitKeyboard(88)
         self.InitWindow()
         # instance of staff
+        self.labeling = Labeling()
+        self.labeling.InitLabel(self)
+
         self.staff = Staff()
-        self.staff.InitLabel(self)
+        #self.staff.InitLabel(self)
         # timer to update the application
         self.update_timer = QTimer(self)
         self.update_timer.setInterval(10)
