@@ -12,7 +12,6 @@ import sys
 import pygame
 import pygame.midi
 import time
-import keyboard
 
 from constants import *
 from midiInput import MidiInput
@@ -31,6 +30,7 @@ class Window(QMainWindow):
         self.width = WINDOW_WIDTH
         self.height = WINDOW_HEIGHT
         # init buttons, keyboard and window
+        self.staff = Staff()
         self.InitButtons()
         self.InitKeyboard(88)
         self.InitWindow()
@@ -38,7 +38,6 @@ class Window(QMainWindow):
         self.labeling = Labeling()
         self.labeling.InitLabel(self)
 
-        self.staff = Staff()
         #self.staff.InitLabel(self)
         # timer to update the application
         self.update_timer = QTimer(self)
@@ -56,7 +55,7 @@ class Window(QMainWindow):
     def InitKeyboard(self, num_keys):
         self.keys = []
         for i in range(num_keys):
-            self.keys.append(Key(i))
+            self.keys.append(Key(i, self.staff))
 
     def InitButtons(self):
         # play

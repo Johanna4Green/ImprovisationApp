@@ -29,8 +29,9 @@ class Key():
         DISTANCE_TO_LEFT_MARGIN + 1000, DISTANCE_TO_LEFT_MARGIN + 1020, DISTANCE_TO_LEFT_MARGIN + 1040
     ] # (16,25, 33, 42, 50, 59, 67, 76, 85 is letztes
 
-    def __init__(self, key_number):
+    def __init__(self, key_number, staff):
         super().__init__()
+        self.staff = staff
         self.key_number = key_number
         self.is_pressed = False
         self.is_played_by_bt = False
@@ -78,7 +79,7 @@ class Key():
     def draw(self, painter):
 
         is_pressed = midi_input.getKeyArray()[self.key_number]
-        #is_played_by_bt = staf.get_bt_keyArray()[self.key_number]
+        is_played_by_bt = self.staff.get_bt_keyArray()[self.key_number]
         is_colored = self.getColorArray()[self.key_number]
 
         # zeiche Taste
@@ -94,7 +95,9 @@ class Key():
             if is_pressed:  # or is_played_by_bt:
                 painter.setBrush(QBrush(Qt.red, Qt.SolidPattern)) # set brush to fill the key with color
                 painter.drawEllipse(self.x + 2, self.y + 100, self.black_circle_w, self.black_circle_h)
-                pass
+            if is_played_by_bt:  # or is_played_by_bt:
+                painter.setBrush(QBrush(Qt.blue, Qt.SolidPattern)) # set brush to fill the key with color
+                painter.drawEllipse(self.x + 2, self.y + 100, self.black_circle_w, self.black_circle_h)
             
         else:
             # zeichne ein weißes Viereck
@@ -108,7 +111,9 @@ class Key():
             if is_pressed:  # or is_played_by_bt:
                 painter.setBrush(QBrush(Qt.red, Qt.SolidPattern)) # set brush to fill the key with color
                 painter.drawEllipse(self.x + 5, self.y + 155, self.white_circle_w, self.white_circle_h)
-                pass
+            if is_played_by_bt:  # or is_played_by_bt:
+                painter.setBrush(QBrush(Qt.blue, Qt.SolidPattern)) # set brush to fill the key with color
+                painter.drawEllipse(self.x + 5, self.y + 155, self.white_circle_w, self.white_circle_h)
                 
 midi_input = MidiInput()
 song_extracting = SongExtracting()

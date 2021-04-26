@@ -98,13 +98,13 @@ class Staff():
                 for entrada in entry[0]:
                     #print(entry[0])
                     #print(entrada)
-                    #self.bt_keys[entrada] = True
+                    self.bt_keys[entrada] = True
                     self.fs.noteon(0, entrada, 60)
                 #print(self.bt_keys)
                 time.sleep(length-0.1)
                 for entrada in entry[0]:
+                    self.bt_keys[entrada] = False
                     self.fs.noteoff(0, entrada)
-                    #self.bt_keys[entrada] = False
                 time.sleep(0.1)
                 if len % 2 == 0:    # >= 2
                     last_chord_pos = self.chordList[counter - 1].get_x_position() # hol die x-Position vom letzten Akkord
