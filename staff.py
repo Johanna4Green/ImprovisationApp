@@ -89,6 +89,8 @@ class Staff():
                         chord.reset_x_position(self.basicXPosList[i])
                         print(self.basicXPosList[i])
                         i = i + 1
+                    while self.state == "stopped":
+                        time.sleep(0.1)
                     break
                 else:
                     print("Bt failed")
