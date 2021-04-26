@@ -36,9 +36,9 @@ class MidiInput():
                 if not msg.is_meta:
                     #print(msg)
                     if msg.type =='note_on':
-                        self.keys[msg.note] = True  # -36
+                        self.keys[msg.note + 3] = True  # -36
                     if msg.type == 'note_off':
-                        self.keys[msg.note] = False # -36
+                        self.keys[msg.note + 3] = False # -36
                     self.type = msg.type
                     self.note = msg.note
                     self.velocity = msg.velocity
