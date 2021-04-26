@@ -10,6 +10,7 @@ import time
 from constants import *
 from midiInput import MidiInput
 from staff import Staff
+from songExtracting import SongExtracting
 
 class Key():
 
@@ -43,6 +44,8 @@ class Key():
         self.black_circle_w = 8
         self.white_circle_h = 10
         self.black_circle_h = 8
+        self.tonality = song_extracting.getTonality(MIDIFILE)
+        print('in key', self.tonality)
 
         if key_number in self.BLACK_KEYS:
             self.key_type = KEY_TYPE_BLACK
@@ -50,18 +53,42 @@ class Key():
         else:
             self.key_type = KEY_TYPE_WHITE
             WHITE_KEYS.append(self)
+        
+
+    def getColorArray(self):
+        color_ar = []
+        g = [0, 2, 3, 5, 7, 9, 10]
+        if self.tonality == 'G':
+            for key_number in range(88):
+                if key_number % 12 in g: 
+                    color_ar.append(True)
+                else:
+                    color_ar.append(False)
+               # self.key_type = KEY_TYPE_YELLOW
+        else:
+            print('fail in colorgetting')
+        return color_ar
+
+
+
+        #g  = 1,3,4,6,8,10,11
+        #['G#', 'A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G']
 
 
     def draw(self, painter):
 
         is_pressed = midi_input.getKeyArray()[self.key_number]
         #is_played_by_bt = staf.get_bt_keyArray()[self.key_number]
+        is_colored = self.getColorArray()[self.key_number]
 
         # zeiche Taste
         if self.key_type == KEY_TYPE_BLACK:
             # zeichne ein schwarzes Viereck
             painter.setPen(QPen(Qt.black, 1, Qt.SolidLine))  # set pen to draw the outline of the key
-            painter.setBrush(QBrush(Qt.black, Qt.SolidPattern)) # set brush to fill the key with color
+            if is_colored:
+                painter.setBrush(QBrush(Qt.darkYellow, Qt.SolidPattern)) # set brush to fill the key with color
+            else:
+                painter.setBrush(QBrush(Qt.black, Qt.SolidPattern)) # set brush to fill the key with color
             painter.drawRect(self.x, self.y, self.w_black, self.h_black)
             # zeichne die Markierung
             if is_pressed:  # or is_played_by_bt:
@@ -72,7 +99,10 @@ class Key():
         else:
             # zeichne ein weißes Viereck
             painter.setPen(QPen(Qt.black, 1, Qt.SolidLine))  # set pen to draw the outline of the key
-            painter.setBrush(QBrush(Qt.white, Qt.SolidPattern)) # set brush to fill the key with color
+            if is_colored:
+                painter.setBrush(QBrush(Qt.yellow, Qt.SolidPattern)) # set brush to fill the key with color
+            else:
+                painter.setBrush(QBrush(Qt.white, Qt.SolidPattern)) # set brush to fill the key with color
             painter.drawRect(self.x, self.y, self.w, self.h)
             # zeichne die Markierung
             if is_pressed:  # or is_played_by_bt:
@@ -81,4 +111,5 @@ class Key():
                 pass
                 
 midi_input = MidiInput()
-staf = Staff()
+song_extracting = SongExtracting()
+#staf = Staff()

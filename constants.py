@@ -41,3 +41,5 @@ NOTELINE_VER_X = 430#420 #400    # 625, 850, (beginn 125,  1st: 275, 2nd, 3rd, 4
 NOTELINE_VER_Y1 = NOTELINE_HOR_Y
 NOTELINE_VER_Y2 = NOTELINE_HOR_Y + (4*16)
 X_DISTANCE = 230   #224 # 225
+
+MIDIFILE = 'sound_midis/AkkordeGDur.mid'
