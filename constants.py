@@ -13,6 +13,7 @@ KEY_TYPE_WHITE = 1
 
 # ONE OKTAVE starting with G# because A is the number1 note on the piano and therefore G# is 0 
 OKTAVE = ['G#', 'A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G']
+OKTAVE_C = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
 BLACKVALUES = ['C#', 'D#', 'F#', 'G#', 'A#']
 # SHARP OR FLAT
 FLAT_TONALITY = ['F', 'Bb', 'Eb', 'Ab', 'Db', 'Gb'] # f b es as des ges
@@ -42,4 +43,4 @@ NOTELINE_VER_Y1 = NOTELINE_HOR_Y
 NOTELINE_VER_Y2 = NOTELINE_HOR_Y + (4*16)
 X_DISTANCE = 230   #224 # 225
 
-MIDIFILE = 'sound_midis/AkkordeGDur.mid'
+MIDIFILE = 'sound_midis/AkkordeEDur.mid'

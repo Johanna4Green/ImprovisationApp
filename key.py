@@ -58,13 +58,26 @@ class Key():
 
     def getColorArray(self):
         color_ar = []
-        g = [0, 2, 3, 5, 7, 9, 10]
+        c = [0, 2, 3, 5, 7, 8, 10]
+        g = [0, 2, 3, 5, 7, 9, 10]  #fis
+        d = [0, 2, 4, 5, 7, 9, 10]  #cis
+        a = [0, 2, 4, 5, 7, 9, 11]  #gis
+        e = [0, 2, 4, 6, 7, 9, 11]  #dis
+        h = [1, 2, 4, 6, 7, 9, 11]  #ais
+        fis = [1, 2, 4, 6, 8, 9, 11] #eis 
         if self.tonality == 'G':
             for key_number in range(88):
                 if key_number % 12 in g: 
                     color_ar.append(True)
                 else:
                     color_ar.append(False)
+        elif self.tonality == 'E':
+             for key_number in range(88):
+                if key_number % 12 in e: 
+                    color_ar.append(True)
+                else:
+                    color_ar.append(False)
+
                # self.key_type = KEY_TYPE_YELLOW
         else:
             print('fail in colorgetting')

@@ -39,7 +39,7 @@ class Staff():
         self.sfid = self.fs.sfload("sound_midis/default-GM.sf2") 
         self.fs.program_select(0, self.sfid, 0, 0)
 
-        self.midFILE = 'sound_midis/AkkordeGDur.mid'
+        self.midFILE = MIDIFILE
         self.songChords = self.song_extracting.getNotesOfSong(self.midFILE)
         self.tonality = self.song_extracting.getTonality(self.midFILE)
         self.lengthOfArray = len(self.songChords)
@@ -62,7 +62,7 @@ class Staff():
         fileInput_thread.start()
 
     def get_bt_keyArray(self):
-        print('in get bt key array in staff')
+        #print('in get bt key array in staff')
         #print(self.bt_keys)
         return self.bt_keys
 
@@ -100,12 +100,12 @@ class Staff():
                 for entrada in entry[0]:
                     #print(entry[0])
                     #print(entrada)
-                    self.bt_keys[entrada] = True
+                    self.bt_keys[entrada + 3] = True
                     self.fs.noteon(0, entrada, 60)
                 #print(self.bt_keys)
                 time.sleep(length-0.1)
                 for entrada in entry[0]:
-                    self.bt_keys[entrada] = False
+                    self.bt_keys[entrada + 3] = False
                     self.fs.noteoff(0, entrada)
                 time.sleep(0.1)
                 if len % 2 == 0:    # >= 2
