@@ -57,36 +57,58 @@ class Key():
         
 
     def getColorArray(self):
+        #[ 'A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#']
         color_ar = []
-        c = [0, 2, 3, 5, 7, 8, 10]
-        g = [0, 2, 3, 5, 7, 9, 10]  #fis
-        d = [0, 2, 4, 5, 7, 9, 10]  #cis
-        a = [0, 2, 4, 5, 7, 9, 11]  #gis
-        e = [0, 2, 4, 6, 7, 9, 11]  #dis
-        h = [1, 2, 4, 6, 7, 9, 11]  #ais
-        fis = [1, 2, 4, 6, 8, 9, 11] #eis 
-        if self.tonality == 'G':
-            for key_number in range(88):
-                if key_number % 12 in g: 
-                    color_ar.append(True)
-                else:
-                    color_ar.append(False)
-        elif self.tonality == 'E':
-             for key_number in range(88):
-                if key_number % 12 in e: 
-                    color_ar.append(True)
-                else:
-                    color_ar.append(False)
 
-               # self.key_type = KEY_TYPE_YELLOW
-        else:
-            print('fail in colorgetting')
+        c_dur_notes = [0, 2, 3, 5, 7, 8, 10]
+        g_dur_notes = [0, 2, 3, 5, 7, 9, 10]  #fis
+        d_dur_notes = [0, 2, 4, 5, 7, 9, 10]  #cis
+        a_dur_notes = [0, 2, 4, 5, 7, 9, 11]  #gis
+        e_dur_notes = [0, 2, 4, 6, 7, 9, 11]  #dis
+        b_dur_notes = [1, 2, 4, 6, 7, 9, 11]  #ais
+        fis_dur_notes = [1, 2, 4, 6, 8, 9, 11] #eis 
+
+        f_dur_notes = [0, 1, 3, 5, 7, 8, 10]    #b
+        bb_dur_notes = [0, 1, 3, 5, 6, 8, 10]  #es
+        es_dur_notes = [1, 3, 5, 6, 8, 10, 11]  #as
+        as_dur_notes = [1, 3, 4, 6, 8, 10, 11]  #des
+        des_dur_notes = [1, 3, 4, 6, 8, 9, 11]  #ges
+        ges_dur_notes = [1, 2, 4, 6, 8, 9, 11]  #ces
+
+        if self.tonality == 'C':
+            ar = c_dur_notes
+        elif self.tonality == 'G':
+            ar = g_dur_notes
+        elif self.tonality == 'D':
+            ar = d_dur_notes
+        elif self.tonality == 'A':
+            ar = a_dur_notes
+        elif self.tonality == 'E':
+            ar = e_dur_notes
+        elif self.tonality == 'B':
+            ar = b_dur_notes
+        elif self.tonality == 'F#':
+            ar = fis_dur_notes
+        elif self.tonality == 'F':
+            ar = f_dur_notes
+        elif self.tonality == 'Bb':
+            ar = bb_dur_notes
+        elif self.tonality == 'Eb':
+            ar = es_dur_notes
+        elif self.tonality == 'Ab':
+            ar = as_dur_notes
+        elif self.tonality == 'Db':
+            ar = des_dur_notes
+        elif self.tonality == 'Gb':
+            ar = ges_dur_notes
+
+        for key_number in range(88):
+            if key_number % 12 in ar: 
+                color_ar.append(True)
+            else:
+                color_ar.append(False)
         return color_ar
 
-
-
-        #g  = 1,3,4,6,8,10,11
-        #['G#', 'A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G']
 
 
     def draw(self, painter):
