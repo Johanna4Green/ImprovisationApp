@@ -1,18 +1,12 @@
-from PyQt5 import QtGui, QtWidgets
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QPushButton, QLabel
-from PyQt5.QtGui import QPainter, QBrush, QPen, QIcon, QPixmap, QFont
-from PyQt5.QtCore import Qt, QTimer, pyqtSlot
+# this class creates all labels: the clef, tact, signs (sharp or flat), the tonality text
+# it gets it's information from songExtracting
 
-import time
-import threading
-import mido
-from mido import MidiFile
-from mido import MetaMessage
-import fluidsynth
-import math
+from PyQt5 import QtWidgets
+from PyQt5.QtWidgets import QLabel
+from PyQt5.QtGui import QPixmap, QFont
+
 from constants import * 
 from songExtracting import SongExtracting
-from chord import Chord
 
 
 class Labeling():
@@ -20,16 +14,17 @@ class Labeling():
     song_extracting = SongExtracting()
 
     def __init__(self):
+        self.midifile = MIDIFILE
+        self.tonality = self.song_extracting.getTonality(self.midifile)
 
-        self.midFILE = 'sound_midis/AkkordeGDur.mid'
-        self.tonality = self.song_extracting.getTonality(self.midFILE)
+    #called from gui inii
+    def init_label(self,window):
+        self.create_clef_label(window)
+        self.create_tonality_text_label(window)
+        self.create_signs_and_tact_label(window)
 
 
-    def InitLabel(self,window):
-
-        self.create_tonality_Label(window)
-
-        #clef
+    def create_clef_label(self,window):
         clefLabel = QtWidgets.QLabel(window)
         clefLabel.resize(70,125)
         clefPixmap = QPixmap('images/clef.png')
@@ -37,12 +32,14 @@ class Labeling():
         clefLabel.setScaledContents(True)
         clefLabel.move(65, 132)
         clefLabel.show()
-        #takt   
+    
+    def create_signs_and_tact_label(self,window):
         time44Label = QtWidgets.QLabel(window)
         time44Label.resize(45,95)
         time44Pixmap = QPixmap('images/timeSign44.webp')
         time44Label.setPixmap(time44Pixmap)
         time44Label.setScaledContents(True)
+  
         # leading sign of tonality 
         if self.tonality == 'C':
             time44Label.move(120, 147)
@@ -231,8 +228,8 @@ class Labeling():
         flatLabel.setScaledContents(True)
         return flatLabel
     
-    def create_tonality_Label(self,window):
-        tonalityText = self.getTonalityText(self.tonality)
+    def create_tonality_text_label(self,window):
+        tonalityText = self.get_tonality_text(self.tonality)
         tonalityLabel = QtWidgets.QLabel(window)
         tonalityLabel.setText(tonalityText)
         tonalityLabel.setFont(QFont('Arial', 30))
@@ -240,7 +237,7 @@ class Labeling():
         tonalityLabel.move(510,280)
         tonalityLabel.show()
 
-    def getTonalityText(self, ton):
+    def get_tonality_text(self, ton):
         tonText = ''
         if ton == 'C':
             tonText = 'Tonart: C - Dur'

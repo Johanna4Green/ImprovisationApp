@@ -1,33 +1,33 @@
-from PyQt5 import QtGui
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget
-from PyQt5.QtGui import QPainter, QBrush, QPen
-from PyQt5.QtCore import Qt, QTimer
-import sys
+# this class draws the keys of the keyboard. 
+# It also draws the red dots on top as current feedback (info gotten from midiInput thread).
+# It also draws the blue dots on top as visualization of the chords played by the Backing Track
+# (info gotten from staff thread).
+# It also colors the keys of the keyboard depending on the tonality to show possible play material
+# (info gotten from songExtracting).
 
-import pygame
-import pygame.midi
-import time
+from PyQt5.QtGui import QPainter, QBrush, QPen
+from PyQt5.QtCore import Qt
+
 from constants import *
 from midiInput import MidiInput
-from staff import Staff
 from songExtracting import SongExtracting
 
 class Key():
 
     BLACK_KEYS = [1, 4, 6, 9, 11, 13, 16, 18, 21, 23, 25, 28, 30, 33, 35, 37, 40 ,42, 45, 47, 49, 52, 54, 57, 59, 61, 64, 66, 69, 71, 73, 76, 78, 81, 83, 85] # welche Tasten sind schwarz?
 
-    X_POSITION_ARRAY = [DISTANCE_TO_LEFT_MARGIN,DISTANCE_TO_LEFT_MARGIN + 14, DISTANCE_TO_LEFT_MARGIN + 20, DISTANCE_TO_LEFT_MARGIN + 40, DISTANCE_TO_LEFT_MARGIN + 54, DISTANCE_TO_LEFT_MARGIN + 60 , DISTANCE_TO_LEFT_MARGIN + 74 , DISTANCE_TO_LEFT_MARGIN + 80,
-        DISTANCE_TO_LEFT_MARGIN + 100, DISTANCE_TO_LEFT_MARGIN + 114, DISTANCE_TO_LEFT_MARGIN + 120, DISTANCE_TO_LEFT_MARGIN + 134, DISTANCE_TO_LEFT_MARGIN + 140, DISTANCE_TO_LEFT_MARGIN + 154, DISTANCE_TO_LEFT_MARGIN + 160, DISTANCE_TO_LEFT_MARGIN + 180, DISTANCE_TO_LEFT_MARGIN + 194,
-        DISTANCE_TO_LEFT_MARGIN + 200, DISTANCE_TO_LEFT_MARGIN + 214, DISTANCE_TO_LEFT_MARGIN + 220, DISTANCE_TO_LEFT_MARGIN + 240, DISTANCE_TO_LEFT_MARGIN + 254, DISTANCE_TO_LEFT_MARGIN + 260, DISTANCE_TO_LEFT_MARGIN + 274, DISTANCE_TO_LEFT_MARGIN + 280, DISTANCE_TO_LEFT_MARGIN + 294,
-        DISTANCE_TO_LEFT_MARGIN + 300, DISTANCE_TO_LEFT_MARGIN + 320, DISTANCE_TO_LEFT_MARGIN + 334, DISTANCE_TO_LEFT_MARGIN + 340, DISTANCE_TO_LEFT_MARGIN + 354, DISTANCE_TO_LEFT_MARGIN + 360, DISTANCE_TO_LEFT_MARGIN + 380, DISTANCE_TO_LEFT_MARGIN + 394, 
-        DISTANCE_TO_LEFT_MARGIN + 400, DISTANCE_TO_LEFT_MARGIN + 414, DISTANCE_TO_LEFT_MARGIN + 420, DISTANCE_TO_LEFT_MARGIN + 434, DISTANCE_TO_LEFT_MARGIN + 440, DISTANCE_TO_LEFT_MARGIN + 460, DISTANCE_TO_LEFT_MARGIN + 474, DISTANCE_TO_LEFT_MARGIN + 480, DISTANCE_TO_LEFT_MARGIN + 494, 
-        DISTANCE_TO_LEFT_MARGIN + 500, DISTANCE_TO_LEFT_MARGIN + 520, DISTANCE_TO_LEFT_MARGIN + 534, DISTANCE_TO_LEFT_MARGIN + 540, DISTANCE_TO_LEFT_MARGIN + 554, DISTANCE_TO_LEFT_MARGIN + 560, DISTANCE_TO_LEFT_MARGIN + 574, DISTANCE_TO_LEFT_MARGIN + 580,
-        DISTANCE_TO_LEFT_MARGIN + 600, DISTANCE_TO_LEFT_MARGIN + 614, DISTANCE_TO_LEFT_MARGIN + 620, DISTANCE_TO_LEFT_MARGIN + 634, DISTANCE_TO_LEFT_MARGIN + 640, DISTANCE_TO_LEFT_MARGIN + 660, DISTANCE_TO_LEFT_MARGIN + 674, DISTANCE_TO_LEFT_MARGIN + 680, DISTANCE_TO_LEFT_MARGIN + 694,
-        DISTANCE_TO_LEFT_MARGIN + 700, DISTANCE_TO_LEFT_MARGIN + 714, DISTANCE_TO_LEFT_MARGIN + 720, DISTANCE_TO_LEFT_MARGIN + 740, DISTANCE_TO_LEFT_MARGIN + 754, DISTANCE_TO_LEFT_MARGIN + 760, DISTANCE_TO_LEFT_MARGIN + 774, DISTANCE_TO_LEFT_MARGIN + 780,
-        DISTANCE_TO_LEFT_MARGIN + 800, DISTANCE_TO_LEFT_MARGIN + 814, DISTANCE_TO_LEFT_MARGIN + 820, DISTANCE_TO_LEFT_MARGIN + 834, DISTANCE_TO_LEFT_MARGIN + 840, DISTANCE_TO_LEFT_MARGIN + 854, DISTANCE_TO_LEFT_MARGIN + 860, DISTANCE_TO_LEFT_MARGIN + 880, DISTANCE_TO_LEFT_MARGIN + 894,
-        DISTANCE_TO_LEFT_MARGIN + 900, DISTANCE_TO_LEFT_MARGIN + 914, DISTANCE_TO_LEFT_MARGIN + 920, DISTANCE_TO_LEFT_MARGIN + 940, DISTANCE_TO_LEFT_MARGIN + 954, DISTANCE_TO_LEFT_MARGIN + 960, DISTANCE_TO_LEFT_MARGIN + 974, DISTANCE_TO_LEFT_MARGIN + 980, DISTANCE_TO_LEFT_MARGIN + 994,
-        DISTANCE_TO_LEFT_MARGIN + 1000, DISTANCE_TO_LEFT_MARGIN + 1020, DISTANCE_TO_LEFT_MARGIN + 1040
-    ] # (16,25, 33, 42, 50, 59, 67, 76, 85 is letztes
+    X_POSITION_ARRAY = [ORIG_KEY_X_POS,ORIG_KEY_X_POS + 14, ORIG_KEY_X_POS + 20, ORIG_KEY_X_POS + 40, ORIG_KEY_X_POS + 54, ORIG_KEY_X_POS + 60 , ORIG_KEY_X_POS + 74 , ORIG_KEY_X_POS + 80,
+                        ORIG_KEY_X_POS + 100, ORIG_KEY_X_POS + 114, ORIG_KEY_X_POS + 120, ORIG_KEY_X_POS + 134, ORIG_KEY_X_POS + 140, ORIG_KEY_X_POS + 154, ORIG_KEY_X_POS + 160, ORIG_KEY_X_POS + 180, ORIG_KEY_X_POS + 194,
+                        ORIG_KEY_X_POS + 200, ORIG_KEY_X_POS + 214, ORIG_KEY_X_POS + 220, ORIG_KEY_X_POS + 240, ORIG_KEY_X_POS + 254, ORIG_KEY_X_POS + 260, ORIG_KEY_X_POS + 274, ORIG_KEY_X_POS + 280, ORIG_KEY_X_POS + 294,
+                        ORIG_KEY_X_POS + 300, ORIG_KEY_X_POS + 320, ORIG_KEY_X_POS + 334, ORIG_KEY_X_POS + 340, ORIG_KEY_X_POS + 354, ORIG_KEY_X_POS + 360, ORIG_KEY_X_POS + 380, ORIG_KEY_X_POS + 394, 
+                        ORIG_KEY_X_POS + 400, ORIG_KEY_X_POS + 414, ORIG_KEY_X_POS + 420, ORIG_KEY_X_POS + 434, ORIG_KEY_X_POS + 440, ORIG_KEY_X_POS + 460, ORIG_KEY_X_POS + 474, ORIG_KEY_X_POS + 480, ORIG_KEY_X_POS + 494, 
+                        ORIG_KEY_X_POS + 500, ORIG_KEY_X_POS + 520, ORIG_KEY_X_POS + 534, ORIG_KEY_X_POS + 540, ORIG_KEY_X_POS + 554, ORIG_KEY_X_POS + 560, ORIG_KEY_X_POS + 574, ORIG_KEY_X_POS + 580,
+                        ORIG_KEY_X_POS + 600, ORIG_KEY_X_POS + 614, ORIG_KEY_X_POS + 620, ORIG_KEY_X_POS + 634, ORIG_KEY_X_POS + 640, ORIG_KEY_X_POS + 660, ORIG_KEY_X_POS + 674, ORIG_KEY_X_POS + 680, ORIG_KEY_X_POS + 694,
+                        ORIG_KEY_X_POS + 700, ORIG_KEY_X_POS + 714, ORIG_KEY_X_POS + 720, ORIG_KEY_X_POS + 740, ORIG_KEY_X_POS + 754, ORIG_KEY_X_POS + 760, ORIG_KEY_X_POS + 774, ORIG_KEY_X_POS + 780,
+                        ORIG_KEY_X_POS + 800, ORIG_KEY_X_POS + 814, ORIG_KEY_X_POS + 820, ORIG_KEY_X_POS + 834, ORIG_KEY_X_POS + 840, ORIG_KEY_X_POS + 854, ORIG_KEY_X_POS + 860, ORIG_KEY_X_POS + 880, ORIG_KEY_X_POS + 894,
+                        ORIG_KEY_X_POS + 900, ORIG_KEY_X_POS + 914, ORIG_KEY_X_POS + 920, ORIG_KEY_X_POS + 940, ORIG_KEY_X_POS + 954, ORIG_KEY_X_POS + 960, ORIG_KEY_X_POS + 974, ORIG_KEY_X_POS + 980, ORIG_KEY_X_POS + 994,
+                        ORIG_KEY_X_POS + 1000, ORIG_KEY_X_POS + 1020, ORIG_KEY_X_POS + 1040
+                        ] # (16,25, 33, 42, 50, 59, 67, 76, 85 is letztes
 
     def __init__(self, key_number, staff):
         super().__init__()
@@ -46,7 +46,6 @@ class Key():
         self.white_circle_h = 10
         self.black_circle_h = 8
         self.tonality = song_extracting.getTonality(MIDIFILE)
-        print('in key', self.tonality)
 
         if key_number in self.BLACK_KEYS:
             self.key_type = KEY_TYPE_BLACK
@@ -56,61 +55,7 @@ class Key():
             WHITE_KEYS.append(self)
         
 
-    def getColorArray(self):
-        #[ 'A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#']
-        color_ar = []
-
-        c_dur_notes = [0, 2, 3, 5, 7, 8, 10]
-        g_dur_notes = [0, 2, 3, 5, 7, 9, 10]  #fis
-        d_dur_notes = [0, 2, 4, 5, 7, 9, 10]  #cis
-        a_dur_notes = [0, 2, 4, 5, 7, 9, 11]  #gis
-        e_dur_notes = [0, 2, 4, 6, 7, 9, 11]  #dis
-        b_dur_notes = [1, 2, 4, 6, 7, 9, 11]  #ais
-        fis_dur_notes = [1, 2, 4, 6, 8, 9, 11] #eis 
-
-        f_dur_notes = [0, 1, 3, 5, 7, 8, 10]    #b
-        bb_dur_notes = [0, 1, 3, 5, 6, 8, 10]  #es
-        es_dur_notes = [1, 3, 5, 6, 8, 10, 11]  #as
-        as_dur_notes = [1, 3, 4, 6, 8, 10, 11]  #des
-        des_dur_notes = [1, 3, 4, 6, 8, 9, 11]  #ges
-        ges_dur_notes = [1, 2, 4, 6, 8, 9, 11]  #ces
-
-        if self.tonality == 'C':
-            ar = c_dur_notes
-        elif self.tonality == 'G':
-            ar = g_dur_notes
-        elif self.tonality == 'D':
-            ar = d_dur_notes
-        elif self.tonality == 'A':
-            ar = a_dur_notes
-        elif self.tonality == 'E':
-            ar = e_dur_notes
-        elif self.tonality == 'B':
-            ar = b_dur_notes
-        elif self.tonality == 'F#':
-            ar = fis_dur_notes
-        elif self.tonality == 'F':
-            ar = f_dur_notes
-        elif self.tonality == 'Bb':
-            ar = bb_dur_notes
-        elif self.tonality == 'Eb':
-            ar = es_dur_notes
-        elif self.tonality == 'Ab':
-            ar = as_dur_notes
-        elif self.tonality == 'Db':
-            ar = des_dur_notes
-        elif self.tonality == 'Gb':
-            ar = ges_dur_notes
-
-        for key_number in range(88):
-            if key_number % 12 in ar: 
-                color_ar.append(True)
-            else:
-                color_ar.append(False)
-        return color_ar
-
-
-
+   
     def draw(self, painter):
 
         is_pressed = midi_input.getKeyArray()[self.key_number]
@@ -149,7 +94,60 @@ class Key():
             if is_played_by_bt:  # or is_played_by_bt:
                 painter.setBrush(QBrush(Qt.blue, Qt.SolidPattern)) # set brush to fill the key with color
                 painter.drawEllipse(self.x + 5, self.y + 155, self.white_circle_w, self.white_circle_h)
-                
+
+
+     # depending on the tonality the notes to be colored are chosen 
+    def getColorArray(self):
+        #[ 'A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#']
+        color_array = []
+        c_dur_notes = [0, 2, 3, 5, 7, 8, 10]
+        g_dur_notes = [0, 2, 3, 5, 7, 9, 10]  #fis
+        d_dur_notes = [0, 2, 4, 5, 7, 9, 10]  #cis
+        a_dur_notes = [0, 2, 4, 5, 7, 9, 11]  #gis
+        e_dur_notes = [0, 2, 4, 6, 7, 9, 11]  #dis
+        b_dur_notes = [1, 2, 4, 6, 7, 9, 11]  #ais
+        fis_dur_notes = [1, 2, 4, 6, 8, 9, 11] #eis 
+        f_dur_notes = [0, 1, 3, 5, 7, 8, 10]    #b
+        bb_dur_notes = [0, 1, 3, 5, 6, 8, 10]  #es
+        es_dur_notes = [1, 3, 5, 6, 8, 10, 11]  #as
+        as_dur_notes = [1, 3, 4, 6, 8, 10, 11]  #des
+        des_dur_notes = [1, 3, 4, 6, 8, 9, 11]  #ges
+        ges_dur_notes = [1, 2, 4, 6, 8, 9, 11]  #ces
+
+        if self.tonality == 'C':
+            ar = c_dur_notes
+        elif self.tonality == 'G':
+            ar = g_dur_notes
+        elif self.tonality == 'D':
+            ar = d_dur_notes
+        elif self.tonality == 'A':
+            ar = a_dur_notes
+        elif self.tonality == 'E':
+            ar = e_dur_notes
+        elif self.tonality == 'B':
+            ar = b_dur_notes
+        elif self.tonality == 'F#':
+            ar = fis_dur_notes
+        elif self.tonality == 'F':
+            ar = f_dur_notes
+        elif self.tonality == 'Bb':
+            ar = bb_dur_notes
+        elif self.tonality == 'Eb':
+            ar = es_dur_notes
+        elif self.tonality == 'Ab':
+            ar = as_dur_notes
+        elif self.tonality == 'Db':
+            ar = des_dur_notes
+        elif self.tonality == 'Gb':
+            ar = ges_dur_notes
+
+        for key_number in range(88):
+            if key_number % 12 in ar: 
+                color_array.append(True)
+            else:
+                color_array.append(False)
+        return color_array
+
+
 midi_input = MidiInput()
 song_extracting = SongExtracting()
-#staf = Staff()

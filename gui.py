@@ -1,3 +1,4 @@
+# this is the MAIN file
 # https://codeloop.org/pyqt5-drawing-rectangle-with-qpainter-class/
 # this window class creates the gui with PyQt5
 # it gets the midiInput from the Thread in the midiInput module/ class
@@ -9,9 +10,6 @@ from PyQt5.QtGui import QPainter, QBrush, QPen, QIcon, QPixmap
 from PyQt5.QtCore import Qt, QTimer, pyqtSlot
 
 import sys
-import pygame
-import pygame.midi
-import time
 
 from constants import *
 from midiInput import MidiInput
@@ -22,23 +20,20 @@ from labeling import Labeling
 class Window(QMainWindow):
 
     def __init__(self):
-        print("in main Window ")
         super().__init__()      # exended from class QMainWindow
         self.title = "Improvisation App"
-        self.top = WINDOW_X
-        self.left = WINDOW_Y
+        self.top = WINDOW_UPPER_LEFT_X
+        self.left = WINDOW_UPPER_LEFT_Y
         self.width = WINDOW_WIDTH
         self.height = WINDOW_HEIGHT
         # init buttons, keyboard and window
         self.staff = Staff()
-        self.InitButtons()
-        self.InitKeyboard(88)
-        self.InitWindow()
+        self.init_buttons()
+        self.init_keyboard(88)
+        self.init_window()
         # instance of staff
         self.labeling = Labeling()
-        self.labeling.InitLabel(self)
-
-        #self.staff.InitLabel(self)
+        self.labeling.init_label(self)
         # timer to update the application
         self.update_timer = QTimer(self)
         self.update_timer.setInterval(10)
@@ -47,17 +42,17 @@ class Window(QMainWindow):
         self.update_timer.start()
 
 
-    def InitWindow(self):
+    def init_window(self):
         self.setWindowTitle(self.title)
         self.setGeometry(self.top, self.left, self.width, self.height)
         self.show()
 
-    def InitKeyboard(self, num_keys):
+    def init_keyboard(self, num_keys):
         self.keys = []
         for i in range(num_keys):
             self.keys.append(Key(i, self.staff))
 
-    def InitButtons(self):
+    def init_buttons(self):
         # play
         play_button = QPushButton('Play', self)
         play_button.setToolTip('to start playing the Backing Track')
@@ -76,17 +71,14 @@ class Window(QMainWindow):
 
     @pyqtSlot()
     def on_click_play(self):
-        print('Play button click')
         self.staff.play_bt()
 
     @pyqtSlot()
     def on_click_pause(self):
-        print('Pause button click')
         self.staff.pause_bt()
 
     @pyqtSlot()
     def on_click_stop(self):
-        print('Stop button click')
         self.staff.stop_bt()
        
 

@@ -1,86 +1,59 @@
-# Akkord-Klasse, die mehrere Noten enthält und auf Basis des "Akkord-Arrays" (staff.py) erstellt wird
-# die Notenzeile/ Staff weiß, wo der Akkord sein soll und sagt es ihm
-# und der Akkord weiß dann, wo die Note hin muss
+# chord class is containing several notes (one chord) which is created by staff.py
+# staff tells chord the x_position, chord tells singleNote the x_position
 
-from PyQt5 import QtGui
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QPushButton
 from PyQt5.QtGui import QPainter, QBrush, QPen
-from PyQt5.QtCore import Qt, QTimer, pyqtSlot
 from constants import *
 from singleNote import SingleNote
 
 class Chord():
 
-    def __init__(self, chordArray, notelength, tonality, xPosition):
-        self.chordArray = chordArray
-        self.notelength = notelength
+    def __init__(self, chord_array, note_length, tonality, x_position):
+        self.chord_array = chord_array
+        self.note_length = note_length
         self.tonality = tonality
-        self.xPosition = xPosition
-        #print(self.chordArray, self.notelength, self.tonality, self.xPosition)
-        self.shifts = {}
-        #print('chordarray in init chord', self.chordArray)
-        self.Notes = self.chord_to_SingleNotes()
-        #print('Notes array in init chord', self.Notes)
-       
-    def chord_to_SingleNotes(self):
-        #print('in chords_to_SingleNotes')
-        thisYPos = 0 
-        firstYPos = 0
-        chordAr = []
-        for note in self.chordArray:
-            #print(note, self.notelength, self.tonality, self.xPosition)
-            singlNote = SingleNote(note, self.notelength, self.tonality, self.xPosition)
-            yPos = singlNote.getYPos()
-            #print('yPos in chord:', yPos)
-            if note == self.chordArray[0]:
-                firstYPos = abs(yPos)
-            #print('FYP', firstYPos)
-            if thisYPos - yPos == Y_NOTE_DISTANCE or abs(yPos - firstYPos) == Y_NOTE_DISTANCE:
-                #print('its ydist',thisYPos - yPos)
+        self.x_position = x_position
+        self.shifts = {}    # if notes are only one halftone apart, one has to be moved one notelength on the x-axis
+        self.notes = self.chord_to_single_notes()   # array of singleNote instances
+        
+
+    # creating an array out of singleNote instances
+    # comparing the y_positions of all the notes in the chord array to figure out, if shifitng is necessary   
+    def chord_to_single_notes(self):
+        last_y_pos = 0  # y_pos of note before the current 'y_pos'
+        first_y_pos = 0 # y_pos of first note in array
+        this_chord_array = []
+        for note in self.chord_array:
+            single_note = SingleNote(note, self.note_length, self.tonality, self.x_position)
+            current_y_pos = single_note.get_y_pos() # y_pos of current note
+            if note == self.chord_array[0]:
+                first_y_pos = abs(current_y_pos)
+            if last_y_pos - current_y_pos == Y_NOTE_DISTANCE or abs(current_y_pos - first_y_pos) == Y_NOTE_DISTANCE:
                 shift = True
-                #print(shift)
             else:
-                #print('its no ydist', thisYPos - yPos)
                 shift = False
-                #print(shift)
-            thisYPos = yPos
-            chordAr.append(singlNote)
-            self.shifts[singlNote] = shift
-        return chordAr
+            last_y_pos = current_y_pos
+            this_chord_array.append(single_note)
+            self.shifts[single_note] = shift
+        return this_chord_array
+
 
     def draw(self, painter):
-       
-        for singlNote in self.Notes:
-            #print(singlNote.noteNumber)
-            singlNote.draw(painter, self.shifts[singlNote])
-            #print(self.shifts[singlNote])
+        for single_note in self.notes:
+            single_note.draw(painter, self.shifts[single_note])
     
-        #if self.noteLength = 'EIGHTH'
-        #    for singleNot
-
-        ###get highest note of Notes
-        ###and the y position of it
-        ###draw fähnchen this many pixel above it --> siehe singleNote eightLenght 
-        #print('drawing the fähnchen')
-        #print(self.Notes[(len(self.Notes)-1)].xPosition)
-        #y_pos = self.Notes[(len(self.Notes)-1)].calculate_note_position()
-        #print(y_pos)
-
+    
     def get_x_position(self):
-        for sg in self.Notes:
-            sg.get_x_position()
-            return sg.get_x_position()
+        for single_note in self.notes:
+            return single_note.get_x_position()
 
     def set_x_position(self, x_pos):
-        for sg in self.Notes:
-            sg.set_x_position(x_pos)
-        #self.xPosition = x_pos
+        for single_note in self.notes:
+            single_note.set_x_position(x_pos)
 
     def update_x_position(self):
-        for singleNoti in self.Notes:
-            singleNoti.update_x_position()
+        for single_note in self.notes:
+            single_note.update_x_position()
 
     def reset_x_position(self, basic_x_pos):
-        print('in chord class', basic_x_pos)
-        for sg in self.Notes:
-            sg.reset_x_position(basic_x_pos)
+        for single_note in self.notes:
+            single_note.reset_x_position(basic_x_pos)

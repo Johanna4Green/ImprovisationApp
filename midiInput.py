@@ -1,10 +1,14 @@
-import mido
-import threading
-from constants import *
+# this class containing the input thread processes the midi-keyboard input. 
+# it plays the sound with fluidsynth and
+# saves the pressed note in an array to be get by the key class and drawn accordingly
 
-import time
 import fluidsynth
+import mido
 from mido import MidiFile
+import threading
+import time
+
+from constants import *
 
 class MidiInput():
 
@@ -20,7 +24,8 @@ class MidiInput():
         self.sfid = self.fs.sfload("sound_midis/default-GM.sf2") 
         self.fs.program_select(0, self.sfid, 0, 0)
 
-        self.keys = [False] * 88 # Key Array kommt hier rein, um Model und View zu trennen = Globale Variable
+        self.keys = [False] * 88 # keys array to be gotten from key class and marker drawn accordingly
+
         input_thread = threading.Thread(target=self.getInput)
         input_thread.start()
 
@@ -43,10 +48,10 @@ class MidiInput():
                     self.note = msg.note
                     self.velocity = msg.velocity
                     self.channel = msg.channel
-                    self.playSound()
+                    self.play_sound()
 
 
-    def playSound(self):
+    def play_sound(self):
 
         if self.type == "note_on":
             self.fs.noteon(self.channel, self.note, self.velocity)
