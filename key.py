@@ -59,7 +59,7 @@ class Key():
     def draw(self, painter):
 
         is_pressed = midi_input.getKeyArray()[self.key_number]
-        is_played_by_bt = self.staff.get_bt_keyArray()[self.key_number]
+        is_played_by_bt = self.staff.get_bt_key_array()[self.key_number]
         is_colored = self.getColorArray()[self.key_number]
 
         # zeiche Taste
@@ -72,13 +72,13 @@ class Key():
                 painter.setBrush(QBrush(Qt.black, Qt.SolidPattern)) # set brush to fill the key with color
             painter.drawRect(self.x, self.y, self.w_black, self.h_black)
             # zeichne die Markierung
-            if is_pressed:  # or is_played_by_bt:
-                painter.setBrush(QBrush(Qt.red, Qt.SolidPattern)) # set brush to fill the key with color
-                painter.drawEllipse(self.x + 2, self.y + 100, self.black_circle_w, self.black_circle_h)
             if is_played_by_bt:  # or is_played_by_bt:
                 painter.setBrush(QBrush(Qt.blue, Qt.SolidPattern)) # set brush to fill the key with color
                 painter.drawEllipse(self.x + 2, self.y + 100, self.black_circle_w, self.black_circle_h)
-            
+            if is_pressed:  # or is_played_by_bt:
+                painter.setBrush(QBrush(Qt.red, Qt.SolidPattern)) # set brush to fill the key with color
+                painter.drawEllipse(self.x + 2, self.y + 100, self.black_circle_w, self.black_circle_h)
+           
         else:
             # zeichne ein weißes Viereck
             painter.setPen(QPen(Qt.black, 1, Qt.SolidLine))  # set pen to draw the outline of the key
@@ -88,14 +88,13 @@ class Key():
                 painter.setBrush(QBrush(Qt.white, Qt.SolidPattern)) # set brush to fill the key with color
             painter.drawRect(self.x, self.y, self.w, self.h)
             # zeichne die Markierung
-            if is_pressed:  # or is_played_by_bt:
-                painter.setBrush(QBrush(Qt.red, Qt.SolidPattern)) # set brush to fill the key with color
-                painter.drawEllipse(self.x + 5, self.y + 155, self.white_circle_w, self.white_circle_h)
             if is_played_by_bt:  # or is_played_by_bt:
                 painter.setBrush(QBrush(Qt.blue, Qt.SolidPattern)) # set brush to fill the key with color
                 painter.drawEllipse(self.x + 5, self.y + 155, self.white_circle_w, self.white_circle_h)
-
-
+            if is_pressed:  # or is_played_by_bt:
+                painter.setBrush(QBrush(Qt.red, Qt.SolidPattern)) # set brush to fill the key with color
+                painter.drawEllipse(self.x + 5, self.y + 155, self.white_circle_w, self.white_circle_h)
+          
      # depending on the tonality the notes to be colored are chosen 
     def getColorArray(self):
         #[ 'A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#']

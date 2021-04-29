@@ -38,33 +38,34 @@ class Staff():
         self.sfid = self.fs.sfload("sound_midis/default-GM.sf2") 
         self.fs.program_select(0, self.sfid, 0, 0)
 
-        self.midFILE = MIDIFILE
-        self.songChords = self.song_extracting.getNotesOfSong(self.midFILE)
-        self.tonality = self.song_extracting.getTonality(self.midFILE)
-        self.lengthOfArray = len(self.songChords)
-    
+        self.midifile = MIDIFILE
+        self.song_chords = self.song_extracting.getNotesOfSong(self.midifile)
+        self.tonality = self.song_extracting.getTonality(self.midifile)
+        self.length_of_array = len(self.song_chords)
+        
         self.x1_hor = NOTELINE_HOR_X1
         self.x2_hor = NOTELINE_HOR_X2
         self.y1_ver = NOTELINE_VER_Y1
         self.y2_ver = NOTELINE_VER_Y2
-        self.xPosition = self.setXPosition()#NOTELINE_VER_X
-        self.basicXPosList = []
-        self.chordList = self.getChords(self.songChords)
+        self.x_position = self.set_x_position()#NOTELINE_VER_X
+        self.basic_x_pos_list = []
+        self.chord_list = self.get_chords(self.song_chords)
+        #self.chordListOfBeginning = self.get_chords(self.song_chords)
         self.bt_keys = [False] * 88 # Key Array kommt hier rein, um Model und View zu trennen = Globale Variable
-        fileInput_thread = threading.Thread(target=self.playTrack)
+        fileInput_thread = threading.Thread(target=self.play_track)
         fileInput_thread.start()
 
-    def get_bt_keyArray(self):
+    def get_bt_key_array(self):
         return self.bt_keys
 
 
-    def playTrack(self):
-        listOfChords = []
+    def play_track(self):
+        list_of_chords = []
         len = 0
         counter = 0
         while True:
-            for entry in self.songChords:
-                counter = counter % self.lengthOfArray
+            for entry in self.song_chords:  # entry[0] = note_array / entry[1] = note_length
+                counter = counter % self.length_of_array
                 if self.state =="playing":
                     pass
                 elif self.state == "paused":
@@ -73,8 +74,8 @@ class Staff():
                         pass
                 elif self.state == "stopped":
                     i = 0
-                    for chord in self.chordList: 
-                        chord.reset_x_position(self.basicXPosList[i])
+                    for chord in self.chord_list: 
+                        chord.reset_x_position(self.basic_x_pos_list[i])
                         i = i + 1
                     while self.state == "stopped":
                         time.sleep(0.1)
@@ -82,21 +83,21 @@ class Staff():
                 else:
                     print("Bt failed")
                     break
-                length = self.getTimeOfLength(entry[1])
+                length = self.get_time_of_length(entry[1])
                 len = len + length 
-                for entrada in entry[0]:
-                    self.bt_keys[entrada + 3] = True
-                    self.fs.noteon(0, entrada, 60)
+                for note in entry[0]:
+                    self.bt_keys[note + 3] = True
+                    self.fs.noteon(0, note, 60)
                 time.sleep(length-0.1)
-                for entrada in entry[0]:
-                    self.bt_keys[entrada + 3] = False
-                    self.fs.noteoff(0, entrada)
+                for note in entry[0]:
+                    self.bt_keys[note + 3] = False
+                    self.fs.noteoff(0, note)
                 time.sleep(0.1)
                 if len % 2 == 0:    # >= 2
-                    last_chord_pos = self.chordList[counter - 1].get_x_position() # hol die x-Position vom letzten Akkord
-                    for chord in self.chordList:
+                    last_chord_pos = self.chord_list[counter - 1].get_x_position() # hol die x-Position vom letzten Akkord
+                    for chord in self.chord_list:
                         chord.update_x_position()
-                        self.chordList[counter].set_x_position(last_chord_pos)         #.xPosition = last_chord_pos # setz den gerade "rausgeschobenen nach ganz hinten  
+                        self.chord_list[counter].set_x_position(last_chord_pos)         #.x_position = last_chord_pos # setz den gerade "rausgeschobenen nach ganz hinten  
                 counter = counter + 1 
         self.fs.delete()
     
@@ -114,7 +115,7 @@ class Staff():
             painter.drawLine(x, self.y1_ver, x, self.y2_ver)
             x = x + X_DISTANCE
         # draw chords 
-        for chord in self.chordList:
+        for chord in self.chord_list:
             x = chord.get_x_position()
             if x < 210 or x > (1120 - NOTEWIDTH):
                 pass
@@ -123,31 +124,31 @@ class Staff():
 
 
 
-    def getChords(self, songchords):
-        listOfChords = []
-        self.basicXPosList.append(210)
-        for entry in songchords:
-            listOfChords.append(Chord(entry[0], entry[1], self.tonality, self.xPosition))
-            self.xPosition = self.xPosition + self.getXDistanceOfLength(entry[1])       #X_DISTANCE/2  #224  X_DISTANCE/4 für viertel 
-            self.basicXPosList.append(self.xPosition)       # to save first/ reset position 
-        return listOfChords
+    def get_chords(self, song_chords):
+        list_of_chords = []
+        self.basic_x_pos_list.append(210)
+        for entry in song_chords:
+            list_of_chords.append(Chord(entry[0], entry[1], self.tonality, self.x_position))
+            self.x_position = self.x_position + self.get_x_distance_of_length(entry[1])       #X_DISTANCE/2  #224  X_DISTANCE/4 für viertel 
+            self.basic_x_pos_list.append(self.x_position)       # to save first/ reset position 
+        return list_of_chords
 
 
 
-    def getXDistanceOfLength(self,length):
-        xDistance = 0
+    def get_x_distance_of_length(self,length):
+        x_distance = 0
         if length == 'WHOLE':
-            xDistance = X_DISTANCE
+            x_distance = X_DISTANCE
         elif length == 'HALF':
-            xDistance = X_DISTANCE/2
+            x_distance = X_DISTANCE/2
         elif length == 'QUARTER':
-            xDistance = X_DISTANCE/4
+            x_distance = X_DISTANCE/4
         else:
-            xDistance = X_DISTANCE/8
-        return xDistance
+            x_distance = X_DISTANCE/8
+        return x_distance
 
     
-    def getTimeOfLength(self, length):
+    def get_time_of_length(self, length):
         time = 0
         if length == 'WHOLE':
             time = 2.0
@@ -160,7 +161,7 @@ class Staff():
         return time
 
 
-    def setXPosition(self):
+    def set_x_position(self):
         xPos = 210 #NOTELINE_VER_X
         return xPos
         
