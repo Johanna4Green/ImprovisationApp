@@ -2,9 +2,6 @@
 # it plays the sound with fluidsynth and
 # saves the pressed note in an array to be get by the key class and drawn accordingly
 
-from PyQt5.QtGui import QPainter, QBrush, QPen, QIcon, QPixmap, QColor, QFont
-from PyQt5.QtCore import Qt, QTimer, pyqtSlot
-
 import fluidsynth
 import mido
 from mido import MidiFile
@@ -16,25 +13,20 @@ from constants import *
 class MidiInput():
 
     def __init__(self):
-        #print("in Midi Input thread")
-        self.type = 'note_off'
-        self.note = 0
-        self.velocity = 0
-        self.channel = 0 
-        # initializing fluidsynther
-        self.fs = fluidsynth.Synth(1)
-        self.fs.start(driver = 'portaudio')
-        self.sfid = self.fs.sfload("sound_midis/default-GM.sf2") 
-        self.fs.program_select(0, self.sfid, 0, 0)
         
+        self.fs = self.initFluidSynth()
         self.keys = [False] * 88 # keys array to be gotten from key class and marker drawn accordingly
-
-        self.record_array = []
-        self.is_recording = False
-        print(self.is_recording)
 
         input_thread = threading.Thread(target=self.getInput)
         input_thread.start()
+
+    # initializing fluidsynther
+    def initFluidSynth(self):
+        fs = fluidsynth.Synth(1)
+        fs.start(driver = 'portaudio')
+        sfid = fs.sfload("sound_midis/default-GM.sf2") 
+        fs.program_select(0, sfid, 0, 0)
+        return fs
 
     def getKeyArray(self):
         return self.keys
@@ -46,82 +38,24 @@ class MidiInput():
             for msg in p:
                 #print(msg) # gibt alle Midi-Events aus
                 if not msg.is_meta:
-                    if self.is_recording:
-                        self.record_array.append(msg)
-                    else:
-                        pass
-                    #print(msg)
                     if msg.type =='note_on':
                         self.keys[msg.note + 3] = True  # -36
                     if msg.type == 'note_off':
                         self.keys[msg.note + 3] = False # -36
-                    self.type = msg.type
-                    self.note = msg.note
-                    self.velocity = msg.velocity
-                    self.channel = msg.channel
-                    self.play_sound()
+                    self.play_sound(msg.type, msg.note, msg.velocity, msg.channel)
 
 
-    def record_input(self):
-        if self.is_recording == False:
-            self.is_recording = True
-        else:
-            self.is_recording = False
-        print(self.is_recording)
-        return self.is_recording
+    def play_sound(self, note_type, note, velocity, channel):
 
-    def listen_to_recording(self):
-        print('listen to recording')
-        print(self.record_array)
-        for msg in self.record_array:
-            print(msg)
-            if msg.type == "note_on":
-                self.fs.noteon(msg.channel, msg.note, msg.velocity)
-            #fs.noteon(0, 67, 30)
-            #fs.noteon(0, 76, 30)
-               
-            #time.sleep(1.0)
-            elif msg.type == "note_off":
-                self.fs.noteoff(msg.channel, msg.note)
-            time.sleep(msg.velocity/240)
-        #self.fs.delete()
-            
-            #if msg.type =='note_on':
-            #    self.keys[msg.note + 3] = True  # -36
-            #if msg.type == 'note_off':
-            #    self.keys[msg.note + 3] = False # -36
-            #self.type = msg.type
-            #self.note = msg.note
-            #self.velocity = msg.velocity
-            #self.channel = msg.channel
-            #self.play_sound()
+        if note_type == "note_on":
+            self.fs.noteon(channel, note, velocity)
 
-
-
-
-
-
-    def draw(self, painter):
-        #painter.setPen(QPen(Qt.black, 1, Qt.SolidLine)) 
-        if self.is_recording:
-            painter.setBrush(QBrush(Qt.red, Qt.SolidPattern)) # set brush to fill the key with color
-        painter.drawEllipse(895, 290, 10, 10)
-        return
-
-
-    def get_record_state(self):
-        return self.is_recording
-
-    def play_sound(self):
-
-        if self.type == "note_on":
-            self.fs.noteon(self.channel, self.note, self.velocity)
-
-        elif self.type == "note_off":
-            self.fs.noteoff(self.channel, self.note)
+        elif note_type == "note_off":
+            self.fs.noteoff(channel, note)
 
         else:
             print("fail")
+
 
 # For driver = portaudio to work: brew install portaudio --HEAD 
 # https://github.com/gordonklaus/portaudio/issues/41

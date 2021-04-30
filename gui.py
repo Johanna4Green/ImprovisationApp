@@ -16,8 +16,11 @@ from midiInput import MidiInput
 from staff import Staff
 from key import Key
 from labeling import Labeling
+from recording import Recording
 
 class Window(QMainWindow):
+
+    
 
     def __init__(self):
         super().__init__()      # exended from class QMainWindow
@@ -32,6 +35,7 @@ class Window(QMainWindow):
         self.init_keyboard(88)
         self.init_window()
         # instance of staff
+        self.recording = Recording()
         self.labeling = Labeling()
         self.labeling.init_label(self)
         # timer to update the application
@@ -95,25 +99,25 @@ class Window(QMainWindow):
 
     @pyqtSlot()
     def on_click_record(self):
-        midi_input.record_input()
+        self.recording.set_record_state()
 
     @pyqtSlot()
     def on_click_listen(self):
-        print('on click listen')
-        midi_input.listen_to_recording()
-        #midi_input.record_input()
+        self.recording.listen_to_recording()
 
     # draw Piano keyboard with 88 keys
     def paintEvent(self, e):
         painter = QPainter(self)    # create the object of QPainter class
         # draw Notelines from staff.py
         self.staff.draw(painter)
+        # draw recording bobble
+        self.recording.draw(painter)
         # draw keyboard and marker from key.py
         for key in WHITE_KEYS:
             key.draw(painter)
         for key in BLACK_KEYS:
             key.draw(painter)
-        midi_input.draw(painter)
+        
         return
 
 # every PyQt5 application must create an application object
