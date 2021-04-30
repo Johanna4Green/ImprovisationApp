@@ -6,7 +6,7 @@
 
 from PyQt5 import QtGui, QtWidgets
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QPushButton, QLabel
-from PyQt5.QtGui import QPainter, QBrush, QPen, QIcon, QPixmap
+from PyQt5.QtGui import QPainter, QBrush, QPen, QIcon, QPixmap, QColor, QFont
 from PyQt5.QtCore import Qt, QTimer, pyqtSlot
 
 import sys
@@ -68,6 +68,18 @@ class Window(QMainWindow):
         stop_button.setToolTip('to stop the Backing Track')
         stop_button.move(300,70)
         stop_button.clicked.connect(self.on_click_stop)
+        # record
+        record_button = QPushButton('Record', self)
+        record_button.setToolTip('to record your playing')
+        record_button.move(907,280)
+        record_button.clicked.connect(self.on_click_record)
+        # listen
+        listen_button = QPushButton('Play recording', self)
+        listen_button.setToolTip('to listen to your recording')
+        listen_button.resize(120,26)
+        listen_button.move(1007,280)
+        listen_button.clicked.connect(self.on_click_listen)
+        #listen_button.setDisabled(True)
 
     @pyqtSlot()
     def on_click_play(self):
@@ -80,7 +92,16 @@ class Window(QMainWindow):
     @pyqtSlot()
     def on_click_stop(self):
         self.staff.stop_bt()
-       
+
+    @pyqtSlot()
+    def on_click_record(self):
+        midi_input.record_input()
+
+    @pyqtSlot()
+    def on_click_listen(self):
+        print('on click listen')
+        midi_input.listen_to_recording()
+        #midi_input.record_input()
 
     # draw Piano keyboard with 88 keys
     def paintEvent(self, e):
@@ -91,9 +112,9 @@ class Window(QMainWindow):
         for key in WHITE_KEYS:
             key.draw(painter)
         for key in BLACK_KEYS:
-            key.draw(painter)  
+            key.draw(painter)
+        midi_input.draw(painter)
         return
-    
 
 # every PyQt5 application must create an application object
 App = QApplication(sys.argv)
