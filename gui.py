@@ -38,6 +38,7 @@ class Window(QMainWindow):
         self.recording = Recording()
         self.labeling = Labeling()
         self.labeling.init_label(self)
+        self.recording_state = False
         # timer to update the application
         self.update_timer = QTimer(self)
         self.update_timer.setInterval(10)
@@ -75,14 +76,21 @@ class Window(QMainWindow):
         # record
         record_button = QPushButton('Record', self)
         record_button.setToolTip('to record your playing')
-        record_button.move(907,280)
+        record_button.move(787,280)
         record_button.clicked.connect(self.on_click_record)
-        # listen
+        # listen to recording
         listen_button = QPushButton('Play recording', self)
         listen_button.setToolTip('to listen to your recording')
         listen_button.resize(120,26)
-        listen_button.move(1007,280)
+        listen_button.move(887,280)
         listen_button.clicked.connect(self.on_click_listen)
+        # save recording
+        save_recording_button = QPushButton('Save recording', self)
+        save_recording_button.setToolTip('to save your recording')
+        save_recording_button.resize(120,26)
+        save_recording_button.move(1007,280)
+        save_recording_button.clicked.connect(self.on_click_save_recording)
+        #listen_button.setDisabled(True)
         #listen_button.setDisabled(True)
 
     @pyqtSlot()
@@ -99,11 +107,24 @@ class Window(QMainWindow):
 
     @pyqtSlot()
     def on_click_record(self):
+        if self.recording_state == False:
+            self.recording_state = True
+            self.staff.play_bt()
+        else: 
+            self.recording_state = False
+            self.staff.stop_bt()
         self.recording.set_record_state()
+       
+    @pyqtSlot()
+    def on_click_save_recording(self):
+        self.recording.create_midi_file_from_recording()
 
     @pyqtSlot()
     def on_click_listen(self):
-        self.recording.listen_to_recording()
+        self.staff.stop_bt()
+        #self.recording.listen_to_recording()
+        self.recording.start_listening_to_recording_thread()
+        self.staff.play_bt()
 
     # draw Piano keyboard with 88 keys
     def paintEvent(self, e):
