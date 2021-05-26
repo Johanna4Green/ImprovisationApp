@@ -133,8 +133,17 @@ class Window(QMainWindow):
         print(path)
         ######## RESET ############
         self.labeling.reset_labeling_class(path)
-        #self.staff.reset_staff_class(path)
-        self.reset_gui_class()
+        self.staff.reset_staff_class(path)
+        
+        #self.reset_gui_class()
+
+        # TODO hier Tonart übergeben
+        for key in WHITE_KEYS:
+            key.reset_key_class(path)
+        for key in BLACK_KEYS:
+            key.reset_key_class(path)
+
+
         #Key.reset_key_class(path)
         # call reset functions from key, labeling and staff to change the midifile and reload 
         #Key.midifile = path

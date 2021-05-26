@@ -24,6 +24,7 @@ class Labeling():
         print(self.midifile)
         self.tonality = self.song_extracting.getTonality(self.midifile)
         print(self.tonality)
+        self.update_labels()
     ###########################
 
     #called from gui inii
@@ -31,6 +32,31 @@ class Labeling():
         self.create_clef_label(window)
         self.create_tonality_text_label(window)
         self.create_signs_and_tact_label(window)
+
+    def update_labels(self):
+        self.tonalityLabel.setText(self.get_tonality_text(self.tonality))
+
+        """
+        # Konstanten
+        #number_of_sharps = {'C' : 0, 'G' : 1, ...}
+        #number_of_flats = {'A' : 0, '?' : 1, ...}
+        self.sharps = number_of_sharps[self.tonality] # int (Anzahl der Kreuze)
+        # Äquivalent auf für b?
+
+        # Setze Label Sichtbarkeit
+        i = 0
+        for label in sharp_labels:
+            if i < self.sharps:
+                self.sharp_labels[i].set_visible(True)
+            else:
+                self.sharp_labels[i].set_visible(False)
+            i += 1
+
+        # Berechne Einrückung der Taktart
+        time_signature_distance = self.sharps * SHARP_LABEL_WIDTH
+        time_signature_label.move(XX + time_signature_distance, YY)
+        """
+
 
 
     def create_clef_label(self,window):
@@ -49,6 +75,13 @@ class Labeling():
         time44Pixmap = QPixmap('images/timeSign44.webp')
         time44Label.setPixmap(time44Pixmap)
         time44Label.setScaledContents(True)
+
+        #sharp_labels = dict()
+        #sharp_labels['fis'] = self.create_sharp_label()
+
+        # fisLabel = self.create_sharp_label(100, 50)
+        # cisLabel = self.create_sharp_label(120, 60)
+        # ...
   
         # leading sign of tonality 
         if self.tonality == 'C':
@@ -240,12 +273,13 @@ class Labeling():
     
     def create_tonality_text_label(self,window):
         tonalityText = self.get_tonality_text(self.tonality)
-        tonalityLabel = QtWidgets.QLabel(window)
-        tonalityLabel.setText(tonalityText)
-        tonalityLabel.setFont(QFont('Arial', 30))
-        tonalityLabel.resize(210, 30)
-        tonalityLabel.move(510,280)
-        tonalityLabel.show()
+        self.tonalityLabel = QtWidgets.QLabel(window)
+        #self.tonalityLabel.setStyleSheet("background-color: lightgreen")
+        self.tonalityLabel.setText(tonalityText)
+        self.tonalityLabel.setFont(QFont('Arial', 30))
+        self.tonalityLabel.resize(210, 30)
+        self.tonalityLabel.move(510,280)
+        self.tonalityLabel.show()
 
     def get_tonality_text(self, ton):
         tonText = ''
