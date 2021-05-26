@@ -16,7 +16,7 @@ class SongExtracting():
         self.tuple = []
         self.file_content = []
 
-        
+    # creates array from midi-file with each [[notes of one_chord] length of one_chord]
     def getNotesOfSong(self, midifile):
         #self.overallTime = 0.10104166666666667  # WholeNote before
         #self.overallTime = 0.051041666666666666 # HalfNote before
@@ -26,15 +26,12 @@ class SongExtracting():
         for msg in MidiFile(midifile):
             if(msg.type != 'program_change' and msg.type != 'control_change') and not msg.is_meta:
                 #print(msg)
-                # calculate time since start
-                self.overall_time = self.overall_time + msg.time
-
+                self.overall_time = self.overall_time + msg.time  # calculate time since start
                 if(msg.velocity > 0): # noteon
                     self.note_array.append(msg.note - 12)   # -12 to get the sound one octave down
                 else:  # noteoff
                     if (msg.time != 0):
-                        # calculate length of this tone
-                        self.note_length = self.determine_length(msg.time)
+                        self.note_length = self.determine_length(msg.time) # calculate length of this tone
                         self.tuple.append(self.note_array)
                         self.tuple.append(self.note_length)
                         self.file_content.append(self.tuple)
@@ -42,7 +39,7 @@ class SongExtracting():
                         self.tuple = []
         return self.file_content   
 
-
+    # get the note length 
     def determine_length(self, number):
         div = 1000000   # 1 second has 1 million microseconds
         tempo = 500000  # 1 beat has 500 thousand microseconds

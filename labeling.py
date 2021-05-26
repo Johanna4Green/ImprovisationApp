@@ -17,6 +17,15 @@ class Labeling():
         self.midifile = MIDIFILE
         self.tonality = self.song_extracting.getTonality(self.midifile)
 
+    ######### RESET ###########
+    def reset_labeling_class(self, midifile):
+        self.midifile = midifile
+        print('in reset labeling')
+        print(self.midifile)
+        self.tonality = self.song_extracting.getTonality(self.midifile)
+        print(self.tonality)
+    ###########################
+
     #called from gui inii
     def init_label(self,window):
         self.create_clef_label(window)
@@ -32,6 +41,7 @@ class Labeling():
         clefLabel.setScaledContents(True)
         clefLabel.move(65, 132)
         clefLabel.show()
+    
     
     def create_signs_and_tact_label(self,window):
         time44Label = QtWidgets.QLabel(window)

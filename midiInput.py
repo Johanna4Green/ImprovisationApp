@@ -31,6 +31,7 @@ class MidiInput():
     def getKeyArray(self):
         return self.keys
 
+    # gets input from midi-keyboard and then plays it
     def getInput(self):
         inputs = mido.get_input_names() # holt Liste mit allen angeschlossenen Midi-Geräten
         #print(inputs)
@@ -45,6 +46,7 @@ class MidiInput():
                     self.play_sound(msg.type, msg.note, msg.velocity, msg.channel)
 
 
+    # called from getInput: plays midi-keyboard Input live 
     def play_sound(self, note_type, note, velocity, channel):
 
         if note_type == "note_on":

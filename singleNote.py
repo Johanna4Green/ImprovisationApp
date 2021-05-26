@@ -18,6 +18,7 @@ class SingleNote():
         self.y_position = self.calculate_note_position()
        
 
+    # draw note according to notelength 
     def draw(self, painter, shift):
         painter.setPen(QPen(Qt.black, 2, Qt.SolidLine))  # set pen to draw the outline of the key
         if self.note_length == 'WHOLE':  # empty circle
@@ -60,7 +61,6 @@ class SingleNote():
                 bar_y_pos = self.y_position + NOTEHEIGHT/2
                 painter.drawLine(bar_x_pos, bar_y_pos - NOTEBARLENGTH, bar_x_pos, bar_y_pos)       
                 pass
-
 
         elif self.note_length == 'EIGHTH':   # filled circle with bar and tick
             painter.setBrush(QBrush(Qt.black, Qt.SolidPattern))
@@ -131,12 +131,12 @@ class SingleNote():
     def get_x_position(self):
         return self.x_position
 
+    def set_x_position(self, x):
+        self.x_position = x 
+
     # moving whole staff one tact to the left
     def update_x_position(self):
         self.x_position = self.x_position - X_DISTANCE      
-
-    def set_x_position(self, x):
-        self.x_position = x  
 
     def get_y_pos(self): 
         return self.y_position

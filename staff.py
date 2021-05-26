@@ -47,25 +47,48 @@ class Staff():
         self.x2_hor = NOTELINE_HOR_X2
         self.y1_ver = NOTELINE_VER_Y1
         self.y2_ver = NOTELINE_VER_Y2
-        self.x_position = self.set_x_position()#NOTELINE_VER_X
-        self.basic_x_pos_list = []
+        self.x_position = self.set_x_position() # NOTELINE_VER_X
+        self.basic_x_pos_list = []  # list of all x_positions to return to start position, when e.g. stop is pressed
         self.chord_list = self.get_chords(self.song_chords)
         #self.chordListOfBeginning = self.get_chords(self.song_chords)
-        self.bt_keys = [False] * 88 # Key Array kommt hier rein, um Model und View zu trennen = Globale Variable
+        self.bt_keys = [False] * 88 # Key Array in init, um Model und View zu trennen = Globale Variable
         fileInput_thread = threading.Thread(target=self.play_track)
         fileInput_thread.start()
+
+    ################# RESET ######################
+    # 
+    def reset_staff_class(self, midifile):
+        self.midifile = ''
+        self.song_chords = []
+        self.tonality = ''
+        self.length_of_array = 0
+        self.x_position = 0
+        print(self.song_chords)
+        print(self.length_of_array)
+        self.chord_list = []
+
+        self.midifile = midifile
+        self.song_chords = self.song_extracting.getNotesOfSong(self.midifile)
+        self.tonality = self.song_extracting.getTonality(self.midifile)
+        self.length_of_array = len(self.song_chords)
+        self.x_position = self.set_x_position() # NOTELINE_VER_X
+        print(self.song_chords)
+        print(self.length_of_array)
+        self.chord_list = self.get_chords(self.song_chords)
+    ############################################
 
     def get_bt_key_array(self):
         return self.bt_keys
 
 
+    # method to play the backing track, in init as thread to be played simultaneously to input, recording, etc.
     def play_track(self):
         list_of_chords = []
-        len = 0
+        sum_up_len = 0 # to calculate overall_length (sum of all notelength added note by note)
         counter = 0
         while True:
             for entry in self.song_chords:  # entry[0] = note_array / entry[1] = note_length
-                counter = counter % self.length_of_array
+                counter = counter % self.length_of_array 
                 if self.state =="playing":
                     pass
                 elif self.state == "paused":
@@ -75,7 +98,7 @@ class Staff():
                 elif self.state == "stopped":
                     i = 0
                     for chord in self.chord_list: 
-                        chord.reset_x_position(self.basic_x_pos_list[i])
+                        chord.reset_x_position(self.basic_x_pos_list[i]) # when stop is clicked: reset x-position
                         i = i + 1
                     while self.state == "stopped":
                         time.sleep(0.1)
@@ -83,17 +106,20 @@ class Staff():
                 else:
                     print("Bt failed")
                     break
-                length = self.get_time_of_length(entry[1])
-                len = len + length 
+                length = self.get_time_of_length(entry[1]) # notelength of current chord
+                sum_up_len = sum_up_len + length # adding latest notelength to sum_up_length
                 for note in entry[0]:
-                    self.bt_keys[note + 3] = True
-                    self.fs.noteon(0, note, 60)
-                time.sleep(length-0.1)
+                    self.bt_keys[note + 3] = True   # draw dot on key
+                    self.fs.noteon(0, note, 60)     # play note
+                time.sleep(length-0.1)              # sleep the notelength to hold it the notlength (-0.1 to use the 0.1 for the noteoff event in order to hear a short break between notes)
                 for note in entry[0]:
-                    self.bt_keys[note + 3] = False
+                    self.bt_keys[note + 3] = False  
                     self.fs.noteoff(0, note)
                 time.sleep(0.1)
-                if len % 2 == 0:    # >= 2
+                # to move when tact is over: 
+                # cannot work because the chord is moved to the pos of the last chord, but this can only work if all chords have equal length! 
+                # FIX NEEDED
+                if sum_up_len % 2 == 0:    # >= 2
                     last_chord_pos = self.chord_list[counter - 1].get_x_position() # hol die x-Position vom letzten Akkord
                     for chord in self.chord_list:
                         chord.update_x_position()
@@ -102,6 +128,7 @@ class Staff():
         self.fs.delete()
     
 
+    # draws the noteline AND calls the chord.draw function to draw the notes onto the noteline
     def draw(self, painter):
         painter.setPen(QPen(Qt.black, 2, Qt.SolidLine))  # set pen to draw the outline of the key
         # horizontal lines / staves
@@ -120,21 +147,21 @@ class Staff():
             if x < 210 or x > (1120 - NOTEWIDTH):
                 pass
             else:
-                chord.draw(painter)
+                chord.draw(painter)     # draws notes through draw of chord and singlenote!
 
 
-
+    # to handle the x-positioning of the chords: get x_pos according to notelength and 
     def get_chords(self, song_chords):
         list_of_chords = []
         self.basic_x_pos_list.append(210)
         for entry in song_chords:
             list_of_chords.append(Chord(entry[0], entry[1], self.tonality, self.x_position))
-            self.x_position = self.x_position + self.get_x_distance_of_length(entry[1])       #X_DISTANCE/2  #224  X_DISTANCE/4 für viertel 
-            self.basic_x_pos_list.append(self.x_position)       # to save first/ reset position 
+            self.x_position = self.x_position + self.get_x_distance_of_length(entry[1]) # get x distance to prior chord by notelength       # X_DISTANCE/2  #224  X_DISTANCE/4 für viertel 
+            self.basic_x_pos_list.append(self.x_position)  # to save first/ reset position 
         return list_of_chords
 
 
-
+    # get x-distance to prior chord by notelength
     def get_x_distance_of_length(self,length):
         x_distance = 0
         if length == 'WHOLE':
@@ -147,7 +174,7 @@ class Staff():
             x_distance = X_DISTANCE/8
         return x_distance
 
-    
+    # get playtime/ length of note to play by notelength
     def get_time_of_length(self, length):
         time = 0
         if length == 'WHOLE':
@@ -164,15 +191,20 @@ class Staff():
     def set_x_position(self):
         xPos = 210 #NOTELINE_VER_X
         return xPos
-        
+
+
+
+    # change state when button pressed  
     def play_bt(self):
         self.state = "playing"
         return self.state
 
+    # change state when button pressed
     def pause_bt(self):
         self.state = "paused"
         return self.state
 
+    # change state when button pressed
     def stop_bt(self):
         self.state = "stopped"
         return self.state

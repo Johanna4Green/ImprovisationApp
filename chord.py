@@ -49,7 +49,7 @@ class Chord():
         return this_chord_array
 
 
-
+    # creating the chord symbol text with 'Krumhansl' from music21 
     def create_chord_symbol(self):
         chord_stream = stream.Stream()
         for note_number in self.chord_array:
@@ -70,7 +70,7 @@ class Chord():
 
 
 
-
+    # write the created chord symbol above the chord
     def drawText(self, painter):
         text = self.chord_symbol
         painter.setPen(QPen(Qt.black, 2, Qt.SolidLine))
@@ -82,7 +82,7 @@ class Chord():
         text_align = Qt.AlignLeft
         painter.drawText(x_pos, y_pos, w, h, text_align, text)
 
-
+    # draw each note of the chord by calling the drawing function from singleNote
     def draw(self, painter):
         self.drawText(painter)
         for single_note in self.notes:

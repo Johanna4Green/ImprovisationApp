@@ -5,7 +5,7 @@
 # it calls the draw method of the Key module/ class and draws the piano
 
 from PyQt5 import QtGui, QtWidgets
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QPushButton, QLabel
+from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QPushButton, QLabel, QInputDialog, QFileDialog
 from PyQt5.QtGui import QPainter, QBrush, QPen, QIcon, QPixmap, QColor, QFont
 from PyQt5.QtCore import Qt, QTimer, pyqtSlot
 
@@ -46,17 +46,27 @@ class Window(QMainWindow):
         self.update_timer.timeout.connect(self.update)
         self.update_timer.start()
 
+    ####### RESET #######
+    def reset_gui_class(self):
+        self.staff = Staff()
+        self.init_keyboard(88)
+        #self.labeling.reset_labeling_class()
+        self.labeling.init_label(self)
+    ######################
 
+    # initalizing the gui window itself
     def init_window(self):
         self.setWindowTitle(self.title)
         self.setGeometry(self.top, self.left, self.width, self.height)
         self.show()
 
+    # creating the keyboard with colors and dots 
     def init_keyboard(self, num_keys):
         self.keys = []
         for i in range(num_keys):
-            self.keys.append(Key(i, self.staff))
+            self.keys.append(Key(i, self.staff)) # self.staff as a parameter to draw dots on the keys live played by backing track 
 
+    # creating all buttons needed for the UI
     def init_buttons(self):
         # play
         play_button = QPushButton('Play', self)
@@ -90,8 +100,51 @@ class Window(QMainWindow):
         save_recording_button.resize(120,26)
         save_recording_button.move(1007,280)
         save_recording_button.clicked.connect(self.on_click_save_recording)
-        #listen_button.setDisabled(True)
-        #listen_button.setDisabled(True)
+        # upload button
+        upload_button = QPushButton('Upload track', self)
+        upload_button.setToolTip('to upload a backing track from your computer')
+        upload_button.resize(120,26)
+        upload_button.move(1007,70)
+        upload_button.clicked.connect(self.on_click_upload_file)
+
+    # create the export button: extra function, because it only appears, when save_recording button was clicked
+    def create_export_button(self):
+        self.export_button = QPushButton('Export recording', self)
+        self.export_button.setToolTip('to export your recording as midi-file')
+        self.export_button.resize(130,26)
+        self.export_button.move(997,580)
+        self.export_button.show()
+        self.export_button.clicked.connect(self.on_click_export)
+
+    @pyqtSlot()
+    def on_click_export(self):
+        self.recording.export_mid_file()
+        self.export_button.hide()
+
+    @pyqtSlot()
+    def on_click_upload_file(self):
+        print('upolad file')
+        self.open_dialog_box()
+
+    # opens dialog box to choose the midi-file to upload as backing track
+    def open_dialog_box(self):
+        filename = QFileDialog.getOpenFileName()
+        path = filename[0]
+        print(path)
+        ######## RESET ############
+        self.labeling.reset_labeling_class(path)
+        #self.staff.reset_staff_class(path)
+        self.reset_gui_class()
+        #Key.reset_key_class(path)
+        # call reset functions from key, labeling and staff to change the midifile and reload 
+        #Key.midifile = path
+        #Labeling.midifile = path
+        #self.staff.midifile = path
+        #print(filename)
+
+        #with open(path, "r") as f:
+        #    print(f.readline())
+        #########################
 
     @pyqtSlot()
     def on_click_play(self):
@@ -105,26 +158,37 @@ class Window(QMainWindow):
     def on_click_stop(self):
         self.staff.stop_bt()
 
+
+    # when record is clicked: 
     @pyqtSlot()
     def on_click_record(self):
-        if self.recording_state == False:
+        #if self.export_button == disabled:
+        #    self.export_button.hide()
+        if self.recording_state == False: # if not recording yet -> start recording + playing backing track
             self.recording_state = True
-            self.staff.play_bt()
+            self.staff.play_bt()    
         else: 
-            self.recording_state = False
+            self.recording_state = False # if already recording -> stop recording + backing track
             self.staff.stop_bt()
         self.recording.set_record_state()
-       
+
+    # save recording WITHOUT backing track, only midi input   
     @pyqtSlot()
     def on_click_save_recording(self):
         self.recording.create_midi_file_from_recording()
+        self.create_export_button() # show export button  -> MUST BE REMOVED LATER
 
+    # play latest recording 
     @pyqtSlot()
     def on_click_listen(self):
+
         self.staff.stop_bt()
-        #self.recording.listen_to_recording()
         self.recording.start_listening_to_recording_thread()
         self.staff.play_bt()
+        while self.recording.get_playing_recording_state() == True:
+            continue
+        self.staff.stop_bt()
+
 
     # draw Piano keyboard with 88 keys
     def paintEvent(self, e):

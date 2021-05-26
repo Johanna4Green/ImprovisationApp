@@ -31,6 +31,7 @@ class Key():
 
     def __init__(self, key_number, staff):
         super().__init__()
+        self.midifile = MIDIFILE
         self.staff = staff
         self.key_number = key_number
         self.is_pressed = False
@@ -45,7 +46,8 @@ class Key():
         self.black_circle_w = 8
         self.white_circle_h = 10
         self.black_circle_h = 8
-        self.tonality = song_extracting.getTonality(MIDIFILE)
+        self.tonality = song_extracting.getTonality(self.midifile)
+        print(self.midifile)
 
         if key_number in self.BLACK_KEYS:
             self.key_type = KEY_TYPE_BLACK
@@ -53,9 +55,16 @@ class Key():
         else:
             self.key_type = KEY_TYPE_WHITE
             WHITE_KEYS.append(self)
-        
+
+    ################## RESET ################
+    def reset_key_class(self, midifile):
+        self.midifile = midifile
+        self.tonality = song_extracting.getTonality(self.midifile)
+    ##########################################
 
    
+    # draws the keys (the whole keyboard) and also 
+    # draws the dots for live feedback from input and backing track
     def draw(self, painter):
 
         is_pressed = midi_input.getKeyArray()[self.key_number]
@@ -95,7 +104,7 @@ class Key():
                 painter.setBrush(QBrush(Qt.red, Qt.SolidPattern)) # set brush to fill the key with color
                 painter.drawEllipse(self.x + 5, self.y + 155, self.white_circle_w, self.white_circle_h)
           
-     # depending on the tonality the notes to be colored are chosen 
+    # depending on the tonality the notes to be colored are chosen 
     def getColorArray(self):
         #[ 'A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#']
         color_array = []
