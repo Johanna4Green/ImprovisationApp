@@ -14,10 +14,10 @@ class SongExtracting():
         self.overall_time = 0
         self.note_length = 'WHOLE'
         self.tuple = []
-        self.file_content = []
 
     # creates array from midi-file with each [[notes of one_chord] length of one_chord]
     def getNotesOfSong(self, midifile):
+        self.file_content = []
         #self.overallTime = 0.10104166666666667  # WholeNote before
         #self.overallTime = 0.051041666666666666 # HalfNote before
         #self.overallTime = 0.026041666666666668 # QuarterNote before

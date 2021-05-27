@@ -29,6 +29,8 @@ class Staff():
 
     song_extracting = SongExtracting()
 
+    # TODO: FluidSynth auslagern
+    # TODO: Midi-File auslagern
     def __init__(self):
 
         self.state = 'paused'
@@ -58,14 +60,20 @@ class Staff():
     ################# RESET ######################
     # 
     def reset_staff_class(self, midifile):
-        self.midifile = ''
-        self.song_chords = []
-        self.tonality = ''
-        self.length_of_array = 0
-        self.x_position = 0
-        print(self.song_chords)
-        print(self.length_of_array)
-        self.chord_list = []
+        # auskommentiert von AS
+        #self.midifile = ''
+        #self.song_chords = []
+        #self.tonality = ''
+        #self.length_of_array = 0
+        #self.x_position = 0
+        #print(self.song_chords)
+        #print(self.length_of_array)
+        #self.chord_list = []
+
+        #print('RESET STAFF')
+        #print(f'NEW: {midifile}')
+        #print('NEW: {}'.format(midifile))
+        #print('NEW: ', midifile)
 
         self.midifile = midifile
         self.song_chords = self.song_extracting.getNotesOfSong(self.midifile)
@@ -75,11 +83,17 @@ class Staff():
         print(self.song_chords)
         print(self.length_of_array)
         self.chord_list = self.get_chords(self.song_chords)
+        self.state = 'stopped'
     ############################################
 
     def get_bt_key_array(self):
         return self.bt_keys
 
+    def reset_chords(self):
+        i = 0
+        for chord in self.chord_list: 
+            chord.reset_x_position(self.basic_x_pos_list[i]) # when stop is clicked: reset x-position
+            i = i + 1
 
     # method to play the backing track, in init as thread to be played simultaneously to input, recording, etc.
     def play_track(self):
@@ -96,10 +110,7 @@ class Staff():
                         time.sleep(0.5)     # as long as bt is paused, waits until play to continue
                         pass
                 elif self.state == "stopped":
-                    i = 0
-                    for chord in self.chord_list: 
-                        chord.reset_x_position(self.basic_x_pos_list[i]) # when stop is clicked: reset x-position
-                        i = i + 1
+                    self.reset_chords()
                     while self.state == "stopped":
                         time.sleep(0.1)
                     break
