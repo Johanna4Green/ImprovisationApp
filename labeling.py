@@ -17,7 +17,7 @@ class Labeling():
         self.midifile = MIDIFILE
         self.tonality = self.song_extracting.getTonality(self.midifile)
 
-    ######### RESET ###########
+    # reset function to update from gui when new Backing Track file is choosen
     def reset_labeling_class(self, midifile):
         self.midifile = midifile
         print('in reset labeling')
@@ -25,9 +25,8 @@ class Labeling():
         self.tonality = self.song_extracting.getTonality(self.midifile)
         print(self.tonality)
         self.update_labels()
-    ###########################
 
-    #called from gui inii
+    #called from gui init
     def init_label(self,window):
         self.create_clef_label(window)
         self.create_tonality_text_label(window)

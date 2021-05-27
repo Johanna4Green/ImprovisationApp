@@ -24,8 +24,6 @@ class Chord():
         print('chord_symbol in init', self.chord_symbol)
         
 
-
-
     # creating an array out of singleNote instances
     # comparing the y_positions of all the notes in the chord array to figure out, if shifitng is necessary   
     def chord_to_single_notes(self):
@@ -81,6 +79,7 @@ class Chord():
         h = 20
         text_align = Qt.AlignLeft
         painter.drawText(x_pos, y_pos, w, h, text_align, text)
+
 
     # draw each note of the chord by calling the drawing function from singleNote
     def draw(self, painter):

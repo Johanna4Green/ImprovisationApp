@@ -3,6 +3,7 @@
 
 from PyQt5.QtGui import QPainter, QBrush
 from PyQt5.QtCore import Qt  
+from PyQt5.QtWidgets import QFileDialog
 
 import fluidsynth
 import mido
@@ -70,11 +71,7 @@ class Recording():
             self.playing_recording = False
             print(self.playing_recording)
 
-    # to export file
-    def export_mid_file(self):
-        print('export')
-        print('EXPORT DIALOG MUST BE OPENED HERE')
-        print('EXPORT BUTTON SHOULD THEN DISAPPEAR')
+    
 
     def get_playing_recording_state(self):
         return self.playing_recording
@@ -85,7 +82,9 @@ class Recording():
         delta_time = 0
         mid = MidiFile()
         track = MidiTrack()
+        #backing_track= MidiTrack()
         mid.tracks.append(track)
+        #mid.tracks.append(backing_track)
         #mid.set_tempo('500000')
         #this_tempo = self.getTempo(mid)
         print(mid.ticks_per_beat)
@@ -105,6 +104,18 @@ class Recording():
 
         mid.save('recordings/recording.mid')
     # https://sourcecodequery.com/example-method/mido.second2tick
+
+
+    # to export file
+    def export_mid_file(self):
+        print('export')
+        print('EXPORT DIALOG MUST BE OPENED HERE')
+        print('EXPORT BUTTON SHOULD THEN DISAPPEAR')
+        #option = QFileDialog.options()
+        #file = QFileDialog.getSaveFileName()
+        
+
+
 
     def getTempo(self, midifile):
         for msg in MidiFile(midifile):

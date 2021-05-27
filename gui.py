@@ -17,6 +17,7 @@ from staff import Staff
 from key import Key
 from labeling import Labeling
 from recording import Recording
+from songExtracting import SongExtracting
 
 class Window(QMainWindow):
 
@@ -45,14 +46,6 @@ class Window(QMainWindow):
         self.update_timer.setSingleShot(False)
         self.update_timer.timeout.connect(self.update)
         self.update_timer.start()
-
-    ####### RESET #######
-    def reset_gui_class(self):
-        self.staff = Staff()
-        self.init_keyboard(88)
-        #self.labeling.reset_labeling_class()
-        self.labeling.init_label(self)
-    ######################
 
     # initalizing the gui window itself
     def init_window(self):
@@ -116,59 +109,24 @@ class Window(QMainWindow):
         self.export_button.show()
         self.export_button.clicked.connect(self.on_click_export)
 
+
     @pyqtSlot()
     def on_click_export(self):
         self.recording.export_mid_file()
-        self.export_button.hide()
-
-    @pyqtSlot()
-    def on_click_upload_file(self):
-        print('upolad file')
-        self.open_dialog_box()
-
-    # opens dialog box to choose the midi-file to upload as backing track
-    def open_dialog_box(self):
-        filename = QFileDialog.getOpenFileName()
-        path = filename[0]
-        print(path)
-        ######## RESET ############
-        self.labeling.reset_labeling_class(path)
-        self.staff.reset_staff_class(path)
-        
-        #self.reset_gui_class()
-
-        # TODO hier Tonart übergeben
-        for key in WHITE_KEYS:
-            key.reset_key_class(path)
-        for key in BLACK_KEYS:
-            key.reset_key_class(path)
+        options = QFileDialog.Options()
+        print(options)
+        options |= QFileDialog.DontUseNativeDialog
+        #dir_name = QFileDialog.getSaveDirectoryName
+        fileName = QFileDialog.getSaveFileName(self,"QFileDialog.getSaveFileName()","","Midi Files (*.mid)", options=options)
+        print(fileName)
+        #if fileName:
+        #    print(fileName)
+        #QFileDialog dialog(this)
+        #dialog.setFileMode(QFileDialog::AnyFile)
+        #self.export_button.hide()
 
 
-        #Key.reset_key_class(path)
-        # call reset functions from key, labeling and staff to change the midifile and reload 
-        #Key.midifile = path
-        #Labeling.midifile = path
-        #self.staff.midifile = path
-        #print(filename)
-
-        #with open(path, "r") as f:
-        #    print(f.readline())
-        #########################
-
-    @pyqtSlot()
-    def on_click_play(self):
-        self.staff.play_bt()
-
-    @pyqtSlot()
-    def on_click_pause(self):
-        self.staff.pause_bt()
-
-    @pyqtSlot()
-    def on_click_stop(self):
-        self.staff.stop_bt()
-
-
-    # when record is clicked: 
+        # when record is clicked: 
     @pyqtSlot()
     def on_click_record(self):
         #if self.export_button == disabled:
@@ -199,6 +157,54 @@ class Window(QMainWindow):
         self.staff.stop_bt()
 
 
+    @pyqtSlot()
+    def on_click_play(self):
+        self.staff.play_bt()
+
+    @pyqtSlot()
+    def on_click_pause(self):
+        self.staff.pause_bt()
+
+    @pyqtSlot()
+    def on_click_stop(self):
+        self.staff.stop_bt()
+
+    # to upload a file as Backing Track: opens dialog box
+    @pyqtSlot()
+    def on_click_upload_file(self):
+        print('upolad file')
+        self.open_dialog_box()
+
+
+    # opens dialog box to choose the midi-file to upload as backing track
+    def open_dialog_box(self):
+        try:
+            print('in try')
+            filename = QFileDialog.getOpenFileName()
+            midi_path = filename[0]
+            self.reset_gui_components(midi_path)
+        except (IOError, OSError) as e:
+            print(e.errno)
+            print('in except')
+            print('fail of upload')
+            pass
+        #finally:
+            #print('in finally')
+            # reset key, staff and labeling when new file is uploaded
+            
+
+    # reset key, staff and labeling
+    def reset_gui_components(self, midi_path):
+        midi_path = midi_path
+        this_tonality = song_extracting.getTonality(midi_path)
+        self.labeling.reset_labeling_class(midi_path)
+        self.staff.reset_staff_class(midi_path)
+        for key in WHITE_KEYS:
+            key.reset_key_class(this_tonality)
+        for key in BLACK_KEYS:
+            key.reset_key_class(this_tonality)
+
+
     # draw Piano keyboard with 88 keys
     def paintEvent(self, e):
         painter = QPainter(self)    # create the object of QPainter class
@@ -211,7 +217,6 @@ class Window(QMainWindow):
             key.draw(painter)
         for key in BLACK_KEYS:
             key.draw(painter)
-        
         return
 
 # every PyQt5 application must create an application object
@@ -219,5 +224,6 @@ App = QApplication(sys.argv)
 # enter the mainloop of the application. The event handling starts from this point
 window = Window()
 midi_input = MidiInput()
+song_extracting = SongExtracting()
 
 sys.exit(App.exec())

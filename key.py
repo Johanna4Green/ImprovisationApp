@@ -56,11 +56,10 @@ class Key():
             self.key_type = KEY_TYPE_WHITE
             WHITE_KEYS.append(self)
 
-    ################## RESET ################
-    def reset_key_class(self, midifile):
-        self.midifile = midifile
-        self.tonality = song_extracting.getTonality(self.midifile)
-    ##########################################
+
+    # reset function called from gui when new file is choosen as Backing Track: to update the keyboard
+    def reset_key_class(self, tonality):
+        self.tonality =  tonality
 
    
     # draws the keys (the whole keyboard) and also 
