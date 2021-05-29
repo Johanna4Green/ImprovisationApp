@@ -10,6 +10,7 @@ from PyQt5.QtGui import QPainter, QBrush, QPen, QIcon, QPixmap, QColor, QFont
 from PyQt5.QtCore import Qt, QTimer, pyqtSlot
 
 import sys
+import time
 
 from constants import *
 from midiInput import MidiInput
@@ -99,39 +100,54 @@ class Window(QMainWindow):
         upload_button.resize(120,26)
         upload_button.move(1007,70)
         upload_button.clicked.connect(self.on_click_upload_file)
-
-    # create the export button: extra function, because it only appears, when save_recording button was clicked
-    def create_export_button(self):
-        self.export_button = QPushButton('Export recording', self)
-        self.export_button.setToolTip('to export your recording as midi-file')
-        self.export_button.resize(130,26)
-        self.export_button.move(997,580)
-        self.export_button.show()
-        self.export_button.clicked.connect(self.on_click_export)
+        # countdown labels
+        #self.create_countdown_label()
 
 
-    @pyqtSlot()
-    def on_click_export(self):
-        self.recording.export_mid_file()
-        options = QFileDialog.Options()
-        print(options)
-        options |= QFileDialog.DontUseNativeDialog
-        #dir_name = QFileDialog.getSaveDirectoryName
-        fileName = QFileDialog.getSaveFileName(self,"QFileDialog.getSaveFileName()","","Midi Files (*.mid)", options=options)
-        print(fileName)
-        #if fileName:
-        #    print(fileName)
-        #QFileDialog dialog(this)
-        #dialog.setFileMode(QFileDialog::AnyFile)
-        #self.export_button.hide()
+    '''    
+    def create_countdown_label(self):   #, text):
+        self.countdown_label = QtWidgets.QLabel(self)
+        self.countdown_label.resize(18,30)
+        #self.countdown_label.setStyleSheet("background-color: lightgreen")
+        self.countdown_label.move(510,300)
+        self.countdown_label.setText('')
+        self.countdown_label.setFont(QFont('Georgia', 30))
+        self.countdown_label.show()
+        self.countdown_label.setVisible(True)
+    
 
+    def update_countdown(self, i):
+        print('called')
+        print(i)
+        self.countdown_label.setText(i)
+        self.countdown_label.show()
+    '''
 
-        # when record is clicked: 
+    # when record is clicked: 
     @pyqtSlot()
     def on_click_record(self):
+       
         #if self.export_button == disabled:
         #    self.export_button.hide()
         if self.recording_state == False: # if not recording yet -> start recording + playing backing track
+            #self.cre
+            #i = 4
+            #counts = ['4', '3', '2', '1'] 
+            #for x in counts:
+            #    print(x)
+            #    self.countdown_label.setText(x)
+            #    self.countdown_label.show()
+            #    #self.update_countdown(x)
+            #    time.sleep(1.0)
+        
+            #for i in range(4): 
+            #    count_num = str(i)
+            #    print(count_num)
+                #self.countdown_label.setText(count_num)
+                #self.update_countdown(count_num)
+
+                #time.sleep(1.0)
+                #i -= 1
             self.recording_state = True
             self.staff.play_bt()    
         else: 
@@ -142,8 +158,23 @@ class Window(QMainWindow):
     # save recording WITHOUT backing track, only midi input   
     @pyqtSlot()
     def on_click_save_recording(self):
-        self.recording.create_midi_file_from_recording()
-        self.create_export_button() # show export button  -> MUST BE REMOVED LATER
+
+        file_to_save_as_midi = self.recording.create_midi_file_from_recording()
+        print(file_to_save_as_midi)
+        try:
+            print('in try')
+            filename = QFileDialog.getSaveFileName(self, "Save as midifile", "","Midi Files (*.mid)")
+            save_path = filename[0]
+            print(save_path)
+            file_to_save_as_midi.save(save_path)   
+        except (IOError, OSError) as e:
+            print(e.errno)
+            print('in except')
+            print('fail of upload')
+            pass
+
+
+
 
     # play latest recording 
     @pyqtSlot()
@@ -174,7 +205,6 @@ class Window(QMainWindow):
     def on_click_upload_file(self):
         print('upolad file')
         self.open_dialog_box()
-
 
     # opens dialog box to choose the midi-file to upload as backing track
     def open_dialog_box(self):

@@ -25,15 +25,19 @@ class Labeling():
         self.tonality = self.song_extracting.getTonality(self.midifile)
         print(self.tonality)
         self.update_labels()
+        # RESET VORZEICHEN
+        #self.create_signs_and_tact_label(self,self.window)
 
     #called from gui init
     def init_label(self,window):
+        self.window = window
         self.create_clef_label(window)
         self.create_tonality_text_label(window)
         self.create_signs_and_tact_label(window)
 
     def update_labels(self):
         self.tonalityLabel.setText(self.get_tonality_text(self.tonality))
+
 
         """
         # Konstanten
@@ -275,7 +279,13 @@ class Labeling():
         self.tonalityLabel = QtWidgets.QLabel(window)
         #self.tonalityLabel.setStyleSheet("background-color: lightgreen")
         self.tonalityLabel.setText(tonalityText)
-        self.tonalityLabel.setFont(QFont('Arial', 30))
+        #painter.setFont(QFont('Frutiger',20))
+        #textFont.setFamily("Frutiger LT Com 55 Roman");
+        #textFont.setPixelSize(13);
+        #setFont(textFont);
+        #text_font = QFont.setFamily(QFont("Frutiger LT Com 55 Roman", 30))
+        #text_font.setPixelSize(30)
+        self.tonalityLabel.setFont(QFont("sound_midis/OpenSans-Regular.ttf", 30))     #(QFont('Georgia', 30)) # Skia Helvetica Arial
         self.tonalityLabel.resize(210, 30)
         self.tonalityLabel.move(510,280)
         self.tonalityLabel.show()
