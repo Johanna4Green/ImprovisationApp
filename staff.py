@@ -60,20 +60,6 @@ class Staff():
     ################# RESET ######################
     # 
     def reset_staff_class(self, midifile):
-        # auskommentiert von AS
-        #self.midifile = ''
-        #self.song_chords = []
-        #self.tonality = ''
-        #self.length_of_array = 0
-        #self.x_position = 0
-        #print(self.song_chords)
-        #print(self.length_of_array)
-        #self.chord_list = []
-
-        #print('RESET STAFF')
-        #print(f'NEW: {midifile}')
-        #print('NEW: {}'.format(midifile))
-        #print('NEW: ', midifile)
 
         self.midifile = midifile
         self.song_chords = self.song_extracting.getNotesOfSong(self.midifile)
@@ -83,7 +69,7 @@ class Staff():
         print(self.song_chords)
         print(self.length_of_array)
         self.chord_list = self.get_chords(self.song_chords)
-        self.state = 'stopped'
+        self.state = "stopped"
     ############################################
 
     def get_bt_key_array(self):

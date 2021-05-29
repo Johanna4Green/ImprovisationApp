@@ -18,6 +18,11 @@ BLACKVALUES = ['C#', 'D#', 'F#', 'G#', 'A#']
 # SHARP OR FLAT
 FLAT_TONALITY = ['F', 'Bb', 'Eb', 'Ab', 'Db', 'Gb'] # f b es as des ges
 SHARP_TONALITY = ['G', 'D', 'A', 'E', 'B', 'F#']   # g d a e h fis
+SHARP_TONALITIES = ['C', 'G', 'D', 'A', 'E', 'B', 'F#']   # C g d a e h fis
+NUMBERS_OF_SHARPS = {'C' : 0, 'G' : 1, 'D' : 2, 'A' : 3, 'E' : 4, 'B' : 5, 'F#' : 6}
+NUMBERS_OF_FLATS =  {'A' : 0, 'F' : 1, 'Bb' : 2, 'Eb' : 3, 'Ab' : 4, 'Db' : 5, 'Gb' : 6, 'Cb': 7}
+
+
 
 # for drawing notes in singleNote.py
 NOTEBARLENGTH = 40
