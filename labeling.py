@@ -26,6 +26,10 @@ class Labeling():
         self.create_tact_label(window)
         self.show_labels()
 
+    #def set_midifile(self, midifile):
+    #    self.midifile = midifile
+    #    return self.midifile
+
     # reset function to update from gui when new Backing Track file is choosen
     def reset_labeling_class(self, midifile):
         self.midifile = midifile
@@ -154,8 +158,8 @@ class Labeling():
         self.tonalityLabel.setText(tonalityText)
         #painter.setFont(QFont('Frutiger',20))
         self.tonalityLabel.setFont(QFont("sound_midis/OpenSans-Regular.ttf", 30))     #(QFont('Georgia', 30)) # Skia Helvetica Arial
-        self.tonalityLabel.resize(210, 30)
-        self.tonalityLabel.move(510,280)
+        self.tonalityLabel.resize(230, 30)
+        self.tonalityLabel.move(500,280)
         self.tonalityLabel.show()
 
     # get the right text for the tonality text label dependent of self.tonality 

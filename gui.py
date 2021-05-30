@@ -36,6 +36,8 @@ class Window(QMainWindow):
         self.init_buttons()
         self.init_keyboard(88)
         self.init_window()
+        # set up midifile
+        #self.midifile = self.get_midifile()
         # instance of staff
         self.recording = Recording()
         self.labeling = Labeling()
@@ -221,14 +223,24 @@ class Window(QMainWindow):
         #finally:
             #print('in finally')
             # reset key, staff and labeling when new file is uploaded
-            
+    '''        
+    def set_midifile(self, midifile): 
+        self.staff.set_midifile(midifile)
+        self.labeling.set_midifile(midifile)
+        for key in WHITE_KEYS:
+            key.set_midifile(midifile)
+        for key in BLACK_KEYS:
+            key.set_midifile(midifile)
+    '''
 
     # reset key, staff and labeling
     def reset_gui_components(self, midi_path):
         midi_path = midi_path
+        self.staff.stop_bt()
         this_tonality = song_extracting.getTonality(midi_path)
         self.labeling.reset_labeling_class(midi_path)
         self.staff.reset_staff_class(midi_path)
+        self.recording.reset(midi_path)
         for key in WHITE_KEYS:
             key.reset_key_class(this_tonality)
         for key in BLACK_KEYS:

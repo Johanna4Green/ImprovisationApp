@@ -29,16 +29,12 @@ class Staff():
 
     song_extracting = SongExtracting()
 
-    # TODO: FluidSynth auslagern
     # TODO: Midi-File auslagern
     def __init__(self):
 
         self.state = 'paused'
         # initializing fluidsynther
-        self.fs = fluidsynth.Synth(1)
-        self.fs.start(driver = 'portaudio')
-        self.sfid = self.fs.sfload("sound_midis/default-GM.sf2") 
-        self.fs.program_select(0, self.sfid, 0, 0)
+        self.fs = self.initFluidSynth()
 
         self.midifile = MIDIFILE
         self.song_chords = self.song_extracting.getNotesOfSong(self.midifile)
@@ -57,19 +53,34 @@ class Staff():
         fileInput_thread = threading.Thread(target=self.play_track)
         fileInput_thread.start()
 
-    ################# RESET ######################
-    # 
-    def reset_staff_class(self, midifile):
+    #def set_midifile(self, midifile):
+    #    self.midifile = midifile
+    #    return self.midifile
 
+    # initializing fluidsynther
+    def initFluidSynth(self):
+        fs = fluidsynth.Synth(1)
+        fs.start(driver = 'portaudio')
+        sfid = fs.sfload("sound_midis/default-GM.sf2") 
+        fs.program_select(0, sfid, 0, 0)
+        return fs
+
+
+    ################# RESET ######################
+    def reset_staff_class(self, midifile):
+        self.state = "stopped"
         self.midifile = midifile
+        
         self.song_chords = self.song_extracting.getNotesOfSong(self.midifile)
         self.tonality = self.song_extracting.getTonality(self.midifile)
         self.length_of_array = len(self.song_chords)
         self.x_position = self.set_x_position() # NOTELINE_VER_X
         print(self.song_chords)
         print(self.length_of_array)
+        
         self.chord_list = self.get_chords(self.song_chords)
-        self.state = "stopped"
+        #self.state = "stopped"
+        
     ############################################
 
     def get_bt_key_array(self):
@@ -120,7 +131,7 @@ class Staff():
                     last_chord_pos = self.chord_list[counter - 1].get_x_position() # hol die x-Position vom letzten Akkord
                     for chord in self.chord_list:
                         chord.update_x_position()
-                        self.chord_list[counter].set_x_position(last_chord_pos)         #.x_position = last_chord_pos # setz den gerade "rausgeschobenen nach ganz hinten  
+                        self.chord_list[counter].set_x_position(last_chord_pos)    # looping     #.x_position = last_chord_pos # setz den gerade "rausgeschobenen nach ganz hinten  
                 counter = counter + 1 
         self.fs.delete()
     
