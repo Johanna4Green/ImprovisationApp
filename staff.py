@@ -70,7 +70,8 @@ class Staff():
     def reset_staff_class(self, midifile):
         self.state = "stopped"
         self.midifile = midifile
-        
+        self.basic_x_pos_list = []
+
         self.song_chords = self.song_extracting.getNotesOfSong(self.midifile)
         self.tonality = self.song_extracting.getTonality(self.midifile)
         self.length_of_array = len(self.song_chords)
@@ -94,10 +95,13 @@ class Staff():
 
     # method to play the backing track, in init as thread to be played simultaneously to input, recording, etc.
     def play_track(self):
-        list_of_chords = []
         sum_up_len = 0 # to calculate overall_length (sum of all notelength added note by note)
         counter = 0
         while True:
+            sum_up_len = 0
+            counter = 0
+            while self.state == "stopped":
+                time.sleep(0.1)
             for entry in self.song_chords:  # entry[0] = note_array / entry[1] = note_length
                 counter = counter % self.length_of_array 
                 if self.state =="playing":
@@ -108,8 +112,6 @@ class Staff():
                         pass
                 elif self.state == "stopped":
                     self.reset_chords()
-                    while self.state == "stopped":
-                        time.sleep(0.1)
                     break
                 else:
                     print("Bt failed")
