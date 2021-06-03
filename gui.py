@@ -4,8 +4,9 @@
 # it gets the midiInput from the Thread in the midiInput module/ class
 # it calls the draw method of the Key module/ class and draws the piano
 
+
 from PyQt5 import QtGui, QtWidgets
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QPushButton, QLabel, QInputDialog, QFileDialog
+from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QPushButton, QLabel, QInputDialog, QFileDialog, QComboBox
 from PyQt5.QtGui import QPainter, QBrush, QPen, QIcon, QPixmap, QColor, QFont
 from PyQt5.QtCore import Qt, QTimer, pyqtSlot
 
@@ -20,6 +21,7 @@ from labeling import Labeling
 from recording import Recording
 from songExtracting import SongExtracting
 
+
 class Window(QMainWindow):
 
     
@@ -31,13 +33,14 @@ class Window(QMainWindow):
         self.left = WINDOW_UPPER_LEFT_Y
         self.width = WINDOW_WIDTH
         self.height = WINDOW_HEIGHT
-        # init buttons, keyboard and window
+
+        self.mode = "Practice"
+        # init buttons, keyboard, dropdown for LearnMode and window
         self.staff = Staff()
         self.init_buttons()
+        self.init_droppingdown_crazy()
         self.init_keyboard(88)
         self.init_window()
-        # set up midifile
-        #self.midifile = self.get_midifile()
         # instance of staff
         self.recording = Recording()
         self.labeling = Labeling()
@@ -49,6 +52,7 @@ class Window(QMainWindow):
         self.update_timer.setSingleShot(False)
         self.update_timer.timeout.connect(self.update)
         self.update_timer.start()
+ 
 
     # initalizing the gui window itself
     def init_window(self):
@@ -56,11 +60,30 @@ class Window(QMainWindow):
         self.setGeometry(self.top, self.left, self.width, self.height)
         self.show()
 
+
     # creating the keyboard with colors and dots 
     def init_keyboard(self, num_keys):
         self.keys = []
         for i in range(num_keys):
             self.keys.append(Key(i, self.staff)) # self.staff as a parameter to draw dots on the keys live played by backing track 
+    
+
+
+    def init_droppingdown_crazy(self):
+        self.cmbox = QComboBox(self)
+        self.cmbox.addItem('1 - Pentatonik mit schwarzen Tasten')
+        self.cmbox.addItem("2 - C-Dur Pentatonik")
+        self.cmbox.addItem("3 - C-Dur Tonleiter")
+        self.cmbox.addItem("4 - Blues Basics")
+        self.cmbox.addItem("5 - Kirchentonarten (dorisch)")
+
+        self.cmbox.resize(300,100)
+        self.cmbox.move(400,37)
+        self.cmbox.setVisible(False)
+        index = self.cmbox.currentIndex()
+        self.cmbox.currentIndexChanged.connect(self.on_dropdown_changed)
+
+    
 
     # creating all buttons needed for the UI
     def init_buttons(self):
@@ -102,9 +125,49 @@ class Window(QMainWindow):
         upload_button.resize(120,26)
         upload_button.move(1007,70)
         upload_button.clicked.connect(self.on_click_upload_file)
-        # countdown labels
-        #self.create_countdown_label()
+        # practice button
+        self.practice_button = QPushButton('Practice mode', self)
+        self.practice_button.setToolTip('to switch to the practice mode')
+        self.practice_button.resize(400,40)
+        self.practice_button.move(650,10)
+        self.practice_button.clicked.connect(self.on_click_practice)
+        self.practice_button.setFocus()
+        # learn button
+        self.learn_button = QPushButton('Learn mode', self)
+        self.learn_button.setToolTip('to switch to the learn mode course')
+        self.learn_button.resize(400,40)
+        self.learn_button.move(150,10)
+        self.learn_button.clicked.connect(self.on_click_learn)
+       
 
+    @pyqtSlot()
+    def on_dropdown_changed(self):
+        print('changed')
+        print(self.cmbox.currentIndex())
+        
+    
+
+    @pyqtSlot()
+    def on_click_practice(self):
+        print('practice mode activated')
+        self.mode = "Practice"
+        self.cmbox.setVisible(False)
+        #self.dropdownWid.setVisible(False)
+        self.learn_button.setFocus(False)
+        self.practice_button.setFocus()
+        #self.learn_button.setStyleSheet("background-color: rgb(29,215,209)")
+
+    
+    @pyqtSlot()
+    def on_click_learn(self):
+        print('learn mode activated')
+        self.cmbox.setVisible(True)
+       # self.dropdownWid.setVisible(True)
+        #self.dropdownWid = self.init_dropdown_widget()
+        self.mode = "Learn"
+        self.practice_button.setFocus(False)
+        self.learn_button.setFocus() #setCheckable(True)
+        #self.learn_button.setStyleSheet("background-color: rgb(29,215,209)")
 
     '''    
     def create_countdown_label(self):   #, text):
@@ -174,8 +237,6 @@ class Window(QMainWindow):
             print('in except')
             print('fail of upload')
             pass
-
-
 
 
     # play latest recording 
