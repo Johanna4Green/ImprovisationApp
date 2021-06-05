@@ -35,12 +35,14 @@ class Window(QMainWindow):
         self.height = WINDOW_HEIGHT
 
         self.mode = "Practice"
+        self.current_practice_file = MIDIFILE
         # init buttons, keyboard, dropdown for LearnMode and window
         self.staff = Staff()
         self.init_buttons()
         self.init_droppingdown_crazy()
         self.init_keyboard(88)
         self.init_window()
+        self.init_learn_text_label()
         # instance of staff
         self.recording = Recording()
         self.labeling = Labeling()
@@ -73,9 +75,11 @@ class Window(QMainWindow):
         self.cmbox = QComboBox(self)
         self.cmbox.addItem('1 - Pentatonik mit schwarzen Tasten')
         self.cmbox.addItem("2 - C-Dur Pentatonik")
-        self.cmbox.addItem("3 - C-Dur Tonleiter")
-        self.cmbox.addItem("4 - Blues Basics")
-        self.cmbox.addItem("5 - Kirchentonarten (dorisch)")
+        self.cmbox.addItem("3 - C-Dur Tonleiter mit Powerchords")
+        self.cmbox.addItem("4 - C-Dur Tonleiter mit Dreiklängen")
+        self.cmbox.addItem("5 - C-Dur Tonleiter mit Septakkorden")
+        self.cmbox.addItem("6 - A-Moll-Tonleiter")
+        self.cmbox.addItem("7 - Kirchentonarten (dorisch)")
 
         self.cmbox.resize(300,100)
         self.cmbox.move(400,37)
@@ -84,6 +88,23 @@ class Window(QMainWindow):
         self.cmbox.currentIndexChanged.connect(self.on_dropdown_changed)
 
     
+    def init_learn_text_label(self):
+        print('Create qLabel now')
+        self.learn_text_label = QLabel(self)
+        self.learn_text_label.resize (1000, 130)
+        self.learn_text_label.move(100, 540)
+        self.learn_text_label.setWordWrap(True)
+        text_1_pentablack = "Die Pentatonik ist eine (penta = 5, griech.) – 5-Tonleiter. Im Gegensatz zur Dur/Moll-Tonleiter fehlen die Halbtonschritte. Scharfe Dissonanzen wie kleine Sekunden und große Septimen sind dadurch ausgeschlossen. Die Pentatonik besteht nur aus großen Sekunden und kleinen Terzen in dieser Reihenfolge: Große Sekunde - Große Sekunde - Kleine Terz - Große Sekunde.\nIn dieser 1. Lektion wird nun in der Fis-Dur-Pentatonik, welche aus den 5 Schwarzen Tasten besteht, improvisiert. Der Backing Track spielt im Wechsel Fis – Cis.\nImprovisiere nun auf den Schwarzen Tasten, spiele zuerst einfach irgendwie und irgendwas, und finde somit Tonfolgen, die dir besonders gefallen."
+        self.learn_text_label.setText("")
+        self.learn_text_label.show()
+        print('qLabel created')
+        print(self.learn_text_label)
+            #"Der Unterschied von Dur zu Moll liegt in der Unterschiedlichen Halb-/Ganzton Reihenfolge. Während bei Dur die Halbtonschritte zwischen der 3. und 4. sowie der 6. und 7. Stufe liegen, sind diese bei der Molltonleiter bei 2. und 3., sowie 5. und 6. Die Molltonleiter klingt. Hier verwenden wir die A-Moll Tonleiter. Diese bietet dasselbe Tonmaterial wie die C-Dur-Tonleiter, nur ist das A der Grundton. Backing Track spielt nun eine Kadenz. Das heißt er spielt die erste (Tonika), dann die vierte (Subdominante), dann die fünfte (Dominante), und schließlich wieder die erste Stufe. Dein Motiv muss nun in A-Moll transponiert werden. (Transponieren bedeutet so viel wie in eine andere Tonart übertragen.) In diesem Fall ist das einfach, da man es nur verschieben muss. Schwarze Tasten braucht man auch hier nicht verwenden. Versuche dein Motiv nun in A-Moll zu spielen und erkenne den Stimmungswechsel.")
+        #return self.learn_text_label
+
+
+
+
 
     # creating all buttons needed for the UI
     def init_buttons(self):
@@ -120,11 +141,11 @@ class Window(QMainWindow):
         save_recording_button.move(1007,280)
         save_recording_button.clicked.connect(self.on_click_save_recording)
         # upload button
-        upload_button = QPushButton('Upload track', self)
-        upload_button.setToolTip('to upload a backing track from your computer')
-        upload_button.resize(120,26)
-        upload_button.move(1007,70)
-        upload_button.clicked.connect(self.on_click_upload_file)
+        self.upload_button = QPushButton('Upload track', self)
+        self.upload_button.setToolTip('to upload a backing track from your computer')
+        self.upload_button.resize(120,26)
+        self.upload_button.move(1007,70)
+        self.upload_button.clicked.connect(self.on_click_upload_file)
         # practice button
         self.practice_button = QPushButton('Practice mode', self)
         self.practice_button.setToolTip('to switch to the practice mode')
@@ -143,31 +164,82 @@ class Window(QMainWindow):
     @pyqtSlot()
     def on_dropdown_changed(self):
         print('changed')
-        print(self.cmbox.currentIndex())
-        
+        index = self.cmbox.currentIndex()
+        self.set_learn_text_label(index)
+        self.set_path_for_learn_reset(index)
     
+
+    def set_path_for_learn_reset(self, index):
+        print(index)
+        if index == 0:
+            path = "sound_midis/1_pentatonik_fisdur.mid"
+        elif index == 1:
+            path = "sound_midis/2_pentatonik_cdur.mid"
+        elif index == 2:
+            path = "sound_midis/3_tonleiter_cdur_powerchords.mid"
+        elif index == 3:
+            path = "sound_midis/4_tonleiter_cdur_chords.mid"
+        elif index == 4:
+            path = "sound_midis/5_tonleiter_cdur_7chords.mid"
+        elif index == 5:
+            path = "sound_midis/6_tonleiter_amoll_chords.mid"
+        elif index == 6:
+            path = "sound_midis/7_cdur_dorisch.mid"
+        self.reset_gui_components(path)
+
+    def set_learn_text_label(self, index):    
+        text_1_pentablack = "Die Pentatonik ist eine (penta = 5, griech.) – 5-Tonleiter. Im Gegensatz zur Dur/Moll-Tonleiter fehlen die Halbtonschritte. Scharfe Dissonanzen wie kleine Sekunden und große Septimen sind dadurch ausgeschlossen. Die Pentatonik besteht nur aus großen Sekunden und kleinen Terzen in dieser Reihenfolge: Große Sekunde - Große Sekunde - Kleine Terz - Große Sekunde.\nIn dieser 1. Lektion wird nun in der Fis-Dur-Pentatonik, welche aus den 5 Schwarzen Tasten besteht, improvisiert. Der Backing Track spielt im Wechsel Fis – Cis.\nImprovisiere nun auf den Schwarzen Tasten, spiele zuerst einfach irgendwie und irgendwas, und finde somit Tonfolgen, die dir besonders gefallen."
+        text_2_penta_cdur = "In dieser Lektion gibt es immer noch die Pentatonik als Grundlage, nur wechseln wir von den Schwarzen Tasten (Fis-Dur) zu den weißen Tasten und der C-Dur-Pentatonik, welche aus C – D – E – G – A besteht. Der Backing Track spielt im Wechsel C und G.\nImprovisiere frei mit den 5 Tönen der C-Dur Pentatonik."
+        text_3_cdur_powerchords = "Nun wird die Pentatonik durch die Heptatonik (griech. „Siebentönigkeit“) erweitert. Alle bekannten Moll- und Dur-Tonleitern sind Heptatoniken. Hier wird die C-Dur-Tonleiter verwendet, die alle 7 weißen Tasten als Tonmaterial bietet.\nVersuche nun ein 2-taktiges Motiv (wie zum Beispiel „Hänschen klein – ging allein“) zu spielen. Und versuche dieses, nach einigen Wiederholungen, rauf und runter, in unterschiedlichen Oktavhöhen zu spielen oder beispielsweise eine kleine Extranote als Vorhaltsnote oder zwischendrin als Extra einzubauen."
+        text_4_cdur_chords = "Die C-Dur-Tonleiter als Tonmaterial bleibt, im Backing Track werden noch die Terzen hinzugefügt. Es wird also je Akkord nicht nur die Quinte gespielt C – G, sondern C – E – G.\nVersuche das zuvor gelernte Motiv nun auch in der Geschwindigkeit zu variieren und mit einem anderen Ton anzufangen, das Motiv also einige Halb-/Ganztonschritte zu verschieben. Höre genau hin und finde somit heraus, was dazu passt und was möglich ist."
+        text_5_cdur_septakkorde = "Auch hier bleibt die C-Dur-Tonleiter als Tonmaterial, im Backing Track werden noch die Septimen hinzugefügt. „Septakkorde gelten in der traditionellen Harmonik als dissonant und auflösungsbedürftig. In der Jazzharmonik spielt der Septakkord in all seinen Formen eine zentrale Rolle und löst den Dreiklang als harmonisches ‚Basismaterial‘ ab.“  Es wird nur der große Durseptakkord C-E-G-H (mit einer großen Septime, also 11 Halbtonschritten von C nach H) und der Dominantseptakkord G-H-D-F, der kleiner Durseptakkord (mit nur eine kleine Septime, nur 10 Halbtonschritte, von G nach F) gespielt.\nHöre dir den Backing Track an und erkenne die hier gewünschten Dissonanzen, welche ein Lied interessanter machen können. Versuche auch hier mit dem Motiv zu arbeiten und achte auf die Wirkung des Septakkords. Du kannst auch selbst Dissonanzen erproben und probieren eine Sekunde, also zwei direkt nebeneinanderliegende weiße Tasten oder eine schwarze Note, welche nicht zur C-Dur-Tonleiter passt, zu spielen."
+        text_6_moll = "Der Unterschied von Dur zu Moll liegt in der Unterschiedlichen Halb-/Ganzton Reihenfolge. Während bei Dur die Halbtonschritte zwischen der 3. und 4. sowie der 6. und 7. Stufe liegen, sind diese bei der Molltonleiter bei 2. und 3., sowie 5. und 6. Die Molltonleiter lässt das Gespielte melancholischer und trauriger klingen.\nHier verwenden wir die A-Moll Tonleiter. Diese bietet dasselbe Tonmaterial wie die C-Dur-Tonleiter, nur ist das A der Grundton. Der Backing Track spielt nun eine Kadenz. Das heißt er spielt die erste (Tonika), dann die vierte (Subdominante), dann die fünfte (Dominante), und schließlich wieder die erste Stufe.\nDein Motiv muss nun in A-Moll transponiert werden. (Transponieren bedeutet so viel wie in eine andere Tonart übertragen.) In diesem Fall ist das einfach, da man es nur verschieben muss. Schwarze Tasten braucht man auch hier nicht verwenden. Versuche dein Motiv nun in A-Moll zu spielen und erkenne den Stimmungswechsel."
+        text_7_kirchentonarten = "„Man spricht von Modi bzw. Kirchentonarten, um diese Tonskalen von den heute gebräuchlichen 24 Tonarten (12 Dur- und 12-Molltonarten) zu unterscheiden. Außerdem sind die Kirchentonarten keine Tonleitern im modernen Sinn, sondern Skalenausschnitte, die das Tonmaterial von modellartig verwendeten Melodien enthalten. Man unterscheidet 7 modale Tonleitern, die sich durch die unterschiedliche Anordnung der Halbtonschritte voneinander unterscheiden:\nIonisch (c–c),   Dorisch (d–d),   Phrygisch (e–e),   Lydisch (f–f),   Mixolydisch (g–g),   Äolisch (a–a),   Lokrisch (h–h).“\nIn diesem Beispiel wird die 2. Skala verwendet. Bei C-Dur dorisch wird jeder Ton um eins nach oben verschoben. Versuche auch hier dein Motiv zu spielen und durch verschiedene Improvisationen abzuwandeln." 
+       
+        print(index)
+        if index == 0:
+            self.learn_text_label.setText(text_1_pentablack)
+        elif index == 1:
+            self.learn_text_label.setText(text_2_penta_cdur)
+        elif index == 2:
+            self.learn_text_label.setText(text_3_cdur_powerchords)
+        elif index == 3:
+            self.learn_text_label.setText(text_4_cdur_chords)
+        elif index == 4:
+            self.learn_text_label.setText(text_5_cdur_septakkorde)
+        elif index == 5:
+            self.learn_text_label.setText(text_6_moll)
+        elif index == 6:
+            self.learn_text_label.setText(text_7_kirchentonarten)
+
+
+
 
     @pyqtSlot()
     def on_click_practice(self):
         print('practice mode activated')
         self.mode = "Practice"
+        self.upload_button.setVisible(True)
         self.cmbox.setVisible(False)
-        #self.dropdownWid.setVisible(False)
+        self.learn_text_label.setVisible(False)
         self.learn_button.setFocus(False)
         self.practice_button.setFocus()
-        #self.learn_button.setStyleSheet("background-color: rgb(29,215,209)")
-
+        self.reset_gui_components(self.current_practice_file)
     
+
     @pyqtSlot()
     def on_click_learn(self):
+        index = self.cmbox.currentIndex()
+        self.set_learn_text_label(index)
+        self.set_path_for_learn_reset(index)
+
         print('learn mode activated')
         self.cmbox.setVisible(True)
-       # self.dropdownWid.setVisible(True)
-        #self.dropdownWid = self.init_dropdown_widget()
+        self.upload_button.setVisible(False)
+        self.learn_text_label.setVisible(True)
         self.mode = "Learn"
         self.practice_button.setFocus(False)
         self.learn_button.setFocus() #setCheckable(True)
-        #self.learn_button.setStyleSheet("background-color: rgb(29,215,209)")
 
     '''    
     def create_countdown_label(self):   #, text):
@@ -275,6 +347,7 @@ class Window(QMainWindow):
             print('in try')
             filename = QFileDialog.getOpenFileName()
             midi_path = filename[0]
+            self.current_practice_file = midi_path
             self.reset_gui_components(midi_path)
         except (IOError, OSError) as e:
             print(e.errno)
