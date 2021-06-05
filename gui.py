@@ -70,7 +70,7 @@ class Window(QMainWindow):
             self.keys.append(Key(i, self.staff)) # self.staff as a parameter to draw dots on the keys live played by backing track 
     
 
-
+    # dropdown menu fpr the learn mode to choose the lecture
     def init_droppingdown_crazy(self):
         self.cmbox = QComboBox(self)
         self.cmbox.addItem('1 - Pentatonik mit schwarzen Tasten')
@@ -80,30 +80,21 @@ class Window(QMainWindow):
         self.cmbox.addItem("5 - C-Dur Tonleiter mit Septakkorden")
         self.cmbox.addItem("6 - A-Moll-Tonleiter")
         self.cmbox.addItem("7 - Kirchentonarten (dorisch)")
-
         self.cmbox.resize(300,100)
         self.cmbox.move(400,37)
         self.cmbox.setVisible(False)
         index = self.cmbox.currentIndex()
-        self.cmbox.currentIndexChanged.connect(self.on_dropdown_changed)
+        self.cmbox.currentIndexChanged.connect(self.on_dropdown_changed)    # returns index 0-6 dependent on choosen item 
 
-    
+
+   # explanation text box for the theory and instructions in the learn mode 
     def init_learn_text_label(self):
-        print('Create qLabel now')
         self.learn_text_label = QLabel(self)
         self.learn_text_label.resize (1000, 130)
         self.learn_text_label.move(100, 540)
         self.learn_text_label.setWordWrap(True)
-        text_1_pentablack = "Die Pentatonik ist eine (penta = 5, griech.) – 5-Tonleiter. Im Gegensatz zur Dur/Moll-Tonleiter fehlen die Halbtonschritte. Scharfe Dissonanzen wie kleine Sekunden und große Septimen sind dadurch ausgeschlossen. Die Pentatonik besteht nur aus großen Sekunden und kleinen Terzen in dieser Reihenfolge: Große Sekunde - Große Sekunde - Kleine Terz - Große Sekunde.\nIn dieser 1. Lektion wird nun in der Fis-Dur-Pentatonik, welche aus den 5 Schwarzen Tasten besteht, improvisiert. Der Backing Track spielt im Wechsel Fis – Cis.\nImprovisiere nun auf den Schwarzen Tasten, spiele zuerst einfach irgendwie und irgendwas, und finde somit Tonfolgen, die dir besonders gefallen."
         self.learn_text_label.setText("")
         self.learn_text_label.show()
-        print('qLabel created')
-        print(self.learn_text_label)
-            #"Der Unterschied von Dur zu Moll liegt in der Unterschiedlichen Halb-/Ganzton Reihenfolge. Während bei Dur die Halbtonschritte zwischen der 3. und 4. sowie der 6. und 7. Stufe liegen, sind diese bei der Molltonleiter bei 2. und 3., sowie 5. und 6. Die Molltonleiter klingt. Hier verwenden wir die A-Moll Tonleiter. Diese bietet dasselbe Tonmaterial wie die C-Dur-Tonleiter, nur ist das A der Grundton. Backing Track spielt nun eine Kadenz. Das heißt er spielt die erste (Tonika), dann die vierte (Subdominante), dann die fünfte (Dominante), und schließlich wieder die erste Stufe. Dein Motiv muss nun in A-Moll transponiert werden. (Transponieren bedeutet so viel wie in eine andere Tonart übertragen.) In diesem Fall ist das einfach, da man es nur verschieben muss. Schwarze Tasten braucht man auch hier nicht verwenden. Versuche dein Motiv nun in A-Moll zu spielen und erkenne den Stimmungswechsel.")
-        #return self.learn_text_label
-
-
-
 
 
     # creating all buttons needed for the UI
@@ -161,6 +152,7 @@ class Window(QMainWindow):
         self.learn_button.clicked.connect(self.on_click_learn)
        
 
+    # when in learn mode in dropdown something is changed, text is changed and midifile is changed, so gui components must be reset
     @pyqtSlot()
     def on_dropdown_changed(self):
         print('changed')
@@ -168,7 +160,7 @@ class Window(QMainWindow):
         self.set_learn_text_label(index)
         self.set_path_for_learn_reset(index)
     
-
+    # depending on choosen lecture in the learn mode, the midifile is changed and the gui components updated 
     def set_path_for_learn_reset(self, index):
         print(index)
         if index == 0:
@@ -187,6 +179,7 @@ class Window(QMainWindow):
             path = "sound_midis/7_cdur_dorisch.mid"
         self.reset_gui_components(path)
 
+    # the text of the lecture text box is changed according to index (given from the dropdown change)
     def set_learn_text_label(self, index):    
         text_1_pentablack = "Die Pentatonik ist eine (penta = 5, griech.) – 5-Tonleiter. Im Gegensatz zur Dur/Moll-Tonleiter fehlen die Halbtonschritte. Scharfe Dissonanzen wie kleine Sekunden und große Septimen sind dadurch ausgeschlossen. Die Pentatonik besteht nur aus großen Sekunden und kleinen Terzen in dieser Reihenfolge: Große Sekunde - Große Sekunde - Kleine Terz - Große Sekunde.\nIn dieser 1. Lektion wird nun in der Fis-Dur-Pentatonik, welche aus den 5 Schwarzen Tasten besteht, improvisiert. Der Backing Track spielt im Wechsel Fis – Cis.\nImprovisiere nun auf den Schwarzen Tasten, spiele zuerst einfach irgendwie und irgendwas, und finde somit Tonfolgen, die dir besonders gefallen."
         text_2_penta_cdur = "In dieser Lektion gibt es immer noch die Pentatonik als Grundlage, nur wechseln wir von den Schwarzen Tasten (Fis-Dur) zu den weißen Tasten und der C-Dur-Pentatonik, welche aus C – D – E – G – A besteht. Der Backing Track spielt im Wechsel C und G.\nImprovisiere frei mit den 5 Tönen der C-Dur Pentatonik."
@@ -214,7 +207,7 @@ class Window(QMainWindow):
 
 
 
-
+    # practice mode is activated
     @pyqtSlot()
     def on_click_practice(self):
         print('practice mode activated')
@@ -226,7 +219,7 @@ class Window(QMainWindow):
         self.practice_button.setFocus()
         self.reset_gui_components(self.current_practice_file)
     
-
+    # learn mode is activated 
     @pyqtSlot()
     def on_click_learn(self):
         index = self.cmbox.currentIndex()
@@ -241,50 +234,12 @@ class Window(QMainWindow):
         self.practice_button.setFocus(False)
         self.learn_button.setFocus() #setCheckable(True)
 
-    '''    
-    def create_countdown_label(self):   #, text):
-        self.countdown_label = QtWidgets.QLabel(self)
-        self.countdown_label.resize(18,30)
-        #self.countdown_label.setStyleSheet("background-color: lightgreen")
-        self.countdown_label.move(510,300)
-        self.countdown_label.setText('')
-        self.countdown_label.setFont(QFont('Georgia', 30))
-        self.countdown_label.show()
-        self.countdown_label.setVisible(True)
-    
-
-    def update_countdown(self, i):
-        print('called')
-        print(i)
-        self.countdown_label.setText(i)
-        self.countdown_label.show()
-    '''
 
     # when record is clicked: 
     @pyqtSlot()
     def on_click_record(self):
        
-        #if self.export_button == disabled:
-        #    self.export_button.hide()
         if self.recording_state == False: # if not recording yet -> start recording + playing backing track
-            #self.cre
-            #i = 4
-            #counts = ['4', '3', '2', '1'] 
-            #for x in counts:
-            #    print(x)
-            #    self.countdown_label.setText(x)
-            #    self.countdown_label.show()
-            #    #self.update_countdown(x)
-            #    time.sleep(1.0)
-        
-            #for i in range(4): 
-            #    count_num = str(i)
-            #    print(count_num)
-                #self.countdown_label.setText(count_num)
-                #self.update_countdown(count_num)
-
-                #time.sleep(1.0)
-                #i -= 1
             self.recording_state = True
             self.staff.play_bt()    
         else: 
@@ -354,18 +309,7 @@ class Window(QMainWindow):
             print('in except')
             print('fail of upload')
             pass
-        #finally:
-            #print('in finally')
-            # reset key, staff and labeling when new file is uploaded
-    '''        
-    def set_midifile(self, midifile): 
-        self.staff.set_midifile(midifile)
-        self.labeling.set_midifile(midifile)
-        for key in WHITE_KEYS:
-            key.set_midifile(midifile)
-        for key in BLACK_KEYS:
-            key.set_midifile(midifile)
-    '''
+    
 
     # reset key, staff and labeling
     def reset_gui_components(self, midi_path):
