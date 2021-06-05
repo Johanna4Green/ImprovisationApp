@@ -87,53 +87,39 @@ class Recording():
         mid.type = 1
         track = MidiTrack()
         backing_track= MidiTrack()
-        length = 0.0
-        #track_length
-        backing_track_length = 0.0
-        
+
         mid.tracks.append(track)
         mid.tracks.append(backing_track)
-        #mid.set_tempo('500000')
-        #this_tempo = self.getTempo(mid)
+
         print(mid.ticks_per_beat)
         print(mid)
         
-       
+        track_time = 0
         track.append(Message('program_change', program=12, time=0))
         track.append(MetaMessage('set_tempo', tempo=500000))
         for msg in self.record_array:   # append every msg of self.record_array
-            #print(msg.time)
             delta_time = int(mido.second2tick(msg.time, mid.ticks_per_beat, 500000))
             msg.note = msg.note + 12
-            length = length + delta_time
-            #scale = 500000 * 1e-6 / 480
-            #t = msg.time / scale
-            #print(t)
+            track_time = track_time + msg.time
+
             msg.time = delta_time
-            #print(msg.time)
-            #print(msg)
+
             track.append(msg)
-        #track_length = length
-        #print(length)
+        #print(track_time)
+
         backing_track.append(Message('program_change', program=12, time=0))
         backing_track.append(MetaMessage('set_tempo', tempo=500000))
-        print('BACKING TRACK')
-        #while backing_track_length < length:
-        i = 0
-        for i in range(3):
+
+        backing_track_time = 0 
+        while backing_track_time < track_time:
             loop = True
             for bmsg in MidiFile(self.midifile):
                 if(bmsg.type != 'program_change' and bmsg.type != 'control_change') and not bmsg.is_meta:
                     #print(bmsg)
                     bmsg.note = bmsg.note - 24 # -24 to move the note 2 oktaves down to be shown in bass clef
-                    #print(bmsg.time)
-                        
                     bdelta_time = int(mido.second2tick(bmsg.time, mid.ticks_per_beat, 500000))
-                    backing_track_length = backing_track_length + delta_time
-                    #rint(backing_track_length)
-                    #scale = 500000 * 1e-6 / 480
-                    #t = msg.time / scale
-                    #print(t)
+                    backing_track_time = backing_track_time + bmsg.time
+
                     bmsg.time = bdelta_time
                     if loop == True: 
                         bmsg.time = 97
@@ -142,12 +128,8 @@ class Recording():
                     print(bmsg.time)
                     print(bmsg)
                     backing_track.append(bmsg)
-                    #loop += 1
-            i +=1
         loop = True
         
-        print('NOW THE BT LENGTH')
-        print(backing_track_length)
         return mid
         #mid.save('recordings/recording.mid')
     # https://sourcecodequery.com/example-method/mido.second2tick
