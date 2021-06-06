@@ -60,6 +60,9 @@ class Key():
     # reset function called from gui when new file is choosen as Backing Track: to update the keyboard
     def reset_key_class(self, tonality):
         self.tonality =  tonality
+    
+    #def reset_for_c_penta(self, tonality):
+    #    self.tonality = tonality
 
    
     # draws the keys (the whole keyboard) and also 
@@ -120,6 +123,8 @@ class Key():
         as_dur_notes = [1, 3, 4, 6, 8, 10, 11]  #des
         des_dur_notes = [1, 3, 4, 6, 8, 9, 11]  #ges
         ges_dur_notes = [1, 2, 4, 6, 8, 9, 11]  #ces
+        c_dur_penta_notes = [0, 3, 5, 7, 10]
+        fis_dur_penta_notes = [1, 4, 6, 9, 11]
 
         if self.tonality == 'C':
             ar = c_dur_notes
@@ -147,6 +152,10 @@ class Key():
             ar = des_dur_notes
         elif self.tonality == 'Gb':
             ar = ges_dur_notes
+        elif self.tonality == 'c-penta':
+            ar = c_dur_penta_notes
+        elif self.tonality == 'fis-penta':
+            ar = fis_dur_penta_notes
 
         for key_number in range(88):
             if key_number % 12 in ar: 

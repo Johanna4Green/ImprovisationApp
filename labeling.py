@@ -39,6 +39,9 @@ class Labeling():
         print(self.tonality)
         self.update_labels()
 
+    def reset_tonality_label(self, name):
+        self.tonalityLabel.setText(name)
+
     # update all labels
     def update_labels(self):
         self.tonalityLabel.setText(self.get_tonality_text(self.tonality))

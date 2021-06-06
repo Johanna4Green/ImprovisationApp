@@ -159,6 +159,7 @@ class Window(QMainWindow):
         index = self.cmbox.currentIndex()
         self.set_learn_text_label(index)
         self.set_path_for_learn_reset(index)
+        self.set_special_learn_mode(index)
     
     # depending on choosen lecture in the learn mode, the midifile is changed and the gui components updated 
     def set_path_for_learn_reset(self, index):
@@ -206,6 +207,29 @@ class Window(QMainWindow):
             self.learn_text_label.setText(text_7_kirchentonarten)
 
 
+    # special changes for only show pentatonic colored in 1. and 2. Lecture and write A-Moll in 6. Lecture
+    def set_special_learn_mode(self, index):
+        if index == 0:   # color only fis dur pentatonik -> black keys
+            for key in WHITE_KEYS:
+                key.reset_key_class('fis-penta')
+            for key in BLACK_KEYS:
+                key.reset_key_class('fis-penta')
+        elif index == 1:    # color only c dur pentatonik -> c, d, e, g, a
+            for key in WHITE_KEYS:
+                key.reset_key_class('c-penta')
+            for key in BLACK_KEYS:
+                key.reset_key_class('c-penta')
+        elif index == 2:
+            pass    
+        elif index == 3:
+            pass
+        elif index == 4:
+            pass
+        elif index == 5:    # for the 6. Lecture A-Moll, nur C-Dur must be written
+            self.labeling.reset_tonality_label("Tonart: A - Moll")
+        elif index == 6:
+            pass
+
 
     # practice mode is activated
     @pyqtSlot()
@@ -225,7 +249,7 @@ class Window(QMainWindow):
         index = self.cmbox.currentIndex()
         self.set_learn_text_label(index)
         self.set_path_for_learn_reset(index)
-
+        self.set_special_learn_mode(index)
         print('learn mode activated')
         self.cmbox.setVisible(True)
         self.upload_button.setVisible(False)
@@ -324,6 +348,8 @@ class Window(QMainWindow):
         for key in BLACK_KEYS:
             key.reset_key_class(this_tonality)
 
+
+    
 
     # draw Piano keyboard with 88 keys
     def paintEvent(self, e):
