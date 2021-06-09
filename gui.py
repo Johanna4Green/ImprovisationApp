@@ -115,22 +115,25 @@ class Window(QMainWindow):
         stop_button.move(300,70)
         stop_button.clicked.connect(self.on_click_stop)
         # record
-        record_button = QPushButton('Record', self)
-        record_button.setToolTip('to record your playing')
-        record_button.move(787,280)
-        record_button.clicked.connect(self.on_click_record)
+        self.record_button = QPushButton('Record', self)
+        self.record_button.setToolTip('to record your playing')
+        self.record_button.move(757,280)
+        self.record_button.resize(120,26)
+        self.record_button.clicked.connect(self.on_click_record)
         # listen to recording
-        listen_button = QPushButton('Play recording', self)
-        listen_button.setToolTip('to listen to your recording')
-        listen_button.resize(120,26)
-        listen_button.move(887,280)
-        listen_button.clicked.connect(self.on_click_listen)
+        self.listen_button = QPushButton('Play recording', self)
+        self.listen_button.setToolTip('to listen to your recording')
+        self.listen_button.resize(120,26)
+        self.listen_button.move(887,280)
+        self.listen_button.clicked.connect(self.on_click_listen)
+        self.listen_button.setEnabled(False)
         # save recording
-        save_recording_button = QPushButton('Save recording', self)
-        save_recording_button.setToolTip('to save your recording')
-        save_recording_button.resize(120,26)
-        save_recording_button.move(1007,280)
-        save_recording_button.clicked.connect(self.on_click_save_recording)
+        self.save_recording_button = QPushButton('Save recording', self)
+        self.save_recording_button.setToolTip('to save your recording')
+        self.save_recording_button.resize(120,26)
+        self.save_recording_button.move(1007,280)
+        self.save_recording_button.clicked.connect(self.on_click_save_recording)
+        self.save_recording_button.setEnabled(False)
         # upload button
         self.upload_button = QPushButton('Upload track', self)
         self.upload_button.setToolTip('to upload a backing track from your computer')
@@ -265,9 +268,17 @@ class Window(QMainWindow):
        
         if self.recording_state == False: # if not recording yet -> start recording + playing backing track
             self.recording_state = True
+            self.record_button.setText('Stop recording')
+            self.record_button.setToolTip('to stop the recording')
+            self.save_recording_button.setEnabled(False)
+            self.listen_button.setEnabled(False)
             self.staff.play_bt()    
         else: 
             self.recording_state = False # if already recording -> stop recording + backing track
+            self.record_button.setText('Record')
+            self.record_button.setToolTip('to record your playing')
+            self.save_recording_button.setEnabled(True)
+            self.listen_button.setEnabled(True)
             self.staff.stop_bt()
         self.recording.set_record_state()
 

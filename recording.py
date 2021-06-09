@@ -158,5 +158,5 @@ class Recording():
     def draw(self, painter):
         if self.is_recording:
             painter.setBrush(QBrush(Qt.red, Qt.SolidPattern)) # set brush to fill the key with color
-        painter.drawEllipse(775, 290, 10, 10)
+        painter.drawEllipse(745, 290, 10, 10)
         return
