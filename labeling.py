@@ -77,7 +77,7 @@ class Labeling():
     def create_tact_label(self, window):
         self.time44Label = QtWidgets.QLabel(window)
         self.time44Label.resize(45,95)
-        time44Pixmap = QPixmap('images/timeSign44.webp')
+        time44Pixmap = QPixmap('images/timeSign44.png')
         self.time44Label.setPixmap(time44Pixmap)
         self.time44Label.setScaledContents(True)
         self.time44Label.setVisible(False)
