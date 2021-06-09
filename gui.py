@@ -12,6 +12,7 @@ from PyQt5.QtCore import Qt, QTimer, pyqtSlot
 
 import sys
 import time
+import os
 
 from constants import *
 from midiInput import MidiInput
@@ -24,7 +25,6 @@ from songExtracting import SongExtracting
 
 class Window(QMainWindow):
 
-    
 
     def __init__(self):
         super().__init__()      # exended from class QMainWindow
@@ -62,7 +62,6 @@ class Window(QMainWindow):
         self.setGeometry(self.top, self.left, self.width, self.height)
         self.show()
 
-
     # creating the keyboard with colors and dots 
     def init_keyboard(self, num_keys):
         self.keys = []
@@ -72,14 +71,21 @@ class Window(QMainWindow):
 
     # dropdown menu fpr the learn mode to choose the lecture
     def init_droppingdown_crazy(self):
+        lessons = []
+        filelist = os.listdir('theory_files')
+        for file in filelist:
+            lessons.append(file.split('.')[0])
+
+        self.unique_name_list = list(set(lessons))
+        self.unique_name_list.sort()
+        print(self.unique_name_list)
+
         self.cmbox = QComboBox(self)
-        self.cmbox.addItem('1 - Pentatonik mit schwarzen Tasten')
-        self.cmbox.addItem("2 - C-Dur Pentatonik")
-        self.cmbox.addItem("3 - C-Dur Tonleiter mit Powerchords")
-        self.cmbox.addItem("4 - C-Dur Tonleiter mit Dreiklängen")
-        self.cmbox.addItem("5 - C-Dur Tonleiter mit Septakkorden")
-        self.cmbox.addItem("6 - A-Moll-Tonleiter")
-        self.cmbox.addItem("7 - Kirchentonarten (dorisch)")
+
+        for name in self.unique_name_list:
+            print(name)
+            self.cmbox.addItem(name)
+       
         self.cmbox.resize(300,100)
         self.cmbox.move(400,37)
         self.cmbox.setVisible(False)
@@ -167,47 +173,20 @@ class Window(QMainWindow):
     # depending on choosen lecture in the learn mode, the midifile is changed and the gui components updated 
     def set_path_for_learn_reset(self, index):
         print(index)
-        if index == 0:
-            path = "sound_midis/1_pentatonik_fisdur.mid"
-        elif index == 1:
-            path = "sound_midis/2_pentatonik_cdur.mid"
-        elif index == 2:
-            path = "sound_midis/3_tonleiter_cdur_powerchords.mid"
-        elif index == 3:
-            path = "sound_midis/4_tonleiter_cdur_chords.mid"
-        elif index == 4:
-            path = "sound_midis/5_tonleiter_cdur_7chords.mid"
-        elif index == 5:
-            path = "sound_midis/6_tonleiter_amoll_chords.mid"
-        elif index == 6:
-            path = "sound_midis/7_cdur_dorisch.mid"
+        path = 'theory_files/' + self.unique_name_list[index] + '.mid'
         self.reset_gui_components(path)
-
+        
     # the text of the lecture text box is changed according to index (given from the dropdown change)
-    def set_learn_text_label(self, index):    
-        text_1_pentablack = "Die Pentatonik ist eine (penta = 5, griech.) – 5-Tonleiter. Im Gegensatz zur Dur/Moll-Tonleiter fehlen die Halbtonschritte. Scharfe Dissonanzen wie kleine Sekunden und große Septimen sind dadurch ausgeschlossen. Die Pentatonik besteht nur aus großen Sekunden und kleinen Terzen in dieser Reihenfolge: Große Sekunde - Große Sekunde - Kleine Terz - Große Sekunde.\nIn dieser 1. Lektion wird nun in der Fis-Dur-Pentatonik, welche aus den 5 Schwarzen Tasten besteht, improvisiert. Der Backing Track spielt im Wechsel Fis – Cis.\nImprovisiere nun auf den Schwarzen Tasten, spiele zuerst einfach irgendwie und irgendwas, und finde somit Tonfolgen, die dir besonders gefallen."
-        text_2_penta_cdur = "In dieser Lektion gibt es immer noch die Pentatonik als Grundlage, nur wechseln wir von den Schwarzen Tasten (Fis-Dur) zu den weißen Tasten und der C-Dur-Pentatonik, welche aus C – D – E – G – A besteht. Der Backing Track spielt im Wechsel C und G.\nImprovisiere frei mit den 5 Tönen der C-Dur Pentatonik."
-        text_3_cdur_powerchords = "Nun wird die Pentatonik durch die Heptatonik (griech. „Siebentönigkeit“) erweitert. Alle bekannten Moll- und Dur-Tonleitern sind Heptatoniken. Hier wird die C-Dur-Tonleiter verwendet, die alle 7 weißen Tasten als Tonmaterial bietet.\nVersuche nun ein 2-taktiges Motiv (wie zum Beispiel „Hänschen klein – ging allein“) zu spielen. Und versuche dieses, nach einigen Wiederholungen, rauf und runter, in unterschiedlichen Oktavhöhen zu spielen oder beispielsweise eine kleine Extranote als Vorhaltsnote oder zwischendrin als Extra einzubauen."
-        text_4_cdur_chords = "Die C-Dur-Tonleiter als Tonmaterial bleibt, im Backing Track werden noch die Terzen hinzugefügt. Es wird also je Akkord nicht nur die Quinte gespielt C – G, sondern C – E – G.\nVersuche das zuvor gelernte Motiv nun auch in der Geschwindigkeit zu variieren und mit einem anderen Ton anzufangen, das Motiv also einige Halb-/Ganztonschritte zu verschieben. Höre genau hin und finde somit heraus, was dazu passt und was möglich ist."
-        text_5_cdur_septakkorde = "Auch hier bleibt die C-Dur-Tonleiter als Tonmaterial, im Backing Track werden noch die Septimen hinzugefügt. „Septakkorde gelten in der traditionellen Harmonik als dissonant und auflösungsbedürftig. In der Jazzharmonik spielt der Septakkord in all seinen Formen eine zentrale Rolle und löst den Dreiklang als harmonisches ‚Basismaterial‘ ab.“  Es wird nur der große Durseptakkord C-E-G-H (mit einer großen Septime, also 11 Halbtonschritten von C nach H) und der Dominantseptakkord G-H-D-F, der kleiner Durseptakkord (mit nur eine kleine Septime, nur 10 Halbtonschritte, von G nach F) gespielt.\nHöre dir den Backing Track an und erkenne die hier gewünschten Dissonanzen, welche ein Lied interessanter machen können. Versuche auch hier mit dem Motiv zu arbeiten und achte auf die Wirkung des Septakkords. Du kannst auch selbst Dissonanzen erproben und probieren eine Sekunde, also zwei direkt nebeneinanderliegende weiße Tasten oder eine schwarze Note, welche nicht zur C-Dur-Tonleiter passt, zu spielen."
-        text_6_moll = "Der Unterschied von Dur zu Moll liegt in der Unterschiedlichen Halb-/Ganzton Reihenfolge. Während bei Dur die Halbtonschritte zwischen der 3. und 4. sowie der 6. und 7. Stufe liegen, sind diese bei der Molltonleiter bei 2. und 3., sowie 5. und 6. Die Molltonleiter lässt das Gespielte melancholischer und trauriger klingen.\nHier verwenden wir die A-Moll Tonleiter. Diese bietet dasselbe Tonmaterial wie die C-Dur-Tonleiter, nur ist das A der Grundton. Der Backing Track spielt nun eine Kadenz. Das heißt er spielt die erste (Tonika), dann die vierte (Subdominante), dann die fünfte (Dominante), und schließlich wieder die erste Stufe.\nDein Motiv muss nun in A-Moll transponiert werden. (Transponieren bedeutet so viel wie in eine andere Tonart übertragen.) In diesem Fall ist das einfach, da man es nur verschieben muss. Schwarze Tasten braucht man auch hier nicht verwenden. Versuche dein Motiv nun in A-Moll zu spielen und erkenne den Stimmungswechsel."
-        text_7_kirchentonarten = "„Man spricht von Modi bzw. Kirchentonarten, um diese Tonskalen von den heute gebräuchlichen 24 Tonarten (12 Dur- und 12-Molltonarten) zu unterscheiden. Außerdem sind die Kirchentonarten keine Tonleitern im modernen Sinn, sondern Skalenausschnitte, die das Tonmaterial von modellartig verwendeten Melodien enthalten. Man unterscheidet 7 modale Tonleitern, die sich durch die unterschiedliche Anordnung der Halbtonschritte voneinander unterscheiden:\nIonisch (c–c),   Dorisch (d–d),   Phrygisch (e–e),   Lydisch (f–f),   Mixolydisch (g–g),   Äolisch (a–a),   Lokrisch (h–h).“\nIn diesem Beispiel wird die 2. Skala verwendet. Bei C-Dur dorisch wird jeder Ton um eins nach oben verschoben. Versuche auch hier dein Motiv zu spielen und durch verschiedene Improvisationen abzuwandeln." 
-       
-        print(index)
-        if index == 0:
-            self.learn_text_label.setText(text_1_pentablack)
-        elif index == 1:
-            self.learn_text_label.setText(text_2_penta_cdur)
-        elif index == 2:
-            self.learn_text_label.setText(text_3_cdur_powerchords)
-        elif index == 3:
-            self.learn_text_label.setText(text_4_cdur_chords)
-        elif index == 4:
-            self.learn_text_label.setText(text_5_cdur_septakkorde)
-        elif index == 5:
-            self.learn_text_label.setText(text_6_moll)
-        elif index == 6:
-            self.learn_text_label.setText(text_7_kirchentonarten)
+    def set_learn_text_label(self, index):   
+        path = 'theory_files/' + self.unique_name_list[index] + '.txt'
+        theory_text = open(path, 'r')
+        theory_lines = theory_text.readlines()
+        print(theory_lines)
+        text = ""
+        for line in theory_lines:
+            text = text + line
+
+        self.learn_text_label.setText(text)
 
 
     # special changes for only show pentatonic colored in 1. and 2. Lecture and write A-Moll in 6. Lecture
@@ -222,16 +201,8 @@ class Window(QMainWindow):
                 key.reset_key_class('c-penta')
             for key in BLACK_KEYS:
                 key.reset_key_class('c-penta')
-        elif index == 2:
-            pass    
-        elif index == 3:
-            pass
-        elif index == 4:
-            pass
         elif index == 5:    # for the 6. Lecture A-Moll, nur C-Dur must be written
             self.labeling.reset_tonality_label("Tonart: A - Moll")
-        elif index == 6:
-            pass
 
 
     # practice mode is activated

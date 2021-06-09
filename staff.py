@@ -76,8 +76,8 @@ class Staff():
         self.tonality = self.song_extracting.getTonality(self.midifile)
         self.length_of_array = len(self.song_chords)
         self.x_position = self.set_x_position() # NOTELINE_VER_X
-        print(self.song_chords)
-        print(self.length_of_array)
+        #print(self.song_chords)
+        #print(self.length_of_array)
         
         self.chord_list = self.get_chords(self.song_chords)
         #self.state = "stopped"

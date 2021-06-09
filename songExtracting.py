@@ -25,7 +25,7 @@ class SongExtracting():
         #self.overallTime = 0.007291666666666667 # SixteenthNote before
         for msg in MidiFile(midifile):
             if(msg.type != 'program_change' and msg.type != 'control_change') and not msg.is_meta:
-                print(msg)
+                #print(msg)
                 self.overall_time = self.overall_time + msg.time  # calculate time since start
                 if(msg.velocity > 0): # noteon
                     self.note_array.append(msg.note - 12)   # -12 to get the sound one octave down
