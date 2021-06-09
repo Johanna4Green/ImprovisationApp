@@ -32,7 +32,7 @@ class Staff():
     # TODO: Midi-File auslagern
     def __init__(self):
 
-        self.state = 'paused'
+        self.state = 'stopped'
         # initializing fluidsynther
         self.fs = self.initFluidSynth()
 
