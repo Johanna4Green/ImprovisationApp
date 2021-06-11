@@ -60,10 +60,7 @@ class Key():
     # reset function called from gui when new file is choosen as Backing Track: to update the keyboard
     def reset_key_class(self, tonality):
         self.tonality =  tonality
-    
-    #def reset_for_c_penta(self, tonality):
-    #    self.tonality = tonality
-
+        
    
     # draws the keys (the whole keyboard) and also 
     # draws the dots for live feedback from input and backing track
@@ -110,60 +107,13 @@ class Key():
     def getColorArray(self):
         #[ 'A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#']
         color_array = []
-        c_dur_notes = [0, 2, 3, 5, 7, 8, 10]
-        g_dur_notes = [0, 2, 3, 5, 7, 9, 10]  #fis
-        d_dur_notes = [0, 2, 4, 5, 7, 9, 10]  #cis
-        a_dur_notes = [0, 2, 4, 5, 7, 9, 11]  #gis
-        e_dur_notes = [0, 2, 4, 6, 7, 9, 11]  #dis
-        b_dur_notes = [1, 2, 4, 6, 7, 9, 11]  #ais
-        fis_dur_notes = [1, 2, 4, 6, 8, 9, 11] #eis 
-        f_dur_notes = [0, 1, 3, 5, 7, 8, 10]    #b
-        bb_dur_notes = [0, 1, 3, 5, 6, 8, 10]  #es
-        es_dur_notes = [1, 3, 5, 6, 8, 10, 11]  #as
-        as_dur_notes = [1, 3, 4, 6, 8, 10, 11]  #des
-        des_dur_notes = [1, 3, 4, 6, 8, 9, 11]  #ges
-        ges_dur_notes = [1, 2, 4, 6, 8, 9, 11]  #ces
-        c_dur_penta_notes = [0, 3, 5, 7, 10]
-        fis_dur_penta_notes = [1, 4, 6, 9, 11]
-
-        if self.tonality == 'C':
-            ar = c_dur_notes
-        elif self.tonality == 'G':
-            ar = g_dur_notes
-        elif self.tonality == 'D':
-            ar = d_dur_notes
-        elif self.tonality == 'A':
-            ar = a_dur_notes
-        elif self.tonality == 'E':
-            ar = e_dur_notes
-        elif self.tonality == 'B':
-            ar = b_dur_notes
-        elif self.tonality == 'F#':
-            ar = fis_dur_notes
-        elif self.tonality == 'F':
-            ar = f_dur_notes
-        elif self.tonality == 'Bb':
-            ar = bb_dur_notes
-        elif self.tonality == 'Eb':
-            ar = es_dur_notes
-        elif self.tonality == 'Ab':
-            ar = as_dur_notes
-        elif self.tonality == 'Db':
-            ar = des_dur_notes
-        elif self.tonality == 'Gb':
-            ar = ges_dur_notes
-        elif self.tonality == 'c-penta':
-            ar = c_dur_penta_notes
-        elif self.tonality == 'fis-penta':
-            ar = fis_dur_penta_notes
-
+        ar = COLORING_DICT[self.tonality] # returns the numbers of the keys for one octave (in an array), which should be colored 
         for key_number in range(88):
             if key_number % 12 in ar: 
                 color_array.append(True)
             else:
                 color_array.append(False)
         return color_array
-
 
 midi_input = MidiInput()
 song_extracting = SongExtracting()

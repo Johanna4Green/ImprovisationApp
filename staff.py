@@ -24,7 +24,7 @@ import fluidsynth
 from constants import * 
 from songExtracting import SongExtracting
 from chord import Chord
-from fluidsynther import fs
+from fluidsynther import fs # fluidsynther for making the sound
 
 class Staff():
 

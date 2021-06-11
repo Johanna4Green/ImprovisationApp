@@ -8,7 +8,7 @@ from mido import MidiFile
 import threading
 import time
 
-from fluidsynther import fs
+from fluidsynther import fs # fluidsynther for making the sound
 from constants import *
 
 class MidiInput():

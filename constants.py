@@ -50,3 +50,56 @@ NOTELINE_VER_Y2 = NOTELINE_HOR_Y + (4*16)
 X_DISTANCE = 230   #224 # 225
 
 MIDIFILE = 'sound_midis/chordtry.mid'
+
+TON_DICT = {
+    'C': 'Tonart: C - Dur',
+    'F': 'Tonart: F - Dur',
+    'Bb': 'Tonart: B - Dur',
+    'Eb': 'Tonart: Es - Dur',
+    'Ab': 'Tonart: As - Dur',
+    'Db': 'Tonart: Des - Dur',
+    'Gb': 'Tonart: Ges - Dur',
+    'G': 'Tonart: G - Dur',
+    'D': 'Tonart: D - Dur',
+    'A': 'Tonart: A - Dur',
+    'E': 'Tonart: E - Dur',
+    'B': 'Tonart: H - Dur',
+    'F#': 'Tonart: Fis - Dur'
+}
+
+
+#[ 'A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#']
+c_dur_notes = [0, 2, 3, 5, 7, 8, 10]
+g_dur_notes = [0, 2, 3, 5, 7, 9, 10]  #fis
+d_dur_notes = [0, 2, 4, 5, 7, 9, 10]  #cis
+a_dur_notes = [0, 2, 4, 5, 7, 9, 11]  #gis
+e_dur_notes = [0, 2, 4, 6, 7, 9, 11]  #dis
+b_dur_notes = [1, 2, 4, 6, 7, 9, 11]  #ais
+fis_dur_notes = [1, 2, 4, 6, 8, 9, 11] #eis 
+f_dur_notes = [0, 1, 3, 5, 7, 8, 10]    #b
+bb_dur_notes = [0, 1, 3, 5, 6, 8, 10]  #es
+es_dur_notes = [1, 3, 5, 6, 8, 10, 11]  #as
+as_dur_notes = [1, 3, 4, 6, 8, 10, 11]  #des
+des_dur_notes = [1, 3, 4, 6, 8, 9, 11]  #ges
+ges_dur_notes = [1, 2, 4, 6, 8, 9, 11]  #ces
+c_dur_penta_notes = [0, 3, 5, 7, 10]
+fis_dur_penta_notes = [1, 4, 6, 9, 11]
+
+
+COLORING_DICT = {
+    'C': c_dur_notes,
+    'G': g_dur_notes,
+    'D': d_dur_notes,
+    'A': a_dur_notes,
+    'E': e_dur_notes,
+    'B': b_dur_notes,
+    'F#': fis_dur_notes,
+    'F': f_dur_notes,
+    'Bb': bb_dur_notes,
+    'Eb': es_dur_notes,
+    'Ab': as_dur_notes,
+    'Db': des_dur_notes,
+    'Gb': ges_dur_notes,
+    'c-penta': c_dur_penta_notes,
+    'fis-penta': fis_dur_penta_notes
+        }

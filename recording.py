@@ -11,7 +11,7 @@ from mido import Message, MidiFile, MidiTrack, MetaMessage
 import threading
 import time
 from constants import *
-from fluidsynther import fs
+from fluidsynther import fs # fluidsynther for making the sound
 
 class Recording():
 

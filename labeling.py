@@ -26,10 +26,6 @@ class Labeling():
         self.create_tact_label(window)
         self.show_labels()
 
-    #def set_midifile(self, midifile):
-    #    self.midifile = midifile
-    #    return self.midifile
-
     # reset function to update from gui when new Backing Track file is choosen
     def reset_labeling_class(self, midifile):
         self.midifile = midifile
@@ -44,7 +40,7 @@ class Labeling():
 
     # update all labels
     def update_labels(self):
-        self.tonalityLabel.setText(self.get_tonality_text(self.tonality))
+        self.tonalityLabel.setText(TON_DICT[self.tonality])       #self.get_tonality_text(self.tonality))
         for i in range(6):
             self.sharp_list[i].setVisible(False)
             self.flat_list[i].setVisible(False)
@@ -156,7 +152,7 @@ class Labeling():
 
     # creating tonality text label to show tonality to user 
     def create_tonality_text_label(self,window):
-        tonalityText = self.get_tonality_text(self.tonality)
+        tonalityText = TON_DICT[self.tonality]         #self.get_tonality_text(self.tonality)
         self.tonalityLabel = QtWidgets.QLabel(window)
         self.tonalityLabel.setText(tonalityText)
         #painter.setFont(QFont('Frutiger',20))
@@ -164,36 +160,3 @@ class Labeling():
         self.tonalityLabel.resize(230, 30)
         self.tonalityLabel.move(500,280)
         self.tonalityLabel.show()
-
-    # get the right text for the tonality text label dependent of self.tonality 
-    def get_tonality_text(self, ton):
-        tonText = ''
-        if ton == 'C':
-            tonText = 'Tonart: C - Dur'
-        elif ton == 'F':
-            tonText = 'Tonart: F - Dur'
-        elif ton == 'Bb':
-            tonText = 'Tonart: B - Dur'
-        elif ton == 'Eb':
-            tonText = 'Tonart: Es - Dur'
-        elif ton == 'Ab':
-            tonText = 'Tonart: As - Dur'
-        elif ton == 'Db':
-            tonText = 'Tonart: Des - Dur'
-        elif ton == 'Gb':
-            tonText = 'Tonart: Ges - Dur'
-        elif ton == 'G':
-            tonText = 'Tonart: G - Dur'
-        elif ton == 'D':
-            tonText = 'Tonart: D - Dur'
-        elif ton == 'A':
-            tonText = 'Tonart: A - Dur'
-        elif ton == 'E':
-            tonText = 'Tonart: E - Dur'
-        elif ton == 'B':
-            tonText = 'Tonart: H - Dur'
-        elif ton == 'F#':
-            tonText = 'Tonart: Fis - Dur'
-        else:
-            print('error with tonText in staff line 480')
-        return tonText
