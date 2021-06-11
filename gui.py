@@ -270,6 +270,8 @@ class Window(QMainWindow):
             print('in except')
             print('fail of upload')
             pass
+        self.save_recording_button.setEnabled(False)
+        self.listen_button.setEnabled(False)
 
 
     # play latest recording 

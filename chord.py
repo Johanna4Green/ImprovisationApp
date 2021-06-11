@@ -72,7 +72,7 @@ class Chord():
     def drawText(self, painter):
         text = self.chord_symbol
         painter.setPen(QPen(Qt.black, 2, Qt.SolidLine))
-        painter.setFont(QFont("sound_midis/OpenSans-Regular.ttf", 20))        #QFont('Skia',20)) #  Helvetica  Arial
+        painter.setFont(QFont("OpenSans-Regular.ttf", 20))        #QFont('Skia',20)) #  Helvetica  Arial
         x_pos = self.x_position
         y_pos = 120
         w = 50

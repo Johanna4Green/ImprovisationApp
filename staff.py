@@ -24,18 +24,15 @@ import fluidsynth
 from constants import * 
 from songExtracting import SongExtracting
 from chord import Chord
+from fluidsynther import fs
 
 class Staff():
 
     song_extracting = SongExtracting()
 
-    # TODO: Midi-File auslagern
     def __init__(self):
 
         self.state = 'stopped'
-        # initializing fluidsynther
-        self.fs = self.initFluidSynth()
-
         self.midifile = MIDIFILE
         self.song_chords = self.song_extracting.getNotesOfSong(self.midifile)
         self.tonality = self.song_extracting.getTonality(self.midifile)
@@ -48,23 +45,9 @@ class Staff():
         self.x_position = self.set_x_position() # NOTELINE_VER_X
         self.basic_x_pos_list = []  # list of all x_positions to return to start position, when e.g. stop is pressed
         self.chord_list = self.get_chords(self.song_chords)
-        #self.chordListOfBeginning = self.get_chords(self.song_chords)
         self.bt_keys = [False] * 88 # Key Array in init, um Model und View zu trennen = Globale Variable
         fileInput_thread = threading.Thread(target=self.play_track)
         fileInput_thread.start()
-
-    #def set_midifile(self, midifile):
-    #    self.midifile = midifile
-    #    return self.midifile
-
-    # initializing fluidsynther
-    def initFluidSynth(self):
-        fs = fluidsynth.Synth(1)
-        fs.start(driver = 'portaudio')
-        sfid = fs.sfload("sound_midis/default-GM.sf2") 
-        fs.program_select(0, sfid, 0, 0)
-        return fs
-
 
     ################# RESET ######################
     def reset_staff_class(self, midifile):
@@ -120,11 +103,11 @@ class Staff():
                 sum_up_len = sum_up_len + length # adding latest notelength to sum_up_length
                 for note in entry[0]:
                     self.bt_keys[note + 3] = True   # draw dot on key
-                    self.fs.noteon(0, note, 60)     # play note
+                    fs.noteon(0, note, 60)     # play note
                 time.sleep(length-0.1)              # sleep the notelength to hold it the notlength (-0.1 to use the 0.1 for the noteoff event in order to hear a short break between notes)
                 for note in entry[0]:
                     self.bt_keys[note + 3] = False  
-                    self.fs.noteoff(0, note)
+                    fs.noteoff(0, note)
                 time.sleep(0.1)
                 # to move when tact is over: 
                 # cannot work because the chord is moved to the pos of the last chord, but this can only work if all chords have equal length! 
@@ -135,7 +118,7 @@ class Staff():
                         chord.update_x_position()
                         self.chord_list[counter].set_x_position(last_chord_pos)    # looping     #.x_position = last_chord_pos # setz den gerade "rausgeschobenen nach ganz hinten  
                 counter = counter + 1 
-        self.fs.delete()
+        fs.delete()
     
 
     # draws the noteline AND calls the chord.draw function to draw the notes onto the noteline

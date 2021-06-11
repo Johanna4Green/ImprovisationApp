@@ -8,25 +8,18 @@ from mido import MidiFile
 import threading
 import time
 
+from fluidsynther import fs
 from constants import *
 
 class MidiInput():
 
     def __init__(self):
         
-        self.fs = self.initFluidSynth()
         self.keys = [False] * 88 # keys array to be gotten from key class and marker drawn accordingly
 
         input_thread = threading.Thread(target=self.getInput)
         input_thread.start()
 
-    # initializing fluidsynther
-    def initFluidSynth(self):
-        fs = fluidsynth.Synth(1)
-        fs.start(driver = 'portaudio')
-        sfid = fs.sfload("sound_midis/default-GM.sf2") 
-        fs.program_select(0, sfid, 0, 0)
-        return fs
 
     def getKeyArray(self):
         return self.keys
@@ -50,10 +43,10 @@ class MidiInput():
     def play_sound(self, note_type, note, velocity, channel):
 
         if note_type == "note_on":
-            self.fs.noteon(channel, note, velocity)
+            fs.noteon(channel, note, velocity)
 
         elif note_type == "note_off":
-            self.fs.noteoff(channel, note)
+            fs.noteoff(channel, note)
 
         else:
             print("fail")

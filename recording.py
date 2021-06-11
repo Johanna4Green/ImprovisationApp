@@ -11,12 +11,12 @@ from mido import Message, MidiFile, MidiTrack, MetaMessage
 import threading
 import time
 from constants import *
+from fluidsynther import fs
 
 class Recording():
 
     def __init__(self):
         
-        self.fs = self.initFluidSynth()
         self.record_array = []
         self.is_recording = False
         self.playing_recording = False
@@ -27,15 +27,6 @@ class Recording():
 
     def reset(self, midifile):
         self.midifile = midifile
-
-    # initializing fluidsynther
-    def initFluidSynth(self):
-        fs = fluidsynth.Synth(1)
-        fs.start(driver = 'portaudio')
-        sfid = fs.sfload("sound_midis/default-GM.sf2") 
-        fs.program_select(0, sfid, 0, 0)
-        return fs
-
 
     # recording the midi-input and appending all messages to the record_array
     def record_input(self):
@@ -66,9 +57,9 @@ class Recording():
                 time.sleep(msg.time)    # wait the time to play each note at its time
                 #print(msg)
                 if msg.type == "note_on":
-                    self.fs.noteon(msg.channel, msg.note, msg.velocity)
+                    fs.noteon(msg.channel, msg.note, msg.velocity)
                 elif msg.type == "note_off":
-                    self.fs.noteoff(msg.channel, msg.note)
+                    fs.noteoff(msg.channel, msg.note)
                 self.last_time = time.time() - self.last_time
                 #print(self.last_time)
             print('after record_array is through')
