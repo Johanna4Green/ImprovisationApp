@@ -48,6 +48,10 @@ class Staff():
         self.bt_keys = [False] * 88 # Key Array in init, um Model und View zu trennen = Globale Variable
         fileInput_thread = threading.Thread(target=self.play_track)
         fileInput_thread.start()
+        self.bpm = 120
+
+    def change_bpm(self, bpm):
+        self.bpm = bpm
 
     ################# RESET ######################
     def reset_staff_class(self, midifile):
@@ -112,11 +116,11 @@ class Staff():
                 # to move when tact is over: 
                 # cannot work because the chord is moved to the pos of the last chord, but this can only work if all chords have equal length! 
                 # FIX NEEDED
-                if sum_up_len % 2 == 0:    # >= 2
-                    last_chord_pos = self.chord_list[counter - 1].get_x_position() # hol die x-Position vom letzten Akkord
-                    for chord in self.chord_list:
-                        chord.update_x_position()
-                        self.chord_list[counter].set_x_position(last_chord_pos)    # looping     #.x_position = last_chord_pos # setz den gerade "rausgeschobenen nach ganz hinten  
+                #if sum_up_len % 2 == 0:    # >= 2
+                last_chord_pos = self.chord_list[counter - 1].get_x_position() # hol die x-Position vom letzten Akkord
+                for chord in self.chord_list:
+                    chord.update_x_position()
+                    self.chord_list[counter].set_x_position(last_chord_pos)    # looping     #.x_position = last_chord_pos # setz den gerade "rausgeschobenen nach ganz hinten  
                 counter = counter + 1 
         fs.delete()
     
@@ -167,15 +171,18 @@ class Staff():
             x_distance = X_DISTANCE/8
         return x_distance
 
-    # get playtime/ length of note to play by notelength
+    # get playtime/ length of note to play by notelength+
+    # change time here for bpm change
     def get_time_of_length(self, length):
         time = 0
+        #bmp = 200
         if length == 'WHOLE':
-            time = 2.0
+            #time = 2.0
+            time = 240/self.bpm
         elif length == 'HALF':
             time = 1.0
         elif length == 'QUARTER':
-            time = 0.5
+            time = 5.0
         else:
             time = 0.25
         return time

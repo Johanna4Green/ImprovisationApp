@@ -47,7 +47,7 @@ class Key():
         self.white_circle_h = 10
         self.black_circle_h = 8
         self.tonality = song_extracting.getTonality(self.midifile)
-        print(self.midifile)
+        #print(self.midifile)
 
         if key_number in self.BLACK_KEYS:
             self.key_type = KEY_TYPE_BLACK
@@ -60,7 +60,7 @@ class Key():
     # reset function called from gui when new file is choosen as Backing Track: to update the keyboard
     def reset_key_class(self, tonality):
         self.tonality =  tonality
-        
+
    
     # draws the keys (the whole keyboard) and also 
     # draws the dots for live feedback from input and backing track
@@ -82,7 +82,7 @@ class Key():
             # zeichne die Markierung
             if is_played_by_bt:  # or is_played_by_bt:
                 painter.setBrush(QBrush(Qt.blue, Qt.SolidPattern)) # set brush to fill the key with color
-                painter.drawEllipse(self.x + 2, self.y + 100, self.black_circle_w, self.black_circle_h)
+                painter.drawEllipse(self.x + 2, self.y + 100, self.black_circle_w, self.black_circle_h) # self.y + self.h_black - self.black_circle_h - 5
             if is_pressed:  # or is_played_by_bt:
                 painter.setBrush(QBrush(Qt.red, Qt.SolidPattern)) # set brush to fill the key with color
                 painter.drawEllipse(self.x + 2, self.y + 100, self.black_circle_w, self.black_circle_h)

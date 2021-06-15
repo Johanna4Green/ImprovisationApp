@@ -22,11 +22,18 @@ class Recording():
         self.playing_recording = False
         self.last_time = 0.0
         self.midifile = MIDIFILE
+        self.tempo_var = 500000
         record_thread = threading.Thread(target=self.record_input)
         record_thread.start()
 
     def reset(self, midifile):
         self.midifile = midifile
+    
+    def change_tempo(self, bpm):
+        midi_tempo = (60/ bpm) * 1000000
+        #print(midi_tempo)
+        self.tempo_var = int(midi_tempo)
+
 
     # recording the midi-input and appending all messages to the record_array
     def record_input(self):
@@ -41,6 +48,7 @@ class Recording():
                         self.last_time = time.time()    # getting the time, as it is not in the midi-input
                     else:
                         pass
+
 
 
     def start_listening_to_recording_thread(self):
@@ -62,9 +70,9 @@ class Recording():
                     fs.noteoff(msg.channel, msg.note)
                 self.last_time = time.time() - self.last_time
                 #print(self.last_time)
-            print('after record_array is through')
+            #print('after record_array is through')
             self.playing_recording = False
-            print(self.playing_recording)
+            #print(self.playing_recording)
 
 
     def get_playing_recording_state(self):
@@ -78,7 +86,7 @@ class Recording():
         mid.type = 1
         track = MidiTrack()
         backing_track= MidiTrack()
-
+        #tempo_var = 500000
         mid.tracks.append(track)
         mid.tracks.append(backing_track)
 
@@ -87,9 +95,9 @@ class Recording():
         
         track_time = 0
         track.append(Message('program_change', program=12, time=0))
-        track.append(MetaMessage('set_tempo', tempo=500000))
+        track.append(MetaMessage('set_tempo', tempo=self.tempo_var))
         for msg in self.record_array:   # append every msg of self.record_array
-            delta_time = int(mido.second2tick(msg.time, mid.ticks_per_beat, 500000))
+            delta_time = int(mido.second2tick(msg.time, mid.ticks_per_beat, self.tempo_var))
             msg.note = msg.note + 12
             track_time = track_time + msg.time
 
@@ -99,7 +107,7 @@ class Recording():
         #print(track_time)
 
         backing_track.append(Message('program_change', program=12, time=0))
-        backing_track.append(MetaMessage('set_tempo', tempo=500000))
+        backing_track.append(MetaMessage('set_tempo', tempo=self.tempo_var))
 
         backing_track_time = 0 
         while backing_track_time < track_time:
@@ -108,16 +116,16 @@ class Recording():
                 if(bmsg.type != 'program_change' and bmsg.type != 'control_change') and not bmsg.is_meta:
                     #print(bmsg)
                     bmsg.note = bmsg.note - 24 # -24 to move the note 2 oktaves down to be shown in bass clef
-                    bdelta_time = int(mido.second2tick(bmsg.time, mid.ticks_per_beat, 500000))
+                    bdelta_time = int(mido.second2tick(bmsg.time, mid.ticks_per_beat, self.tempo_var))
                     backing_track_time = backing_track_time + bmsg.time
 
                     bmsg.time = bdelta_time
                     if loop == True: 
                         bmsg.time = 97
-                        print('inloop')
+                        #print('in loop')
                         loop = False
-                    print(bmsg.time)
-                    print(bmsg)
+                    #print(bmsg.time)
+                    #print(bmsg)
                     backing_track.append(bmsg)
         loop = True
         
@@ -131,7 +139,7 @@ class Recording():
             if msg.is_meta:
                 if msg.type == 'set_tempo':
                     tempo = msg.tempo
-                    print(tempo)
+                    #print(tempo)
                     return tempo
 
     # to adapt the recording state, when the record button is clicked. 

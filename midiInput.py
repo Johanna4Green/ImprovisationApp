@@ -50,11 +50,3 @@ class MidiInput():
 
         else:
             print("fail")
-
-
-# For driver = portaudio to work: brew install portaudio --HEAD 
-# https://github.com/gordonklaus/portaudio/issues/41
-# head ist entscheidend.
-# for fluidsynth: pip install PyFluidSynth 
-# version: pyFluidSynth 1.3.0
-# Maybe important: PyAudio 0.2.11

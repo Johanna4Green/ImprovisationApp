@@ -1,17 +1,26 @@
 # this class creates all labels: the clef, tact, signs (sharp or flat), the tonality text
 # it gets it's information from songExtracting
 
-from PyQt5 import QtWidgets
+from PyQt5 import QtGui, QtWidgets
 from PyQt5.QtWidgets import QLabel
-from PyQt5.QtGui import QPixmap, QFont
+from PyQt5.QtGui import QPixmap, QFont, QFontDatabase
 
 from constants import * 
 from songExtracting import SongExtracting
+from font import os_font
 
 
 class Labeling():
 
     song_extracting = SongExtracting()
+    #QFontDatabase.addApplicationFont("OpenSans-Regular.ttf")
+    #self.font = QFont("OpenSans-Regular.ttf", 10, 1)
+    #id=QtGui.QFontDatabase.addApplicationFont("robotolight.ttf")
+    #id = QFontDatabase.addApplicationFont("BebasNeue-Regular.ttf")
+    #family = QFontDatabase.applicationFontFamilies(id).at(0)
+    #font = QFont.monospace(family)
+    
+
 
     def __init__(self):
         self.midifile = MIDIFILE
@@ -51,13 +60,13 @@ class Labeling():
         tact_C_x_pos = 119
         if self.tonality in SHARP_TONALITIES:
             sharp_num = NUMBERS_OF_SHARPS.get(self.tonality)
-            print(sharp_num)
+            #print(sharp_num)
             for i in range(sharp_num):
                 self.sharp_list[i].setVisible(True)
             self.tact_x_pos = tact_C_x_pos + sharp_num * 9 
         else:       # self.tonality in FLAT_TONALITY
             flat_num = NUMBERS_OF_FLATS.get(self.tonality)
-            print(flat_num)
+            #print(flat_num)
             for i in range(flat_num):
                 self.flat_list[i].setVisible(True)
             self.tact_x_pos = tact_C_x_pos + flat_num * 9
@@ -155,8 +164,7 @@ class Labeling():
         tonalityText = TON_DICT[self.tonality]         #self.get_tonality_text(self.tonality)
         self.tonalityLabel = QtWidgets.QLabel(window)
         self.tonalityLabel.setText(tonalityText)
-        #painter.setFont(QFont('Frutiger',20))
-        self.tonalityLabel.setFont(QFont("OpenSans-Regular.ttf", 30))     #(QFont('Georgia', 30)) # Skia Helvetica Arial
+        self.tonalityLabel.setFont(QFont(os_font, 30)) #("OpenSans-Regular.ttf", 30))     #(self.font)     # #(QFont('Georgia', 30)) # Skia Helvetica Arial
         self.tonalityLabel.resize(230, 30)
         self.tonalityLabel.move(500,280)
         self.tonalityLabel.show()
