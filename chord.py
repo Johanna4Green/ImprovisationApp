@@ -22,7 +22,6 @@ class Chord():
         self.shifts = {}    # if notes are only one halftone apart, one has to be moved one notelength on the x-axis
         self.notes = self.chord_to_single_notes()   # array of singleNote instances
         self.chord_symbol = self.create_chord_symbol()
-        #print('chord_symbol in init', self.chord_symbol)
         
 
     # creating an array out of singleNote instances
@@ -77,7 +76,7 @@ class Chord():
         x_pos = self.x_position
         y_pos = 120
         w = 50
-        h = 20
+        h = 25
         text_align = Qt.AlignLeft
         painter.drawText(x_pos, y_pos, w, h, text_align, text)
 

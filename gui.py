@@ -27,12 +27,7 @@ from font import os_font
 class Window(QMainWindow):
 
     print(os_font)
-    #id=QtGui.QFontDatabase.addApplicationFont("robotolight.ttf")
-    #id = QFontDatabase.addApplicationFont("BebasNeue-Regular.ttf")
-    #family = QFontDatabase.applicationFontFamilies(id).at(0)
-    #font = QFont.monospace(family)
-
-
+    
     def __init__(self):
         super().__init__()      # exended from class QMainWindow
         self.title = "Improvisation App"
@@ -46,7 +41,7 @@ class Window(QMainWindow):
         # init buttons, keyboard, dropdown for LearnMode and window
         self.staff = Staff()
         self.init_buttons()
-        self.init_droppingdown_crazy()
+        self.init_theory_dropdown()
         self.init_bpm_spinner()
         self.init_bmp_label()
         self.init_keyboard(88)
@@ -79,29 +74,25 @@ class Window(QMainWindow):
     
 
     # dropdown menu fpr the learn mode to choose the lecture
-    def init_droppingdown_crazy(self):
+    def init_theory_dropdown(self):
         lessons = []
         filelist = os.listdir('theory_files')
         for file in filelist:
             lessons.append(file.split('.')[0])
-
         self.unique_name_list = list(set(lessons))
         self.unique_name_list.sort()
-        #print(self.unique_name_list)
 
         self.cmbox = QComboBox(self)
-
         for name in self.unique_name_list:
-            #print(name)
             self.cmbox.addItem(name)
        
-        self.cmbox.resize(300,100)
-        self.cmbox.move(400,37)
+        self.cmbox.resize(275,30)
+        self.cmbox.move(412,70)
         self.cmbox.setVisible(False)
         index = self.cmbox.currentIndex()
         self.cmbox.currentIndexChanged.connect(self.on_dropdown_changed)    # returns index 0-6 dependent on choosen item 
 
-
+    # bpm spinner to switch the bpm for the backing track from 10 - 200 beats per minute
     def init_bpm_spinner(self):
         self.bpm_spinner = QSpinBox(self)
         self.bpm_spinner.resize(45,30)
@@ -125,7 +116,7 @@ class Window(QMainWindow):
         self.learn_text_label.resize (1000, 130)
         self.learn_text_label.move(100, 540)
         self.learn_text_label.setWordWrap(True)
-        self.learn_text_label.setFont(QFont(os_font))
+        self.learn_text_label.setFont(QFont(os_font, 11))
         self.learn_text_label.setText("")
         self.learn_text_label.show()
 
@@ -187,12 +178,10 @@ class Window(QMainWindow):
         self.learn_button.move(150,10)
         self.learn_button.clicked.connect(self.on_click_learn)
        
-
+    # when the bpm is changed, the new bpm must be given to staff
     @pyqtSlot()
     def on_bpm_changed(self):
-        #print('changed')
         bpm  = self.bpm_spinner.value()
-        print(bpm)
         self.staff.change_bpm(bpm)
         #self.recording.change_tempo(bmp)
       
@@ -207,7 +196,6 @@ class Window(QMainWindow):
     
     # depending on choosen lecture in the learn mode, the midifile is changed and the gui components updated 
     def set_path_for_learn_reset(self, index):
-        #print(index)
         path = 'theory_files/' + self.unique_name_list[index] + '.mid'
         self.reset_gui_components(path)
         
@@ -216,11 +204,9 @@ class Window(QMainWindow):
         path = 'theory_files/' + self.unique_name_list[index] + '.txt'
         theory_text = open(path, 'r')
         theory_lines = theory_text.readlines()
-        #print(theory_lines)
         text = ""
         for line in theory_lines:
             text = text + line
-
         self.learn_text_label.setText(text)
 
 
@@ -293,17 +279,13 @@ class Window(QMainWindow):
     def on_click_save_recording(self):
 
         file_to_save_as_midi = self.recording.create_midi_file_from_recording()
-        #print(file_to_save_as_midi)
         try:
-            #print('in try')
             filename = QFileDialog.getSaveFileName(self, "Save as midifile", "","Midi Files (*.mid)")
             save_path = filename[0]
             print(save_path)
             file_to_save_as_midi.save(save_path)   
         except (IOError, OSError) as e:
-            print(e.errno)
-            print('in except')
-            #print('fail of upload')
+            print('failed to save the recording' + e.eerno)
             pass
         self.save_recording_button.setEnabled(False)
         self.listen_button.setEnabled(False)
@@ -312,7 +294,6 @@ class Window(QMainWindow):
     # play latest recording 
     @pyqtSlot()
     def on_click_listen(self):
-
         self.staff.stop_bt()
         self.recording.start_listening_to_recording_thread()
         self.staff.play_bt()
@@ -336,21 +317,18 @@ class Window(QMainWindow):
     # to upload a file as Backing Track: opens dialog box
     @pyqtSlot()
     def on_click_upload_file(self):
-        print('upolad file')
+        print('upload file')
         self.open_dialog_box()
 
     # opens dialog box to choose the midi-file to upload as backing track
     def open_dialog_box(self):
         try:
-            #print('in try')
             filename = QFileDialog.getOpenFileName()
             midi_path = filename[0]
             self.current_practice_file = midi_path
             self.reset_gui_components(midi_path)
         except (IOError, OSError) as e:
-            print(e.errno)
-            print('in except')
-            #print('fail of upload')
+            print('fail of upload' + e.eerno)
             pass
     
 
@@ -368,8 +346,6 @@ class Window(QMainWindow):
             key.reset_key_class(this_tonality)
 
 
-    
-
     # draw Piano keyboard with 88 keys
     def paintEvent(self, e):
         painter = QPainter(self)    # create the object of QPainter class
@@ -383,6 +359,8 @@ class Window(QMainWindow):
         for key in BLACK_KEYS:
             key.draw(painter)
         return
+
+
 
 # every PyQt5 application must create an application object
 App = QApplication(sys.argv)

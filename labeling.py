@@ -13,14 +13,6 @@ from font import os_font
 class Labeling():
 
     song_extracting = SongExtracting()
-    #QFontDatabase.addApplicationFont("OpenSans-Regular.ttf")
-    #self.font = QFont("OpenSans-Regular.ttf", 10, 1)
-    #id=QtGui.QFontDatabase.addApplicationFont("robotolight.ttf")
-    #id = QFontDatabase.addApplicationFont("BebasNeue-Regular.ttf")
-    #family = QFontDatabase.applicationFontFamilies(id).at(0)
-    #font = QFont.monospace(family)
-    
-
 
     def __init__(self):
         self.midifile = MIDIFILE
@@ -165,6 +157,6 @@ class Labeling():
         self.tonalityLabel = QtWidgets.QLabel(window)
         self.tonalityLabel.setText(tonalityText)
         self.tonalityLabel.setFont(QFont(os_font, 30)) #("OpenSans-Regular.ttf", 30))     #(self.font)     # #(QFont('Georgia', 30)) # Skia Helvetica Arial
-        self.tonalityLabel.resize(230, 30)
-        self.tonalityLabel.move(500,280)
+        self.tonalityLabel.resize(310, 30)       #(230, 30)
+        self.tonalityLabel.move(420, 280)         #(500,280)
         self.tonalityLabel.show()
