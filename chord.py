@@ -75,7 +75,7 @@ class Chord():
         painter.setFont(QFont(os_font, 20))        #QFont('Skia',20)) #  Helvetica  Arial
         x_pos = self.x_position
         y_pos = 120
-        w = 50
+        w = 65
         h = 25
         text_align = Qt.AlignLeft
         painter.drawText(x_pos, y_pos, w, h, text_align, text)

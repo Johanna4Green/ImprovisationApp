@@ -157,6 +157,6 @@ class Labeling():
         self.tonalityLabel = QtWidgets.QLabel(window)
         self.tonalityLabel.setText(tonalityText)
         self.tonalityLabel.setFont(QFont(os_font, 30)) #("OpenSans-Regular.ttf", 30))     #(self.font)     # #(QFont('Georgia', 30)) # Skia Helvetica Arial
-        self.tonalityLabel.resize(310, 30)       #(230, 30)
-        self.tonalityLabel.move(420, 280)         #(500,280)
+        self.tonalityLabel.resize(320, 32)       #(230, 30)
+        self.tonalityLabel.move(410, 280)         #(500,280)
         self.tonalityLabel.show()
