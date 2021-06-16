@@ -6,8 +6,8 @@
 
 
 from PyQt5 import QtGui, QtWidgets
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QPushButton, QLabel, QInputDialog, QFileDialog, QComboBox, QSpinBox, QLineEdit
-from PyQt5.QtGui import QPainter, QBrush, QPen, QIcon, QPixmap, QColor, QFont, QIntValidator
+from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QPushButton, QLabel, QInputDialog, QFileDialog, QComboBox, QSpinBox, QLineEdit, QShortcut
+from PyQt5.QtGui import QPainter, QBrush, QPen, QIcon, QPixmap, QColor, QFont, QKeySequence
 from PyQt5.QtCore import Qt, QTimer, pyqtSlot
 
 import sys
@@ -27,7 +27,7 @@ from font import os_font
 class Window(QMainWindow):
 
     print(os_font)
-    
+
     def __init__(self):
         super().__init__()      # exended from class QMainWindow
         self.title = "Improvisation App"
@@ -35,7 +35,9 @@ class Window(QMainWindow):
         self.left = WINDOW_UPPER_LEFT_Y
         self.width = WINDOW_WIDTH
         self.height = WINDOW_HEIGHT
-
+        self.play_state = "Paused"
+        self.play_state_for_recording = "Stopped"
+        #self.recording_state = "False"
         self.mode = "Practice"
         self.current_practice_file = MIDIFILE
         # init buttons, keyboard, dropdown for LearnMode and window
@@ -44,8 +46,10 @@ class Window(QMainWindow):
         self.init_theory_dropdown()
         self.init_bpm_spinner()
         self.init_bmp_label()
+        #self.init_countdown_label()
         self.init_keyboard(88)
         self.init_window()
+        self.init_key_shortcuts()
         self.init_learn_text_label()
         # instance of staff
         self.recording = Recording()
@@ -72,6 +76,29 @@ class Window(QMainWindow):
         for i in range(num_keys):
             self.keys.append(Key(i, self.staff)) # self.staff as a parameter to draw dots on the keys live played by backing track 
     
+    # shortcuts for main functions
+    # https://zetcode.com/pyqt/qshortcut/
+    def init_key_shortcuts(self):
+        self.quitSc = QShortcut(QKeySequence('Ctrl+Q'), self)
+        self.quitSc.activated.connect(QApplication.instance().quit)
+        self.record_Sc = QShortcut(QKeySequence('Ctrl+R'), self)
+        self.record_Sc.activated.connect(self.on_click_record)
+        self.play_Sc = QShortcut(QKeySequence('Space'), self)
+        self.play_Sc.activated.connect(self.on_click_space)
+            
+    # shortcut Space can be either used for play and pause of backing track, or, if recording, to stop the recording        
+    @pyqtSlot()
+    def on_click_space(self):
+        print('space clicked')
+        if self.recording_state == True:
+            self.stop_recording()
+        else:
+            if self.play_state == "Paused":
+                self.on_click_play()
+            else:
+                self.on_click_pause()
+
+
 
     # dropdown menu fpr the learn mode to choose the lecture
     def init_theory_dropdown(self):
@@ -257,8 +284,15 @@ class Window(QMainWindow):
     # when record is clicked: 
     @pyqtSlot()
     def on_click_record(self):
+
+        print('in on click record')
        
         if self.recording_state == False: # if not recording yet -> start recording + playing backing track
+            self.staff.stop_bt()
+            if self.play_state_for_recording == "Stopped":
+                pass
+            else:
+                time.sleep(2.1)
             self.recording_state = True
             self.record_button.setText('Stop recording')
             self.record_button.setToolTip('to stop the recording')
@@ -266,13 +300,16 @@ class Window(QMainWindow):
             self.listen_button.setEnabled(False)
             self.staff.play_bt()    
         else: 
-            self.recording_state = False # if already recording -> stop recording + backing track
-            self.record_button.setText('Record')
-            self.record_button.setToolTip('to record your playing')
-            self.save_recording_button.setEnabled(True)
-            self.listen_button.setEnabled(True)
-            self.staff.stop_bt()
+            self.stop_recording()
         self.recording.set_record_state()
+
+    def stop_recording(self):
+        self.recording_state = False # if already recording -> stop recording + backing track
+        self.record_button.setText('Record')
+        self.record_button.setToolTip('to record your playing')
+        self.save_recording_button.setEnabled(True)
+        self.listen_button.setEnabled(True)
+        self.on_click_stop()
 
     # save recording WITHOUT backing track, only midi input   
     @pyqtSlot()
@@ -304,14 +341,20 @@ class Window(QMainWindow):
 
     @pyqtSlot()
     def on_click_play(self):
+        self.play_state = "Playing"
+        self.play_state_for_recording = "Playing"
         self.staff.play_bt()
 
     @pyqtSlot()
     def on_click_pause(self):
+        self.play_state = "Paused"
+        self.play_state_for_recording = "Paused"
         self.staff.pause_bt()
 
     @pyqtSlot()
     def on_click_stop(self):
+        print('in on click')
+        self.play_state_for_recording = "Stopped"
         self.staff.stop_bt()
 
     # to upload a file as Backing Track: opens dialog box

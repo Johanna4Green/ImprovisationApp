@@ -32,7 +32,7 @@ class Staff():
 
     def __init__(self):
 
-        self.state = 'stopped'
+        self.state = "stopped"
         self.midifile = MIDIFILE
         self.song_chords = self.song_extracting.getNotesOfSong(self.midifile)
         self.tonality = self.song_extracting.getTonality(self.midifile)
@@ -95,7 +95,7 @@ class Staff():
                     pass
                 elif self.state == "paused":
                     while self.state == "paused":
-                        time.sleep(0.5)     # as long as bt is paused, waits until play to continue
+                        time.sleep(0.1)     # as long as bt is paused, waits until play to continue
                         pass
                 elif self.state == "stopped":
                     self.reset_chords()
