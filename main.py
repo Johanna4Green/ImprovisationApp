@@ -91,7 +91,7 @@ class Window(QMainWindow):
     def on_click_space(self):
         print('space clicked')
         if self.recording_state == True:
-            self.stop_recording()
+            self.on_click_record()
         else:
             if self.play_state == "Paused":
                 self.on_click_play()
@@ -143,7 +143,7 @@ class Window(QMainWindow):
         self.learn_text_label.resize (1000, 130)
         self.learn_text_label.move(100, 540)
         self.learn_text_label.setWordWrap(True)
-        self.learn_text_label.setFont(QFont(os_font, 11))
+        self.learn_text_label.setFont(QFont(os_font, 14))
         self.learn_text_label.setText("")
         self.learn_text_label.show()
 
