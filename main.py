@@ -321,6 +321,9 @@ class Window(QMainWindow):
             save_path = filename[0]
             print(save_path)
             file_to_save_as_midi.save(save_path)   
+        except FileNotFoundError:
+            print("cancel")
+            pass
         except (IOError, OSError) as e:
             print('failed to save the recording' + e.eerno)
             pass
@@ -370,6 +373,9 @@ class Window(QMainWindow):
             midi_path = filename[0]
             self.current_practice_file = midi_path
             self.reset_gui_components(midi_path)
+        except FileNotFoundError:
+            print("cancel")
+            pass
         except (IOError, OSError) as e:
             print('fail of upload' + e.eerno)
             pass
