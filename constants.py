@@ -49,7 +49,7 @@ NOTELINE_VER_Y1 = NOTELINE_HOR_Y
 NOTELINE_VER_Y2 = NOTELINE_HOR_Y + (4*16)
 X_DISTANCE = 230   #224 # 225
 
-MIDIFILE = 'sound_midis/chordtry.mid'
+MIDIFILE = 'sound_midis/CDur_Example.mid'
 
 TON_DICT = {
     'C': 'Tonart: C - Dur',
