@@ -1,32 +1,30 @@
-import mido
-import threading
-from constants import *
+# this class containing the input thread processes the midi-keyboard input. 
+# it plays the sound with fluidsynth and
+# saves the pressed note in an array to be get by the key class and drawn accordingly
 
-import time
 import fluidsynth
+import mido
 from mido import MidiFile
+import threading
+import time
+
+from fluidsynther import fs # fluidsynther for making the sound
+from constants import *
 
 class MidiInput():
 
     def __init__(self):
-        #print("in Midi Input thread")
-        self.type = 'note_off'
-        self.note = 0
-        self.velocity = 0
-        self.channel = 0 
-        # initializing fluidsynther
-        self.fs = fluidsynth.Synth(1)
-        self.fs.start(driver = 'portaudio')
-        self.sfid = self.fs.sfload("default-GM.sf2") 
-        self.fs.program_select(0, self.sfid, 0, 0)
+        
+        self.keys = [False] * 88 # keys array to be gotten from key class and marker drawn accordingly
 
-        self.keys = [False] * 88 # Key Array kommt hier rein, um Model und View zu trennen = Globale Variable
         input_thread = threading.Thread(target=self.getInput)
         input_thread.start()
+
 
     def getKeyArray(self):
         return self.keys
 
+    # gets input from midi-keyboard and then plays it
     def getInput(self):
         inputs = mido.get_input_names() # holt Liste mit allen angeschlossenen Midi-Geräten
         #print(inputs)
@@ -34,32 +32,21 @@ class MidiInput():
             for msg in p:
                 #print(msg) # gibt alle Midi-Events aus
                 if not msg.is_meta:
-                    #print(msg)
                     if msg.type =='note_on':
-                        self.keys[msg.note] = True  # -36
+                        self.keys[msg.note + 3] = True
                     if msg.type == 'note_off':
-                        self.keys[msg.note] = False # -36
-                    self.type = msg.type
-                    self.note = msg.note
-                    self.velocity = msg.velocity
-                    self.channel = msg.channel
-                    self.playSound()
+                        self.keys[msg.note + 3] = False
+                    self.play_sound(msg.type, msg.note, msg.velocity, msg.channel)
 
 
-    def playSound(self):
+    # called from getInput: plays midi-keyboard Input live 
+    def play_sound(self, note_type, note, velocity, channel):
 
-        if self.type == "note_on":
-            self.fs.noteon(self.channel, self.note, self.velocity)
+        if note_type == "note_on":
+            fs.noteon(channel, note, velocity)
 
-        elif self.type == "note_off":
-            self.fs.noteoff(self.channel, self.note)
+        elif note_type == "note_off":
+            fs.noteoff(channel, note)
 
         else:
             print("fail")
-
-# For driver = portaudio to work: brew install portaudio --HEAD 
-# https://github.com/gordonklaus/portaudio/issues/41
-# head ist entscheidend.
-# for fluidsynth: pip install PyFluidSynth 
-# version: pyFluidSynth 1.3.0
-# Maybe important: PyAudio 0.2.11
