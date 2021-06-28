@@ -63,12 +63,9 @@ class Staff():
         self.tonality = self.song_extracting.getTonality(self.midifile)
         self.length_of_array = len(self.song_chords)
         self.x_position = self.set_x_position() # NOTELINE_VER_X
-        #print(self.song_chords)
-        #print(self.length_of_array)
-        
+
         self.chord_list = self.get_chords(self.song_chords)
-        #self.state = "stopped"
-        
+   
     ############################################
 
     def get_bt_key_array(self):
@@ -191,8 +188,6 @@ class Staff():
     def set_x_position(self):
         xPos = 210 #NOTELINE_VER_X
         return xPos
-
-
 
     # change state when button pressed  
     def play_bt(self):

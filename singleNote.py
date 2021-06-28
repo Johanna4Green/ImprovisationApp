@@ -19,6 +19,7 @@ class SingleNote():
        
 
     # draw note according to notelength 
+    # only works for whole notes, because of the moving further in the backing track noteline, but here it's prepared for the other note values
     def draw(self, painter, shift):
         painter.setPen(QPen(Qt.black, 2, Qt.SolidLine))  # set pen to draw the outline of the key
         if self.note_length == 'WHOLE':  # empty circle
@@ -31,7 +32,6 @@ class SingleNote():
                 pass
 
         elif self.note_length == 'HALF': # empty circle with bar
-            #print('in HalfPrinter')
             if shift == False:
                 painter.drawEllipse(self.x_position, self.y_position, NOTEWIDTH, NOTEHEIGHT)      # bobble ring
                 bar_x_pos = self.x_position + NOTEWIDTH
@@ -104,7 +104,7 @@ class SingleNote():
         elif self.tonality in SHARP_TONALITY:
             return 'is_sharp'
         else:
-            print("probably tonality C or inexistent")
+            print("tonality C")
 
    
     # for each given "White note" returns the y_position in the sheetmusic lines

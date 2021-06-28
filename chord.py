@@ -32,8 +32,6 @@ class Chord():
         this_chord_array = []
         for note in self.chord_array:
             single_note = SingleNote(note, self.note_length, self.tonality, self.x_position)
-            #print(single_note.value)
-            #print('oktave', OKTAVE_C[note % 12])
             current_y_pos = single_note.get_y_pos() # y_pos of current note
             if note == self.chord_array[0]:
                 first_y_pos = abs(current_y_pos)
@@ -52,9 +50,7 @@ class Chord():
         chord_stream = stream.Stream()
         for note_number in self.chord_array:
             note_name = OKTAVE_C[note_number % 12]
-            #print('oktave', note_name)
             chord_stream.append(note.Note(note_name))
-        #print(len(chord_stream))
         chord_symbol = chord_stream.analyze('Krumhansl')
         chord_tonic_name = chord_symbol.tonic.name
         chord_mode = chord_symbol.mode
@@ -63,7 +59,6 @@ class Chord():
         elif chord_mode == 'major':
             written_chord_mode = ''
         written_chord = chord_tonic_name + written_chord_mode
-        #print(chord_tonic_name, chord_mode)
         return written_chord
 
 

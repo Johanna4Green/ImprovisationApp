@@ -30,10 +30,7 @@ class Labeling():
     # reset function to update from gui when new Backing Track file is choosen
     def reset_labeling_class(self, midifile):
         self.midifile = midifile
-        print('in reset labeling')
-        print(self.midifile)
         self.tonality = self.song_extracting.getTonality(self.midifile)
-        print(self.tonality)
         self.update_labels()
 
     def reset_tonality_label(self, name):
@@ -52,13 +49,11 @@ class Labeling():
         tact_C_x_pos = 119
         if self.tonality in SHARP_TONALITIES:
             sharp_num = NUMBERS_OF_SHARPS.get(self.tonality)
-            #print(sharp_num)
             for i in range(sharp_num):
                 self.sharp_list[i].setVisible(True)
             self.tact_x_pos = tact_C_x_pos + sharp_num * 9 
         else:       # self.tonality in FLAT_TONALITY
             flat_num = NUMBERS_OF_FLATS.get(self.tonality)
-            #print(flat_num)
             for i in range(flat_num):
                 self.flat_list[i].setVisible(True)
             self.tact_x_pos = tact_C_x_pos + flat_num * 9

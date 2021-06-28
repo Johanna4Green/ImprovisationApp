@@ -37,7 +37,6 @@ class Window(QMainWindow):
         self.height = WINDOW_HEIGHT
         self.play_state = "Paused"
         self.play_state_for_recording = "Stopped"
-        #self.recording_state = "False"
         self.mode = "Practice"
         self.current_practice_file = MIDIFILE
         # init buttons, keyboard, dropdown for LearnMode and window
@@ -89,7 +88,6 @@ class Window(QMainWindow):
     # shortcut Space can be either used for play and pause of backing track, or, if recording, to stop the recording        
     @pyqtSlot()
     def on_click_space(self):
-        print('space clicked')
         if self.recording_state == True:
             self.on_click_record()
         else:
@@ -210,7 +208,6 @@ class Window(QMainWindow):
     def on_bpm_changed(self):
         bpm  = self.bpm_spinner.value()
         self.staff.change_bpm(bpm)
-        #self.recording.change_tempo(bmp)
       
 
     # when in learn mode in dropdown something is changed, text is changed and midifile is changed, so gui components must be reset
@@ -256,7 +253,6 @@ class Window(QMainWindow):
     # practice mode is activated
     @pyqtSlot()
     def on_click_practice(self):
-        print('practice mode activated')
         self.mode = "Practice"
         self.upload_button.setVisible(True)
         self.cmbox.setVisible(False)
@@ -272,7 +268,6 @@ class Window(QMainWindow):
         self.set_learn_text_label(index)
         self.set_path_for_learn_reset(index)
         self.set_special_learn_mode(index)
-        print('learn mode activated')
         self.cmbox.setVisible(True)
         self.upload_button.setVisible(False)
         self.learn_text_label.setVisible(True)
@@ -285,8 +280,6 @@ class Window(QMainWindow):
     @pyqtSlot()
     def on_click_record(self):
 
-        print('in on click record')
-       
         if self.recording_state == False: # if not recording yet -> start recording + playing backing track
             self.staff.stop_bt()
             if self.play_state_for_recording == "Stopped":
@@ -356,14 +349,12 @@ class Window(QMainWindow):
 
     @pyqtSlot()
     def on_click_stop(self):
-        print('in on click')
         self.play_state_for_recording = "Stopped"
         self.staff.stop_bt()
 
     # to upload a file as Backing Track: opens dialog box
     @pyqtSlot()
     def on_click_upload_file(self):
-        print('upload file')
         self.open_dialog_box()
 
     # opens dialog box to choose the midi-file to upload as backing track

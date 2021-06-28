@@ -33,9 +33,9 @@ class MidiInput():
                 #print(msg) # gibt alle Midi-Events aus
                 if not msg.is_meta:
                     if msg.type =='note_on':
-                        self.keys[msg.note + 3] = True  # -36
+                        self.keys[msg.note + 3] = True
                     if msg.type == 'note_off':
-                        self.keys[msg.note + 3] = False # -36
+                        self.keys[msg.note + 3] = False
                     self.play_sound(msg.type, msg.note, msg.velocity, msg.channel)
 
 
