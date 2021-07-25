@@ -65,7 +65,7 @@ class Key():
     # draws the keys (the whole keyboard) and also 
     # draws the dots for live feedback from input and backing track
     def draw(self, painter):
-
+        
         is_pressed = midi_input.getKeyArray()[self.key_number]
         is_played_by_bt = self.staff.get_bt_key_array()[self.key_number]
         is_colored = self.getColorArray()[self.key_number]

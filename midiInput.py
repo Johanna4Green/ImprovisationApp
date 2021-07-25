@@ -14,11 +14,14 @@ from constants import *
 class MidiInput():
 
     def __init__(self):
-        
         self.keys = [False] * 88 # keys array to be gotten from key class and marker drawn accordingly
-
-        input_thread = threading.Thread(target=self.getInput)
-        input_thread.start()
+        
+        
+    def start(self, device):
+        self.device = device 
+        self.input_thread = threading.Thread(target=self.getInput)  
+        self.input_thread.start()
+       
 
 
     def getKeyArray(self):
@@ -28,7 +31,8 @@ class MidiInput():
     def getInput(self):
         inputs = mido.get_input_names() # holt Liste mit allen angeschlossenen Midi-Geräten
         #print(inputs)
-        with mido.open_input(inputs[0]) as p: # hier die [0] mit dem richtigen Gerät ersetzen
+        with mido.open_input(self.device) as p:
+        #with mido.open_input(inputs[0]) as p: # hier die [0] mit dem richtigen Gerät ersetzen
             for msg in p:
                 #print(msg) # gibt alle Midi-Events aus
                 if not msg.is_meta:
