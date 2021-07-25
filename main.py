@@ -23,6 +23,7 @@ from recording import Recording
 from songExtracting import SongExtracting
 from font import os_font
 
+import mido
 
 class Window(QMainWindow):
 
@@ -45,12 +46,11 @@ class Window(QMainWindow):
         self.init_theory_dropdown()
         self.init_bpm_spinner()
         self.init_bmp_label()
-        #self.init_countdown_label()
         self.init_keyboard(88)
         self.init_window()
         self.init_key_shortcuts()
         self.init_learn_text_label()
-        # instance of staff
+        # instance of recording and labeling
         self.recording = Recording()
         self.labeling = Labeling()
         self.labeling.init_label(self)
@@ -61,7 +61,7 @@ class Window(QMainWindow):
         self.update_timer.setSingleShot(False)
         self.update_timer.timeout.connect(self.update)
         self.update_timer.start()
- 
+        self.init_file_dialog_for_input_device()
 
     # initalizing the gui window itself
     def init_window(self):
@@ -73,7 +73,7 @@ class Window(QMainWindow):
     def init_keyboard(self, num_keys):
         self.keys = []
         for i in range(num_keys):
-            self.keys.append(Key(i, self.staff)) # self.staff as a parameter to draw dots on the keys live played by backing track 
+            self.keys.append(Key(i, self.staff, midi_input, song_extracting)) # self.staff as a parameter to draw dots on the keys live played by backing track 
     
     # shortcuts for main functions
     # https://zetcode.com/pyqt/qshortcut/
@@ -98,7 +98,7 @@ class Window(QMainWindow):
 
 
 
-    # dropdown menu fpr the learn mode to choose the lecture
+    # dropdown menu for the learn mode to choose the lecture
     def init_theory_dropdown(self):
         lessons = []
         filelist = os.listdir('theory_files')
@@ -145,6 +145,36 @@ class Window(QMainWindow):
         self.learn_text_label.setText("")
         self.learn_text_label.show()
 
+
+    # a file dialog appears when starting the application, to choose the midi-device
+    def init_file_dialog_for_input_device(self):
+
+        inputs = mido.get_input_names()
+        num = 0
+        entry_string = "Please enter the correct number for your keyboard:"
+        if inputs == []:
+            entry_string = "Please connect your Midi-Device to your computer and try again. \nTherefore click Cancel or Ok after connecting your decive and you can choose again."
+        for i in inputs: 
+            entry_string = entry_string + ' ' +  '\n''[' + str(num) + ']' + ' ' + i
+            num = num + 1 
+        highest_number = num - 1
+        
+        try:
+            i, okPressed = QInputDialog.getInt(self, "Choose your adapted Midi-keyboard", entry_string, 0, 0, highest_number, 1)
+            if okPressed:
+                device = inputs[i]
+                midi_input.start(device)
+            else:
+                print('cancelled')
+        except (IndexError) as e:
+            print('Index out of range, Midi-Device must be chosen')
+            self.recall_decive_choosing()
+            pass
+
+    # if no midi-device had been connected, the pop-up appears as long as the user connects and chooses one
+    def recall_decive_choosing(self):
+        self.init_file_dialog_for_input_device()
+        
 
     # creating all buttons needed for the UI
     def init_buttons(self):
@@ -405,8 +435,8 @@ class Window(QMainWindow):
 # every PyQt5 application must create an application object
 App = QApplication(sys.argv)
 # enter the mainloop of the application. The event handling starts from this point
-window = Window()
 midi_input = MidiInput()
 song_extracting = SongExtracting()
+window = Window()
 
 sys.exit(App.exec())

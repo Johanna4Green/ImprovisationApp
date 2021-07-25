@@ -9,8 +9,6 @@ from PyQt5.QtGui import QPainter, QBrush, QPen
 from PyQt5.QtCore import Qt
 
 from constants import *
-from midiInput import MidiInput
-from songExtracting import SongExtracting
 
 class Key():
 
@@ -29,10 +27,12 @@ class Key():
                         ORIG_KEY_X_POS + 1000, ORIG_KEY_X_POS + 1020, ORIG_KEY_X_POS + 1040
                         ] # (16,25, 33, 42, 50, 59, 67, 76, 85 is letztes
 
-    def __init__(self, key_number, staff):
+    def __init__(self, key_number, staff, midi_input, song_extracting):
         super().__init__()
         self.midifile = MIDIFILE
         self.staff = staff
+        self.midi_input = midi_input
+        self.song_extracting = song_extracting
         self.key_number = key_number
         self.is_pressed = False
         self.is_played_by_bt = False
@@ -46,8 +46,7 @@ class Key():
         self.black_circle_w = 8
         self.white_circle_h = 10
         self.black_circle_h = 8
-        self.tonality = song_extracting.getTonality(self.midifile)
-        #print(self.midifile)
+        self.tonality = self.song_extracting.getTonality(self.midifile)
 
         if key_number in self.BLACK_KEYS:
             self.key_type = KEY_TYPE_BLACK
@@ -66,7 +65,7 @@ class Key():
     # draws the dots for live feedback from input and backing track
     def draw(self, painter):
 
-        is_pressed = midi_input.getKeyArray()[self.key_number]
+        is_pressed = self.midi_input.getKeyArray()[self.key_number]
         is_played_by_bt = self.staff.get_bt_key_array()[self.key_number]
         is_colored = self.getColorArray()[self.key_number]
 
@@ -114,6 +113,3 @@ class Key():
             else:
                 color_array.append(False)
         return color_array
-
-midi_input = MidiInput()
-song_extracting = SongExtracting()
