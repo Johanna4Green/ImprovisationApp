@@ -46,7 +46,6 @@ class Window(QMainWindow):
         self.init_theory_dropdown()
         self.init_bpm_spinner()
         self.init_bmp_label()
-        #self.init_countdown_label()
         self.init_keyboard(88)
         self.init_window()
         self.init_key_shortcuts()
@@ -74,7 +73,7 @@ class Window(QMainWindow):
     def init_keyboard(self, num_keys):
         self.keys = []
         for i in range(num_keys):
-            self.keys.append(Key(i, self.staff)) # self.staff as a parameter to draw dots on the keys live played by backing track 
+            self.keys.append(Key(i, self.staff, midi_input, song_extracting)) # self.staff as a parameter to draw dots on the keys live played by backing track 
     
     # shortcuts for main functions
     # https://zetcode.com/pyqt/qshortcut/
@@ -164,8 +163,6 @@ class Window(QMainWindow):
             i, okPressed = QInputDialog.getInt(self, "Choose your adapted Midi-keyboard", entry_string, 0, 0, highest_number, 1)
             if okPressed:
                 device = inputs[i]
-                print(device)
-                #self.midi_input = MidiInput()
                 midi_input.start(device)
             else:
                 print('cancelled')
@@ -173,7 +170,6 @@ class Window(QMainWindow):
             print('Index out of range, Midi-Device must be chosen')
             self.recall_decive_choosing()
             pass
-
 
     # if no midi-device had been connected, the pop-up appears as long as the user connects and chooses one
     def recall_decive_choosing(self):
@@ -440,7 +436,7 @@ class Window(QMainWindow):
 App = QApplication(sys.argv)
 # enter the mainloop of the application. The event handling starts from this point
 midi_input = MidiInput()
-window = Window()
 song_extracting = SongExtracting()
+window = Window()
 
 sys.exit(App.exec())

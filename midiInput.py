@@ -37,11 +37,11 @@ class MidiInput():
                 #print(msg) # gibt alle Midi-Events aus
                 if not msg.is_meta:
                     if msg.type =='note_on':
-                        self.keys[msg.note + 3] = True
+                        self.keys[msg.note  - 21] = True # -21 to map the keys on the right position (drawn keyboard 0-88, real keyboard 21-108)
                     if msg.type == 'note_off':
-                        self.keys[msg.note + 3] = False
+                        self.keys[msg.note  - 21] = False
                     self.play_sound(msg.type, msg.note, msg.velocity, msg.channel)
-
+ 
 
     # called from getInput: plays midi-keyboard Input live 
     def play_sound(self, note_type, note, velocity, channel):
